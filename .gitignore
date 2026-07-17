@@ -1,0 +1,10 @@
+# System / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local environment files — do not publish secrets
+.env
+.env.*
+!.env.example
