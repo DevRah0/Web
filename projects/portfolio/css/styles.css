@@ -429,3 +429,8 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
   }
 
 }
+@media (hover: none) and (pointer: coarse) {
+  .skip-link {
+    display: none;
+  }
+}
