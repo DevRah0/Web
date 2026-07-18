@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#0b1020" />
-    <title>الصفحة غير موجودة | بورتفوليو عبدالعزيز</title>
+    <title>الصفحة غير موجودة | بورتفوليو عبدالرحمن الربيعي</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
     <style>
       :root { color: #edf0f8; background: #0b1020; font-family: Tahoma, "Segoe UI", Arial, sans-serif; }
@@ -17,14 +17,77 @@
       p { max-width: 29rem; margin: 0 auto 2rem; color: #aeb8cc; line-height: 1.9; }
       a { display: inline-block; padding: .8rem 1.2rem; color: #202800; background: #e6ff5b; border-radius: 999px; font-weight: 800; text-decoration: none; }
       a:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+      .lang-switch { display: inline-block; margin-bottom: .75rem; padding: .35rem .75rem; cursor: pointer; color: #edf0f8; background: transparent; border: 1px solid rgba(230,255,91,.45); border-radius: 999px; font-size: .75rem; font-weight: 700; }
+      .lang-switch:hover { color: #202800; background: #e6ff5b; }
     </style>
   </head>
   <body>
     <main>
+      <button class="lang-switch" type="button" aria-label="Switch language" title="Switch language">EN</button>
       <p class="code" aria-label="خطأ 404">404</p>
       <h1>يبدو أن هذه الصفحة أخذت مسارًا آخر.</h1>
       <p>الرابط الذي فتحته غير موجود أو تم نقله. يمكنك العودة إلى الصفحة الرئيسية من هنا.</p>
       <a href="./">العودة للرئيسية</a>
     </main>
+    <script>
+      (() => {
+        const toggle = document.querySelector('.lang-switch');
+        const title = document.querySelector('title');
+        const code = document.querySelector('.code');
+        const heading = document.querySelector('h1');
+        const text = document.querySelector('main > p:not(.code)');
+        const link = document.querySelector('a');
+
+        const copy = {
+          ar: {
+            lang: 'ar',
+            dir: 'rtl',
+            pageTitle: 'الصفحة غير موجودة | بورتفوليو عبدالرحمن الربيعي',
+            codeAria: 'خطأ 404',
+            heading: 'يبدو أن هذه الصفحة أخذت مسارًا آخر.',
+            text: 'الرابط الذي فتحته غير موجود أو تم نقله. يمكنك العودة إلى الصفحة الرئيسية من هنا.',
+            link: 'العودة للرئيسية',
+            toggleText: 'EN',
+            toggleLabel: 'Switch language'
+          },
+          en: {
+            lang: 'en',
+            dir: 'ltr',
+            pageTitle: 'Page Not Found | Abdulrahman Al-Rubaie Portfolio',
+            codeAria: 'Error 404',
+            heading: 'Looks like this page took a different route.',
+            text: 'The link you opened does not exist or has moved. You can return to the homepage from here.',
+            link: 'Back to home',
+            toggleText: 'ع',
+            toggleLabel: 'تبديل اللغة'
+          }
+        };
+
+        const savedLang = localStorage.getItem('portfolio-lang') === 'en' ? 'en' : 'ar';
+        const apply = (lang) => {
+          const t = copy[lang];
+          document.documentElement.lang = t.lang;
+          document.documentElement.dir = t.dir;
+          if (title) title.textContent = t.pageTitle;
+          if (code) code.setAttribute('aria-label', t.codeAria);
+          if (heading) heading.textContent = t.heading;
+          if (text) text.textContent = t.text;
+          if (link) link.textContent = t.link;
+          if (toggle) {
+            toggle.textContent = t.toggleText;
+            toggle.setAttribute('aria-label', t.toggleLabel);
+            toggle.setAttribute('title', t.toggleLabel);
+          }
+        };
+
+        let currentLang = savedLang;
+        apply(currentLang);
+        toggle?.addEventListener('click', () => {
+          currentLang = currentLang === 'ar' ? 'en' : 'ar';
+          apply(currentLang);
+          localStorage.setItem('portfolio-lang', currentLang);
+        });
+      })();
+    </script>
   </body>
 </html>
