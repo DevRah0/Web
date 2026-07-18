@@ -188,3 +188,225 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
   html { scroll-behavior: auto; }.marquee-track, .contact-star { animation: none; } [data-reveal] { opacity: 1; transform: none; transition: none; }.button, .round-button, .text-link span, .inline-link span, .email-link span { transition: none; }
 }
 
+
+@media (max-width: 768px) {
+
+  /* منع أي عنصر من تجاوز عرض الشاشة */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  body * {
+    max-width: 100%;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* مساحة مريحة للجوال */
+  .shell {
+    width: calc(100% - 32px);
+    margin-inline: auto;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .hero-content,
+  .hero-intro {
+    margin-inline: auto;
+  }
+
+  h1 {
+    max-width: none;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-footnote {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* العناصر الزخرفية */
+  .hero-monogram {
+    opacity: .15;
+    font-size: 9rem;
+    right: 50%;
+    transform: translateX(50%);
+  }
+
+  .floating-card {
+    transform: scale(.9);
+  }
+
+  .orb-one,
+  .orb-two {
+    opacity: .45;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  /* بطاقات المشاريع */
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .project-featured {
+    grid-column: auto;
+  }
+
+  .project-preview,
+  .project-featured .project-preview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+  }
+
+  .project-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .8rem;
+    padding-top: 1rem;
+  }
+
+  .project-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .round-button {
+    align-self: flex-end;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .contact {
+    text-align: center;
+    gap: 3rem;
+  }
+
+  .contact-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact h2 {
+    max-width: 100%;
+  }
+
+  .contact-content > p:not(.eyebrow) {
+    max-width: 100%;
+  }
+
+  .email-link {
+    justify-content: center;
+    font-size: 1.15rem;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  .social-links {
+    justify-content: center;
+    gap: .8rem;
+  }
+
+  .social-links a {
+    padding: 12px 18px;
+    min-width: 120px;
+  }
+
+  .contact-art {
+    width: min(220px, 70vw);
+  }
+
+  .contact-circle span {
+    font-size: 1.3rem;
+  }
+
+}
+/* =========================================================
+   Mobile Enhancements v4 - Polish
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  /* عنوان الأقسام */
+  .section-heading,
+  .about-layout,
+  .skills,
+  .contact {
+    text-align: center;
+  }
+
+  .section-heading h2,
+  .about-copy h2,
+  .skills-intro h2,
+  .contact h2 {
+    max-width: 100%;
+  }
+
+  /* تحسين الأزرار */
+  .button {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* تحسين القوائم */
+  .skill-list article {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .skill-list article + article {
+    margin-top: .8rem;
+  }
+
+  /* تحسين بطاقات About */
+  .fact-card {
+    margin-inline: auto;
+  }
+
+  /* تحسين Footer */
+  .site-footer {
+    text-align: center;
+  }
+
+  .site-footer>* {
+    width: 100%;
+  }
+
+  /* إخفاء بعض الزخارف الثقيلة */
+  .cursor-glow,
+  .art-grid {
+    display: none;
+  }
+
+}
