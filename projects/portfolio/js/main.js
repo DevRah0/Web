@@ -430,13 +430,21 @@
   }
 })();
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
-  link.addEventListener("click", () => {
-    setTimeout(() => {
-      history.replaceState(
-        null,
-        "",
-        window.location.pathname + window.location.search
-      );
-    }, 500);
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search
+    );
   });
 });
