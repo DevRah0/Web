@@ -346,9 +346,7 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
   }
 
 }
-/* =========================================================
-   Mobile Enhancements v4 - Polish
-   ========================================================= */
+
 
 @media (max-width: 768px) {
 
@@ -407,6 +405,27 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
   .cursor-glow,
   .art-grid {
     display: none;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .skip-link {
+    top: .75rem;
+    right: 50%;
+    transform: translate(50%, -200%);
+    width: calc(100% - 32px);
+    max-width: 320px;
+    text-align: center;
+    font-size: .9rem;
+    padding: .8rem 1rem;
+    border-radius: 12px;
+  }
+
+  .skip-link:focus {
+    transform: translate(50%, 0);
   }
 
 }
