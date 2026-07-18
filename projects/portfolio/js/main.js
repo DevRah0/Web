@@ -429,3 +429,14 @@
     }, { passive: true });
   }
 })();
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener("click", () => {
+    setTimeout(() => {
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search
+      );
+    }, 500);
+  });
+});
