@@ -10,7 +10,7 @@ A simple web application built with **PHP** and **MySQL** to manage student reco
 > Add a screenshot of the project here.
 > أضف صورة للمشروع هنا.
 
-![Student Status System](images/screenshot.png)
+![Student Status System](images/screenshot.bmp)
 
 ---
 
