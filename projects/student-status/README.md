@@ -3,16 +3,12 @@
 
 A simple web application built with **PHP** and **MySQL** to manage student records.
 
-تطبيق ويب بسيط تم تطويره باستخدام **PHP** و **MySQL** لإدارة بيانات الطلاب.
+> تطبيق ويب بسيط تم تطويره باستخدام **PHP** و **MySQL** لإدارة بيانات الطلاب.
 
 ---
 
 ## 📸 Screenshot
 ### صورة المشروع
-
-> Add a screenshot of the project here.
-
-> أضف صورة للمشروع هنا.
 
 ![Student Status System](images/screenshot.bmp)
 
