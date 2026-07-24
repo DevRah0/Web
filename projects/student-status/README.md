@@ -61,8 +61,6 @@ student-status/
 
 👉 **Live Website:** https://abdulrahman0.gt.tc/
 
-يمكنك زيارة المشروع وتجربته مباشرة عبر الرابط أعلاه.
-
 ---
 
 ## 🚀 Getting Started
