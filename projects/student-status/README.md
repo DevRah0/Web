@@ -1,20 +1,25 @@
-# Student Status System | نظام إدارة حالة الطلاب
+# Student Status System
+### نظام إدارة حالة الطلاب
 
 A simple web application built with **PHP** and **MySQL** to manage student records.
+
 تطبيق ويب بسيط تم تطويره باستخدام **PHP** و **MySQL** لإدارة بيانات الطلاب.
 
 ---
 
-## 📸 Screenshot | صورة المشروع
+## 📸 Screenshot
+### صورة المشروع
 
 > Add a screenshot of the project here.
+
 > أضف صورة للمشروع هنا.
 
 ![Student Status System](images/screenshot.bmp)
 
 ---
 
-## ✨ Features | المميزات
+## ✨ Features
+### المميزات
 
 - Add a student's name and age.
 - إضافة اسم الطالب وعمره.
@@ -33,7 +38,8 @@ A simple web application built with **PHP** and **MySQL** to manage student reco
 
 ---
 
-## 🛠️ Technologies Used | التقنيات المستخدمة
+## 🛠️ Technologies Used
+### التقنيات المستخدمة
 
 - HTML
 - CSS
@@ -42,7 +48,8 @@ A simple web application built with **PHP** and **MySQL** to manage student reco
 
 ---
 
-## 📂 Project Structure | هيكل المشروع
+## 📂 Project Structure
+### هيكل المشروع
 
 ```text
 student-status/
@@ -55,7 +62,8 @@ student-status/
 
 ---
 
-## 🚀 Getting Started | طريقة التشغيل
+## 🚀 Getting Started
+### طريقة التشغيل
 
 1. Create a MySQL database.
    - أنشئ قاعدة بيانات MySQL.
@@ -74,10 +82,11 @@ student-status/
 
 ---
 
-## 📌 Database Structure | بنية قاعدة البيانات
+## 📌 Database Structure
+### بنية قاعدة البيانات
 
 | Column | Description |
-|--------|-------------|
+|---------|-------------|
 | **id** | Primary Key & Auto Increment |
 | **name** | Student Name |
 | **age** | Student Age |
@@ -85,6 +94,7 @@ student-status/
 
 ---
 
-## 👨‍💻 Author | المطور
+## 👨‍💻 Author
+### المطور
 
 **Abdulrahman Al-Rubaie**
