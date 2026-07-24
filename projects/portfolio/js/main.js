@@ -341,11 +341,15 @@
   });
 
   const langToggle = document.querySelector(".lang-toggle");
-  langToggle?.addEventListener("click", () => {
+langToggle?.addEventListener("click", () => {
     const nextLang = currentLang === "ar" ? "en" : "ar";
+
     applyLanguage(nextLang);
+
     saveValue("portfolio-lang", nextLang);
-  });
+
+    loadGitHubProjects();
+});
 
   const menuToggle = document.querySelector(".menu-toggle");
   const navMenu = document.querySelector(".nav-links");
@@ -448,3 +452,184 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     );
   });
 });
+function getRepoInfo(name) {
+    const repo = name.toLowerCase();
+    const lang =
+        document.documentElement.lang === "ar" ? "ar" : "en";
+
+    const t = lang === "ar";
+
+    if (repo.includes("web")) {
+        return {
+            title: t ? "تطوير الويب" : "Web Development",
+            category: t ? "ويب" : "Web",
+            color: "web",
+            icon: "🌐",
+        };
+    }
+
+    if (repo.includes("ai") || repo.includes("robot")) {
+        return {
+            title: t ? "الذكاء الاصطناعي والروبوتات" : "AI & Robotics",
+            category: t ? "ذكاء اصطناعي" : "AI & Robotics",
+            color: "ai",
+            icon: "🤖",
+        };
+    }
+
+    if (repo.includes("mechanical")) {
+        return {
+            title: t ? "الهندسة الميكانيكية" : "Mechanical Engineering",
+            category: t ? "ميكانيكا" : "Mechanical",
+            color: "mechanical",
+            icon: "⚙️",
+        };
+    }
+
+    if (
+        repo.includes("electrical") ||
+        repo.includes("electronics") ||
+        repo.includes("power")
+    ) {
+        return {
+            title: t ? "الهندسة الإلكترونية" : "Electronics Engineering",
+            category: t ? "إلكترونيات" : "Electronics",
+            color: "electronics",
+            icon: "⚡",
+        };
+    }
+
+    return {
+        title: name.replace(/[_-]/g, " "),
+        category: t ? "أخرى" : "Other",
+        color: "other",
+        icon: "📦",
+    };
+}
+async function loadGitHubProjects() {
+    const container = document.getElementById("github-projects");
+    if (!container) return;
+    const lang =
+    document.documentElement.lang === "ar"
+        ? "ar"
+        : "en";
+
+    container.innerHTML = `
+<div class="repo-loading">
+    ${lang === "ar" ? "جارٍ تحميل المشاريع..." : "Loading projects..."}
+</div>
+`;
+
+    try {
+        const response = await fetch(
+            "https://api.github.com/users/DevRah0/repos?sort=updated&per_page=100"
+        );
+
+        if (!response.ok) throw new Error("GitHub API Error");
+
+        const repos = await response.json();
+        container.innerHTML = "";
+        console.log(repos);
+console.log(repos.length);
+
+        // مستودعات لا نريد عرضها
+        const ignored = [".github"];
+
+       
+
+        repos
+            .filter(repo => !ignored.includes(repo.name))
+            .forEach(repo => {
+
+                const article = document.createElement("article");
+article.className = "project";
+article.setAttribute("data-reveal", "");
+article.classList.add("is-visible");
+
+const language =
+    repo.language ||
+    (lang === "ar" ? "غير محدد" : "Not specified");
+
+const info = getRepoInfo(repo.name);
+
+
+
+const updated = new Date(repo.updated_at).toLocaleDateString(
+    lang === "ar" ? "ar-SA" : "en-US",
+    {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    }
+);
+   
+
+article.innerHTML = `
+<div class="repo-card">
+
+    <div class="repo-header">
+        <div class="repo-icon">${info.icon}</div>
+
+        <div>
+            <h3>${info.title}</h3>
+            <div class="repo-meta">
+    <span class="repo-category ${info.color}">
+        ${info.category}
+    </span>
+
+    <span class="repo-language">
+        ${language}
+    </span>
+</div>
+
+    <div class="repo-footer">
+
+        <small>${updated}</small>
+
+        <div class="repo-actions">
+
+            ${
+                repo.homepage
+    ? `<a href="${repo.homepage}" target="_blank" class="repo-demo">
+        ${lang === "ar" ? "عرض الموقع" : "Live Demo"}
+      </a>`
+    : ""
+            }
+
+            <a
+                href="${repo.html_url}"
+                target="_blank"
+                class="repo-github"
+            >
+               ${lang === "ar" ? "المستودع →" : "GitHub →"}
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+`;
+
+
+
+                container.appendChild(article);
+                
+            });
+
+    } catch (err) {
+        console.error(err);
+
+container.innerHTML = `
+<div class="repo-error">
+    ${
+        lang === "ar"
+            ? "تعذر تحميل المشاريع حالياً."
+            : "Unable to load projects."
+    }
+</div>
+`;
+    }
+}
+
+loadGitHubProjects();

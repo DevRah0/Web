@@ -434,3 +434,231 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
     display: none;
   }
 }
+/* ===========================
+   GitHub Repository Cards
+=========================== */
+
+.repo-card{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    height:100%;
+
+    padding:1.4rem;
+
+    background:var(--surface);
+
+    border:1px solid var(--line);
+
+    border-radius:1.25rem;
+
+    transition:
+        transform .25s,
+        border-color .25s,
+        box-shadow .25s;
+}
+
+.repo-card:hover{
+    transform:translateY(-6px);
+
+    border-color:var(--accent);
+
+    box-shadow:0 18px 45px rgba(0,0,0,.18);
+}
+
+.repo-header{
+    display:flex;
+    gap:1rem;
+    align-items:center;
+}
+
+.repo-icon{
+
+    width:52px;
+    height:52px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(91,176,255,.12);
+
+    font-size:1.35rem;
+}
+
+.repo-header h3{
+
+    margin:0;
+
+    font-size:1.05rem;
+
+    font-weight:700;
+
+    word-break:break-word;
+}
+
+.repo-language{
+
+    display:inline-block;
+
+    margin-top:.35rem;
+
+    color:var(--muted);
+
+    font-size:.82rem;
+}
+
+.repo-footer{
+
+    margin-top:2rem;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:1rem;
+
+    flex-wrap:wrap;
+}
+
+.repo-footer small{
+
+    color:var(--muted);
+
+    font-size:.8rem;
+}
+
+.repo-actions{
+
+    display:flex;
+
+    gap:.6rem;
+
+    flex-wrap:wrap;
+}
+
+.repo-actions a{
+
+    padding:.55rem 1rem;
+
+    border-radius:999px;
+
+    border:1px solid var(--line);
+
+    font-size:.82rem;
+
+    transition:.25s;
+}
+
+.repo-actions a:hover{
+
+    background:var(--accent);
+
+    color:var(--accent-dark);
+
+    border-color:var(--accent);
+}
+.repo-meta {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-top: .4rem;
+    flex-wrap: wrap;
+}
+
+.repo-category {
+    padding: .25rem .7rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+}
+
+.repo-language {
+    font-size: .8rem;
+    color: var(--text-muted);
+}
+.repo-category.web {
+    background: #2563eb;
+}
+
+.repo-category.ai {
+    background: #7c3aed;
+}
+
+.repo-category.mechanical {
+    background: #ea580c;
+}
+
+.repo-category.electronics {
+    background: #ca8a04;
+}
+
+.repo-category.other {
+    background: #6b7280;
+}
+.repo-category {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.repo-category.web {
+    color: #3b82f6;
+    background: rgba(59,130,246,.12);
+    border-color: rgba(59,130,246,.25);
+}
+
+.repo-category.ai {
+    color: #8b5cf6;
+    background: rgba(139,92,246,.12);
+    border-color: rgba(139,92,246,.25);
+}
+
+.repo-category.mechanical {
+    color: #f59e0b;
+    background: rgba(245,158,11,.12);
+    border-color: rgba(245,158,11,.25);
+}
+
+.repo-category.electronics {
+    color: #22c55e;
+    background: rgba(34,197,94,.12);
+    border-color: rgba(34,197,94,.25);
+}
+
+.repo-category.other {
+    color: #94a3b8;
+    background: rgba(148,163,184,.12);
+    border-color: rgba(148,163,184,.25);
+}
+.repo-loading,
+.repo-error {
+    width: 100%;
+    text-align: center;
+    padding: 3rem 1rem;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.repo-error {
+    color: #ef4444;
+}
+#github-projects {
+    grid-column: 1 / -1;
+}
