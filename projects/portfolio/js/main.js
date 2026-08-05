@@ -477,6 +477,15 @@ function getRepoInfo(name) {
         };
     }
 
+    if (repo.includes("bridge")) {
+        return {
+            title: t ? "BridgeOS — لوحة مفاتيح عبر البلوتوث" : "BridgeOS — Bluetooth Keyboard",
+            category: t ? "إنترنت الأشياء" : "IoT",
+            color: "iot",
+            icon: "⌨️",
+        };
+    }
+
     if (repo.includes("mechanical")) {
         return {
             title: t ? "الهندسة الميكانيكية" : "Mechanical Engineering",

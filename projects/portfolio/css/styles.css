@@ -601,6 +601,9 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
     background: #ca8a04;
 }
 
+.repo-category.iot {
+    background: #0891b2;
+}
 .repo-category.other {
     background: #6b7280;
 }
@@ -638,6 +641,11 @@ body.lang-en .scroll-cue { right: auto; left: 0; writing-mode: vertical-lr; }
     border-color: rgba(34,197,94,.25);
 }
 
+.repo-category.iot {
+    color: #06b6d4;
+    background: rgba(6,182,212,.12);
+    border-color: rgba(6,182,212,.25);
+}
 .repo-category.other {
     color: #94a3b8;
     background: rgba(148,163,184,.12);
