@@ -1,4 +1,5 @@
 import { CACHE_KEY, normalizeRepositories, repositoryPresentation, filterRepositories, readRepositoryCache, fetchPublicRepositories } from './repositories.mjs';
+import { setupMotion } from './motion.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -10,101 +11,99 @@ const preferences = {
 
 const COPY = {
   ar: {
-    title: 'عبدالرحمن الربيعي | هندسة الحاسب',
-    description: 'عبدالرحمن الربيعي، مهندس حاسب. مشاريع عملية في الذكاء الاصطناعي، تطوير الويب، الروبوتات والأنظمة المضمنة. الرياض، السعودية.',
-    name: 'عبدالرحمن الربيعي', discipline: 'هندسة الحاسب', skip: 'تخطَّ إلى المحتوى',
-    brandLabel: 'عبدالرحمن الربيعي — الرئيسية', navLabel: 'التنقل الرئيسي',
-    navProjects: 'المشاريع', navAbout: 'عني', navExpertise: 'المهارات', navJourney: 'التجربة', navContact: 'تواصل',
-    available: 'متاح للفرص المهنية', intro: 'مرحبًا، أنا عبدالرحمن الربيعي',
-    heroA: 'أربط الفكرة', heroB: 'بالعالم الحقيقي.',
-    heroDescription: 'مهندس حاسب أبني مشاريع تجمع بين البرمجيات والأنظمة الذكية؛ من الرؤية الحاسوبية إلى الويب والروبوتات.',
-    explore: 'استكشف أعمالي', location: 'الرياض، المملكة العربية السعودية', scroll: 'تعرّف على عملي',
-    projectsLabel: 'من الفكرة إلى التطبيق', projectsTitle: 'مساحات أبني فيها.',
-    projectsDescription: 'مجموعة أعمالي في البرمجيات والهندسة. كل مستودع يجمع مشاريعه وتوثيقها، ويتحدث هذا القسم تلقائيًا مع إضافة أعمال جديدة.',
-    allOnGithub: 'جميع المستودعات على GitHub', filtersLabel: 'تصفية المستودعات',
-    searchPlaceholder: 'ابحث عن مستودع…', searchLabel: 'ابحث عن مستودع', paginationLabel: 'صفحات المستودعات',
-    aboutLabel: 'خلف كل مشروع', aboutA: 'فضول هندسي.', aboutB: 'وتعلّم بالممارسة.',
-    aboutLead: 'أنا عبدالرحمن الربيعي، حاصل على بكالوريوس هندسة الحاسب من جامعة الطائف. أهتم بما يحدث عندما تلتقي البرمجيات بالعالم المادي.',
-    aboutBody: 'أطوّر مهاراتي عبر مشاريع في الذكاء الاصطناعي وتطوير الويب والأنظمة المضمنة. يجذبني العمل على النظام كاملًا: كيف يستشعر، وكيف يعالج البيانات، وكيف يتفاعل مع المستخدم.',
-    educationLabel: 'التعليم', education: 'بكالوريوس هندسة الحاسب', university: 'جامعة الطائف',
-    accreditationLabel: 'الاعتماد المهني', accreditation: 'عضو الهيئة السعودية للمهندسين', focus: 'هندسة الحاسب والأنظمة الذكية',
-    expertiseLabel: 'الأدوات التي أعمل بها', expertiseTitle: 'أكثر من زاوية للحل.', expertiseNote: 'مهارات طوّرتها بالتعلّم والتطبيق في مشاريعي.',
-    journeyLabel: 'تجربة عملية', journeyTitle: 'التخصص يتكامل.',
-    journeyDescription: 'تدريبي التعاوني في شركة الأساليب الذكية جمعني بأربعة مسارات هندسية، بتركيز رئيسي على الذكاء الاصطناعي والروبوتات وROS.',
-    trainingLabel: 'تدريب تعاوني · AI & Robotics',
-    contactLabel: 'لنبدأ محادثة', contactA: 'فرصة جديدة؟', contactB: 'يسعدني التواصل.',
-    contactDescription: 'مفتوح للفرص المهنية والتعاون في المجالات التقنية والهندسية المرتبطة بهندسة الحاسب.',
-    emailLabel: 'راسل عبدالرحمن بالبريد الإلكتروني', sayHello: 'تواصل معي', backTop: 'العودة للأعلى',
+    title: 'عبدالرحمن — هندسة الحاسب',
+    description: 'الموقع الشخصي لعبدالرحمن، مهندس حاسب من جامعة الطائف. أعمال في البرمجة والذكاء الاصطناعي والروبوتات.',
+    name: 'عبدالرحمن', discipline: 'هندسة الحاسب', skip: 'تجاوز إلى المحتوى',
+    brandLabel: 'عبدالرحمن — الرئيسية', navLabel: 'التنقل الرئيسي',
+    navProjects: 'الأعمال', navAbout: 'نبذة', navExpertise: 'المهارات', navJourney: 'التدريب', navContact: 'التواصل',
+    available: 'متاح للفرص الوظيفية',
+    heroDescription: 'درست هندسة الحاسب في جامعة الطائف. أعرض هنا أعمالي في البرمجة والذكاء الاصطناعي والروبوتات.',
+    explore: 'تصفّح الأعمال', location: 'الرياض، المملكة العربية السعودية',
+    projectsLabel: 'الأعمال', projectsTitle: 'من أعمالي.',
+    projectsDescription: 'أعرض هنا مشاريعي البرمجية والهندسية، مع نبذة عن كل مشروع ورابط لملفاته على GitHub.',
+    allOnGithub: 'جميع المستودعات على GitHub', filtersLabel: 'تصفية المستودعات', previewLabel: 'من مستودعاتي',
+    searchPlaceholder: 'البحث في الأعمال', searchLabel: 'البحث في الأعمال', paginationLabel: 'صفحات المستودعات',
+    aboutLabel: 'نبذة', aboutA: 'عنّي.',
+    aboutLead: 'أنا عبدالرحمن، مهندس حاسب وخريج جامعة الطائف. أهتم بتطوير البرمجيات وتطبيقات الذكاء الاصطناعي والأنظمة المضمّنة.',
+    aboutBody: 'شملت أعمالي تطبيقات للتعرّف على إيماءات اليد، ومساعدات صوتية، ومشاريع لربط الأجهزة والتحكّم بها. أنجزت عددًا منها خلال الدراسة والتدريب التعاوني.',
+    educationLabel: 'المؤهل', education: 'بكالوريوس هندسة الحاسب', university: 'جامعة الطائف',
+    accreditationLabel: 'العضوية المهنية', accreditation: 'الهيئة السعودية للمهندسين',
+    expertiseLabel: 'المهارات', expertiseTitle: 'أدوات العمل.', expertiseNote: 'تقنيات استخدمتها في مشاريعي، وأواصل تطوير معرفتي بها.',
+    journeyLabel: 'التدريب التعاوني', journeyTitle: 'شركة الأساليب الذكية.',
+    journeyDescription: 'كان مساري الرئيسي في الذكاء الاصطناعي والروبوتات وROS، مع تدريب في تطوير الويب والإلكترونيات والتصميم الميكانيكي.',
+    contactLabel: 'التواصل', contactA: 'يسعدني تواصلكم.',
+    contactDescription: 'للفرص الوظيفية أو المشاريع المشتركة، يمكنكم التواصل معي عبر البريد الإلكتروني.',
+    emailLabel: 'التواصل مع عبدالرحمن عبر البريد الإلكتروني', emailText: 'البريد الإلكتروني', backTop: 'إلى الأعلى',
     openMenu: 'فتح القائمة', closeMenu: 'إغلاق القائمة', lightTheme: 'تفعيل المظهر الفاتح', darkTheme: 'تفعيل المظهر الداكن',
-    retry: 'إعادة المحاولة', reset: 'مسح البحث والتصفية', loading: 'جارٍ تحديث المستودعات…', cached: 'من آخر نسخة محفوظة',
-    error: 'تعذّر التحديث الآن؛ أعرض آخر نسخة محفوظة.', failed: 'تعذّر تحميل المستودعات. يمكنك استعراضها على GitHub.',
-    rate: 'GitHub غير متاح مؤقتًا؛ أعرض آخر نسخة محفوظة.',
-    emptyTitle: 'لا توجد مستودعات عامة بعد.', noResults: 'ما لقينا نتيجة مطابقة.', noResultsHint: 'جرّب اسمًا آخر أو غيّر التصفية.',
+    pauseMotion: 'إيقاف الحركة', playMotion: 'تفعيل الحركة', systemMotion: 'الحركة متوقفة وفق إعدادات الجهاز', cursorLabel: 'فتح',
+    retry: 'إعادة المحاولة', reset: 'مسح البحث والتصفية', loading: 'جارٍ تحديث المستودعات…', cached: 'آخر نسخة محفوظة',
+    error: 'تعذّر التحديث؛ تظهر المستودعات المحفوظة.', failed: 'تعذّر تحميل المستودعات. يمكنكم استعراضها على GitHub.',
+    rate: 'الاتصال بـGitHub غير متاح مؤقتًا؛ تظهر النسخة المحفوظة.',
+    emptyTitle: 'لا توجد مستودعات عامة حاليًا.', noResults: 'لا توجد نتائج لهذا البحث.', noResultsHint: 'يمكنكم تعديل كلمة البحث أو اختيار مجال آخر.',
     repositoryCount: count => `${count.toLocaleString('ar-SA')} مستودع`,
     pageLabel: page => `الصفحة ${page}`, pageStatus: (count, page, pages) => `${count} مستودع، الصفحة ${page} من ${pages}`,
-    openRepository: name => `استعراض مستودع ${name} على GitHub`, live: 'عرض مباشر', updated: 'آخر تعديل', stars: 'نجوم', forks: 'تفرّعات', archived: 'مؤرشف', fork: 'نسخة',
-    categories: { all: 'الكل', ai: 'الذكاء الاصطناعي', web: 'الويب', systems: 'الأنظمة', iot: 'الإلكترونيات', mechanical: 'الميكانيكا', other: 'أخرى' },
+    openRepository: name => `استعراض ${name} على GitHub`, live: 'الموقع', updated: 'آخر تعديل', stars: 'نجوم', forks: 'تفرّعات', archived: 'مؤرشف', fork: 'نسخة',
+    categories: { all: 'الجميع', ai: 'الذكاء الاصطناعي', web: 'الويب', systems: 'الأنظمة', iot: 'الإلكترونيات', mechanical: 'الميكانيكا', other: 'أخرى' },
     expertise: [
-      ['الذكاء الاصطناعي والرؤية الحاسوبية', 'نماذج تتعامل مع الصور والصوت.'],
-      ['تطوير الويب', 'من واجهة المستخدم إلى التكامل مع الخدمات.'],
-      ['الروبوتات والأنظمة المضمنة', 'ربط البرمجيات بالأجهزة والتحكّم.'],
-      ['الإلكترونيات وإنترنت الأشياء', 'دوائر ومستشعرات وتطبيقات تحكّم.'],
-      ['التصميم الميكانيكي', 'تصميم أجزاء الروبوت وفهم حركته.'],
+      ['الذكاء الاصطناعي والرؤية الحاسوبية', 'التعرّف على إيماءات اليد والتعامل مع الصور والصوت.'],
+      ['تطوير الويب', 'بناء الواجهات وربطها بالخدمات وواجهات البرمجة.'],
+      ['الروبوتات والأنظمة المضمّنة', 'برمجة الأجهزة والتواصل بينها والعمل مع ROS.'],
+      ['الإلكترونيات وإنترنت الأشياء', 'توصيل المستشعرات وبرمجة المتحكّمات ودوائر التحكّم.'],
+      ['التصميم الميكانيكي', 'تصميم أجزاء الروبوتات ونماذجها ثلاثية الأبعاد.'],
     ],
     tracks: [
-      ['الذكاء الاصطناعي والروبوتات', 'المسار الرئيسي: الرؤية الحاسوبية وROS وتفاعل الإنسان مع الأنظمة.'],
-      ['تطوير الويب ومعالجة اللغة', 'واجهات وتطبيقات ومساعدات صوتية.'],
-      ['الهندسة الكهربائية وإنترنت الأشياء', 'المستشعرات والدوائر وبرمجة المتحكمات.'],
-      ['الهندسة الميكانيكية', 'التصميم ثلاثي الأبعاد وأجزاء الروبوت.'],
+      ['الذكاء الاصطناعي والروبوتات', 'المسار الرئيسي، وشمل الرؤية الحاسوبية والتعامل مع ROS.'],
+      ['تطوير الويب ومعالجة اللغة', 'تطوير واجهات وتطبيقات ومساعدات صوتية.'],
+      ['الهندسة الكهربائية وإنترنت الأشياء', 'دوائر ومستشعرات وبرمجة متحكّمات.'],
+      ['الهندسة الميكانيكية', 'نمذجة أجزاء الروبوتات وتصميمها.'],
     ],
   },
   en: {
-    title: 'Abdulrahman Al-Rubaie | Computer Engineering',
-    description: 'Abdulrahman Al-Rubaie, Computer Engineer. Hands-on projects in AI, web development, robotics, and embedded systems. Based in Riyadh, Saudi Arabia.',
-    name: 'Abdulrahman Al-Rubaie', discipline: 'Computer Engineering', skip: 'Skip to content',
-    brandLabel: 'Abdulrahman Al-Rubaie — Home', navLabel: 'Main navigation',
-    navProjects: 'Projects', navAbout: 'About', navExpertise: 'Skills', navJourney: 'Experience', navContact: 'Contact',
-    available: 'Open to opportunities', intro: 'Hello, I’m Abdulrahman Al-Rubaie',
-    heroA: 'Ideas meet', heroB: 'the real world.',
-    heroDescription: 'Computer Engineer building at the intersection of software and intelligent systems. From computer vision to the web and robotics.',
-    explore: 'Explore my work', location: 'Riyadh, Saudi Arabia', scroll: 'Discover my work',
-    projectsLabel: 'From ideas to implementation', projectsTitle: 'Where I build.',
-    projectsDescription: 'My work across software and engineering. Each repository brings its projects and documentation together. New public repositories appear here automatically.',
-    allOnGithub: 'All repositories on GitHub', filtersLabel: 'Filter repositories',
-    searchPlaceholder: 'Search repositories…', searchLabel: 'Search repositories', paginationLabel: 'Repository pages',
-    aboutLabel: 'Behind the projects', aboutA: 'Curious by nature.', aboutB: 'Learning by building.',
-    aboutLead: 'I’m Abdulrahman Al-Rubaie, with a bachelor’s degree in Computer Engineering from Taif University. I’m interested in what happens when software meets the physical world.',
-    aboutBody: 'I develop my skills through projects in AI, web development, and embedded systems. I enjoy thinking about the whole system: how it senses, processes data, and interacts with people.',
+    title: 'Abdulrahman — Computer Engineering',
+    description: 'Abdulrahman’s portfolio. Computer Engineering, Taif University. Work in programming, artificial intelligence, and robotics.',
+    name: 'Abdulrahman', discipline: 'Computer Engineering', skip: 'Skip to content',
+    brandLabel: 'Abdulrahman — Home', navLabel: 'Main navigation',
+    navProjects: 'Work', navAbout: 'About', navExpertise: 'Skills', navJourney: 'Training', navContact: 'Contact',
+    available: 'Open to job opportunities',
+    heroDescription: 'I studied Computer Engineering at Taif University. This is a collection of my work in programming, AI, and robotics.',
+    explore: 'Explore work', location: 'Riyadh, Saudi Arabia',
+    projectsLabel: 'Work', projectsTitle: 'Selected work.',
+    projectsDescription: 'A brief introduction to each repository. The code and project documentation are available on GitHub.',
+    allOnGithub: 'All repositories on GitHub', filtersLabel: 'Filter repositories', previewLabel: 'From my repositories',
+    searchPlaceholder: 'Search my work', searchLabel: 'Search my work', paginationLabel: 'Repository pages',
+    aboutLabel: 'About', aboutA: 'A little about me.',
+    aboutLead: 'I’m Abdulrahman, a Computer Engineering graduate from Taif University. My interests include software development, AI applications, and embedded systems.',
+    aboutBody: 'My work includes hand-gesture recognition, voice assistants, and projects for connecting and controlling devices. Several were completed during my degree and cooperative training.',
     educationLabel: 'Education', education: 'Bachelor’s in Computer Engineering', university: 'Taif University',
-    accreditationLabel: 'Professional accreditation', accreditation: 'Member, Saudi Council of Engineers', focus: 'Computer engineering & intelligent systems',
-    expertiseLabel: 'Tools of the trade', expertiseTitle: 'More ways to solve.', expertiseNote: 'Skills developed through learning and hands-on projects.',
-    journeyLabel: 'Hands-on experience', journeyTitle: 'Connected disciplines.',
-    journeyDescription: 'My cooperative training at Smart Methods covered four engineering tracks, with a primary focus on AI, robotics, and ROS.',
-    trainingLabel: 'Cooperative training · AI & Robotics',
-    contactLabel: 'Start a conversation', contactA: 'A new opportunity?', contactB: 'Let’s connect.',
-    contactDescription: 'Open to professional opportunities and collaboration across technical and engineering fields related to Computer Engineering.',
-    emailLabel: 'Email Abdulrahman', sayHello: 'Say hello', backTop: 'Back to top',
+    accreditationLabel: 'Membership', accreditation: 'Saudi Council of Engineers',
+    expertiseLabel: 'Skills', expertiseTitle: 'Tools I work with.', expertiseNote: 'Technologies I have used in my projects and continue to learn.',
+    journeyLabel: 'Cooperative training', journeyTitle: 'Smart Methods.',
+    journeyDescription: 'My main track covered AI, robotics, and ROS, alongside training in web development, electronics, and mechanical design.',
+    contactLabel: 'Contact', contactA: 'Get in touch.',
+    contactDescription: 'For job opportunities or collaborative projects, you’re welcome to contact me by email.',
+    emailLabel: 'Contact Abdulrahman by email', emailText: 'Email me', backTop: 'Back to top',
     openMenu: 'Open menu', closeMenu: 'Close menu', lightTheme: 'Switch to light theme', darkTheme: 'Switch to dark theme',
-    retry: 'Try again', reset: 'Clear search and filters', loading: 'Updating repositories…', cached: 'From the latest saved copy',
-    error: 'Could not refresh. Showing the latest saved copy.', failed: 'Could not load repositories. You can explore them on GitHub.',
-    rate: 'GitHub is temporarily unavailable. Showing the latest saved copy.',
-    emptyTitle: 'No public repositories yet.', noResults: 'No matching repositories.', noResultsHint: 'Try another name or change the filter.',
+    pauseMotion: 'Pause motion', playMotion: 'Enable motion', systemMotion: 'Motion paused by device settings', cursorLabel: 'Open',
+    retry: 'Try again', reset: 'Clear search and filters', loading: 'Updating repositories…', cached: 'Latest saved copy',
+    error: 'Refresh unavailable. Showing saved repositories.', failed: 'Repositories could not be loaded. You can view them on GitHub.',
+    rate: 'GitHub is temporarily unavailable. Showing the saved copy.',
+    emptyTitle: 'No public repositories yet.', noResults: 'No results for this search.', noResultsHint: 'Try a different search or category.',
     repositoryCount: count => `${count} ${count === 1 ? 'repository' : 'repositories'}`,
     pageLabel: page => `Page ${page}`, pageStatus: (count, page, pages) => `${count} repositories. Page ${page} of ${pages}.`,
-    openRepository: name => `Explore ${name} on GitHub`, live: 'Live demo', updated: 'Updated', stars: 'stars', forks: 'forks', archived: 'Archived', fork: 'Fork',
-    categories: { all: 'All', ai: 'AI & Robotics', web: 'Web', systems: 'Systems', iot: 'Electronics', mechanical: 'Mechanical', other: 'Other' },
+    openRepository: name => `View ${name} on GitHub`, live: 'Website', updated: 'Updated', stars: 'stars', forks: 'forks', archived: 'Archived', fork: 'Fork',
+    categories: { all: 'All', ai: 'AI', web: 'Web', systems: 'Systems', iot: 'Electronics', mechanical: 'Mechanical', other: 'Other' },
     expertise: [
-      ['AI & Computer Vision', 'Models that work with images and speech.'],
-      ['Web Development', 'From the user interface to connected services.'],
-      ['Robotics & Embedded Systems', 'Connecting software, devices, and control.'],
-      ['Electronics & IoT', 'Circuits, sensors, and control applications.'],
-      ['Mechanical Design', 'Designing robot parts and understanding motion.'],
+      ['AI & Computer Vision', 'Hand-gesture recognition and working with images and audio.'],
+      ['Web Development', 'Building interfaces and connecting them to services and APIs.'],
+      ['Robotics & Embedded Systems', 'Device programming, communication, and working with ROS.'],
+      ['Electronics & IoT', 'Sensors, microcontrollers, and control circuits.'],
+      ['Mechanical Design', 'Designing robot parts and their 3D models.'],
     ],
     tracks: [
-      ['AI & Robotics', 'Primary track: computer vision, ROS, and human-system interaction.'],
+      ['AI & Robotics', 'My main track, including computer vision and working with ROS.'],
       ['Web Development & NLP', 'Interfaces, applications, and voice assistants.'],
-      ['Electrical Engineering & IoT', 'Sensors, circuits, and microcontroller programming.'],
-      ['Mechanical Engineering', '3D design and robot components.'],
+      ['Electrical Engineering & IoT', 'Circuits, sensors, and microcontroller programming.'],
+      ['Mechanical Engineering', 'Modelling and designing robot parts.'],
     ],
   },
 };
@@ -116,6 +115,9 @@ let query = '';
 let page = 1;
 let repositoryState = 'loading';
 let loading = false;
+let motion = null;
+let activePreview = '';
+let previewSequence = 0;
 const PAGE_SIZE = 6;
 const externalPath = 'M7 17 17 7M7 7h10v10';
 const cached = readRepositoryCache(preferences.get(CACHE_KEY));
@@ -148,7 +150,7 @@ function updateTheme() {
   const isDark = root.dataset.theme !== 'light';
   $('.theme-toggle').setAttribute('aria-label', isDark ? t.lightTheme : t.darkTheme);
   $('.theme-toggle').title = isDark ? t.lightTheme : t.darkTheme;
-  $('meta[name="theme-color"]').content = isDark ? '#101211' : '#f4f6f0';
+  $('meta[name="theme-color"]').content = isDark ? '#191517' : '#f5f4f1';
 }
 function setMenu(open, restoreFocus = false) {
   $('#nav-menu').classList.toggle('is-open', open);
@@ -164,7 +166,7 @@ function applyLanguage(next) {
   root.dir = language === 'ar' ? 'rtl' : 'ltr';
   document.title = t.title;
   $('meta[name="description"]').content = t.description;
-  // Keep social metadata in sync, preserving the existing social image.
+  // Keep the first-name identity consistent in visible text and metadata.
   $('meta[property="og:title"]').content = t.title;
   $('meta[property="og:description"]').content = t.description;
   $('meta[name="twitter:title"]').content = t.title;
@@ -180,7 +182,7 @@ function applyLanguage(next) {
   toggle.title = toggle.getAttribute('aria-label');
   $('#repo-search').placeholder = t.searchPlaceholder;
   $('#repo-search').setAttribute('aria-label', t.searchLabel);
-  $$('#expertise-grid article').forEach((card, i) => {
+  $$('#expertise-grid details').forEach((card, i) => {
     card.querySelector('h3').textContent = t.expertise[i][0];
     card.querySelector('p').textContent = t.expertise[i][1];
   });
@@ -190,6 +192,7 @@ function applyLanguage(next) {
   });
   $('.menu-toggle').setAttribute('aria-label', $('.menu-toggle').getAttribute('aria-expanded') === 'true' ? t.closeMenu : t.openMenu);
   updateTheme();
+  motion?.updateControls();
   renderFilters();
   renderRepositories();
 }
@@ -208,14 +211,21 @@ function renderFilters(focusCategory) {
 function repoCard(repo, index) {
   const t = COPY[language];
   const presentation = repositoryPresentation(repo, language);
-  const card = element('article', 'repo-card');
+  const card = element('article', 'repo-row');
+  card.dataset.repository = repo.name;
+  card.addEventListener('pointerenter', () => updatePreview(repo, index));
+  card.addEventListener('focusin', () => updatePreview(repo, index));
   const top = element('div', 'repo-top');
   const label = element('span', 'repo-category', t.categories[repo.category]);
   if (repo.archived) label.append(element('span', 'repo-badge', t.archived));
   if (repo.isFork) label.append(element('span', 'repo-badge', t.fork));
   top.append(label, element('span', 'repo-index', String(index + 1).padStart(2, '0')));
-  const heading = element('h3', 'repo-name', presentation.title);
-  heading.dir = 'ltr';
+  const heading = element('h3', 'repo-name');
+  const titleLink = externalLink(repo.url, presentation.title, 'repo-title-link');
+  titleLink.dir = 'ltr';
+  titleLink.setAttribute('aria-label', t.openRepository(repo.name));
+  titleLink.setAttribute('data-cursor', '');
+  heading.append(titleLink);
   const description = element('p', 'repo-description', presentation.description);
   description.dir = 'auto';
   const tags = element('ul', 'repo-tags');
@@ -239,6 +249,27 @@ function repoCard(repo, index) {
   card.append(top, heading, description, tags, footer);
   return card;
 }
+function updatePreview(repo, index) {
+  if (!repo || activePreview === repo.name) return;
+  activePreview = repo.name;
+  const sequence = ++previewSequence;
+  const presentation = repositoryPresentation(repo, language);
+  const panel = $('#work-preview');
+  const content = $('.preview-content');
+  const apply = () => {
+    if (sequence !== previewSequence) return;
+    panel.dataset.category = repo.category;
+    $('#preview-number').textContent = String(index + 1).padStart(2, '0');
+    $('#preview-title').textContent = presentation.title;
+    $('#preview-category').textContent = COPY[language].categories[repo.category];
+    $('#preview-category').dir = language === 'ar' ? 'rtl' : 'ltr';
+    $('#preview-stack').textContent = presentation.tags.slice(0, 3).join(' / ');
+    if (motion?.enabled()) content.animate([{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 480, easing: 'cubic-bezier(.2,.7,.1,1)' });
+  };
+  content.getAnimations?.().forEach(animation => animation.cancel());
+  apply();
+}
+
 function renderStatus() {
   const t = COPY[language];
   const status = $('#repo-status');
@@ -258,8 +289,12 @@ function renderRepositories() {
   $('#repos-count').textContent = t.repositoryCount(filtered.length);
   $('#repo-announcement').textContent = t.pageStatus(filtered.length, page, pages);
   renderStatus();
+  $('#work-preview').hidden = filtered.length === 0;
   if (filtered.length) {
     list.replaceChildren(...filtered.slice(start, start + PAGE_SIZE).map((repo, i) => repoCard(repo, start + i)));
+    activePreview = '';
+    updatePreview(filtered[start], start);
+    if (motion?.enabled()) motion.animateList(list);
   } else if ((loading || repositoryState === 'loading') && !repositories.length) {
     list.replaceChildren();
   } else {
@@ -371,6 +406,7 @@ if ('IntersectionObserver' in window) {
 }
 
 // Show a local public-repository snapshot immediately, then refresh from GitHub.
+motion = setupMotion({ copy: () => COPY[language], storage: preferences });
 applyLanguage(language);
 if (cached) {
   repositories = cached.repos;

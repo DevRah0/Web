@@ -6,28 +6,28 @@ export const CACHE_TTL = 15 * 60 * 1000;
 export const REPOSITORY_DETAILS = {
   'ai-and-robotics': {
     title: 'AI & Robotics', category: 'ai', tags: ['Python', 'OpenCV', 'MediaPipe'],
-    ar: 'تجارب في الرؤية الحاسوبية وتعلّم الآلة، من التعرّف على إيماءات اليد إلى المساعدات الصوتية.',
-    en: 'Computer vision and machine learning projects, from hand-gesture recognition to voice assistants.',
+    ar: 'مشاريع في التعرّف على إيماءات اليد والمساعدات الصوتية، باستخدام Python وأدوات الرؤية الحاسوبية.',
+    en: 'Hand-gesture recognition and voice-assistant projects using Python and computer vision tools.',
   },
   bridgeos: {
     title: 'BridgeOS', category: 'systems', tags: ['Rust', 'SwiftUI', 'BLE / GATT'],
-    ar: 'مشروع لربط إدخال لوحة المفاتيح من iOS بجهاز Raspberry Pi عبر Bluetooth Low Energy.',
-    en: 'A project connecting keyboard input on iOS to a Raspberry Pi over Bluetooth Low Energy.',
+    ar: 'تطبيق وأدوات لتمرير إدخال لوحة المفاتيح من iOS إلى Raspberry Pi عبر اتصال Bluetooth Low Energy.',
+    en: 'An app and tools for passing keyboard input from iOS to a Raspberry Pi over Bluetooth Low Energy.',
   },
   web: {
     title: 'Web', category: 'web', tags: ['JavaScript', 'HTML / CSS', 'PHP'],
-    ar: 'تطبيقات ويب تجمع الواجهات والخدمات: موقعي الشخصي، ومحادثة صوتية، وتطبيق لعرض الحالة الأكاديمية.',
-    en: 'Web projects spanning interfaces and services: this portfolio, a voice chatbot, and a student-status application.',
+    ar: 'يضم موقعي الشخصي، وتطبيق محادثة صوتية، وتطبيقًا للاستعلام عن الحالة الأكاديمية للطالب.',
+    en: 'This portfolio, a voice-chat application, and a tool for looking up a student’s academic status.',
   },
   electronics_and_iot: {
     title: 'Electronics & IoT', category: 'iot', tags: ['Arduino', 'C++', 'Sensors'],
-    ar: 'دوائر ومستشعرات وبرمجة متحكّمات لتجارب عملية في التحكّم والأتمتة وإنترنت الأشياء.',
-    en: 'Circuits, sensors, and microcontroller programming for hands-on control, automation, and IoT projects.',
+    ar: 'أعمال في توصيل الدوائر والمستشعرات وبرمجة المتحكّمات، ضمن التدريب على الإلكترونيات وإنترنت الأشياء.',
+    en: 'Circuit, sensor, and microcontroller exercises from my electronics and IoT training.',
   },
   mechanical_eng: {
     title: 'Mechanical Engineering', category: 'mechanical', tags: ['CAD', 'Onshape', 'Robotics'],
-    ar: 'تصميمات ميكانيكية ونماذج أولية للروبوتات، منها تصميم روبوت رباعي الأرجل.',
-    en: 'Mechanical designs and robot prototypes, including a quadruped robot design.',
+    ar: 'نماذج وتصميمات لأجزاء ميكانيكية، تشمل تصميم روبوت رباعي الأرجل باستخدام أدوات CAD.',
+    en: 'Mechanical parts and CAD models, including the design of a quadruped robot.',
   },
 };
 
