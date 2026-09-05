@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#070a16"/>
-  <g transform="translate(16,16)">
-    <rect x="-11" y="-11" width="22" height="22" rx="6" fill="none" stroke="#5ea0ff" stroke-width="2.2"/>
-    <circle r="7" fill="#7cd6ff"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#101211"/><path d="M9 29c0-5 3-8 7-8s7 3 7 8v8h-4v-2c-1 2-3 3-5 3-3 0-5-2-5-5 0-4 4-6 10-6-1-3-5-3-6 1H9Zm10 2c-4 0-6 1-6 3 0 3 6 2 6-2v-1Zm8-10h4v3c2-3 4-4 7-3v4c-4-1-7 1-7 6v6h-4V21Z" fill="#f1f3ea"/><circle cx="39" cy="35" r="3" fill="#c9f86b"/></svg>
