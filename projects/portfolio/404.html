@@ -1,112 +1,45 @@
 <!doctype html>
 <html lang="ar" dir="rtl" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex" />
-    <meta name="theme-color" content="#070a16" />
-    <title>الصفحة غير موجودة | عبدالرحمن الربيعي</title>
-    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <style>
-      :root {
-        --bg: #070a16; --text: #e9eef8; --muted: #a7b1c8;
-        --accent: #5ea0ff; --accent-2: #7cd6ff;
-        --border: rgba(140,160,220,0.16); --surface: #0e1427;
-        --grad: linear-gradient(120deg,#5ea0ff,#7cd6ff,#a78bff);
-        --font: "Cairo","Segoe UI",Tahoma,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
-        --font-mono: ui-monospace,"SF Mono",Consolas,monospace;
-      }
-      :root[data-theme="light"] {
-        --bg:#f6f8fc; --surface:#fff; --text:#14203a; --muted:#43526e;
-        --accent:#1f6fe0; --accent-2:#0fa3c9;
-      }
-      *{box-sizing:border-box}
-      body{margin:0;min-height:100vh;display:grid;place-items:center;padding:1.5rem;color:var(--text);background:var(--bg);font-family:var(--font);line-height:1.7}
-      main{width:min(100%,46rem);padding:clamp(2.2rem,8vw,4.5rem);overflow:hidden;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:1.5rem;box-shadow:0 30px 70px rgba(3,8,20,.4)}
-      .code{font-family:var(--font-mono);font-size:clamp(4rem,16vw,8rem);font-weight:800;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-      h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.25;margin:1.4rem 0 .8rem}
-      p{max-width:30rem;margin:0 auto 2rem;color:var(--muted);line-height:1.85}
-      .home-link{display:inline-flex;align-items:center;gap:.5rem;padding:.8rem 1.3rem;background:var(--accent);color:#fff;border-radius:999px;font-weight:700}
-      a:focus-visible,.home-link:focus-visible{outline:3px solid var(--accent-2);outline-offset:3px;border-radius:999px}
-      .controls{display:flex;gap:.5rem;justify-content:center;margin-bottom:2rem}
-      .lang-switch{padding:.4rem .85rem;border-radius:999px;cursor:pointer;color:var(--text);background:transparent;border:1px solid var(--border);font-size:.78rem;font-weight:700}
-      .lang-switch:hover{color:var(--accent-2)}
-      .theme-switch{width:2.4rem;height:2.4rem;border-radius:.65rem;border:1px solid var(--border);cursor:pointer;font-size:.85rem;background:transparent}
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="controls">
-        <button class="lang-switch" type="button" aria-label="التبديل إلى الإنجليزية" title="التبديل إلى الإنجليزية">EN</button>
-        <button class="theme-switch" type="button" aria-label="تبديل المظهر" title="تبديل المظهر">🌙</button>
-      </div>
-      <p class="code" aria-hidden="true">404</p>
-      <h1>يبدو أن هذه الصفحة أخذت مسارًا آخر.</h1>
-      <p>الرابط الذي فتحته غير موجود أو تم نقله. يمكنك العودة إلى الصفحة الرئيسية من هنا.</p>
-      <a class="home-link" href="/Web/">العودة إلى الرئيسية</a>
-    </main>
-    <script>
-      (() => {
-        "use strict";
-        const root = document.documentElement;
-        const store = {
-          get(k){ try{return localStorage.getItem(k);}catch(_){return null;} },
-          set(k,v){ try{localStorage.setItem(k,v);}catch(_){} }
-        };
-        const I18N = {
-          ar: {
-            langLabel:"التبديل إلى الإنجليزية", text:"EN", themeLabel:"تبديل المظهر", themeIcon:"🌙",
-            h1:"يبدو أن هذه الصفحة أخذت مسارًا آخر.",
-            p:"الرابط الذي فتحته غير موجود أو تم نقله. يمكنك العودة إلى الصفحة الرئيسية من هنا.",
-            home:"العودة إلى الرئيسية", docTitle:"الصفحة غير موجودة | عبدالرحمن الربيعي"
-          },
-          en: {
-            langLabel:"Switch to Arabic", text:"ع", themeLabel:"Toggle theme", themeIcon:"🌙",
-            h1:"Looks like this page took a different route.",
-            p:"The link you opened does not exist or has been moved. You can return to the homepage from here.",
-            home:"Back to home", docTitle:"Page Not Found | Abdulrahman Al-Rubaie"
-          }
-        };
-        let cur = store.get("lang")==="en" ? "en" : "ar";
-        const applyTheme = () => {
-          const saved = store.get("theme");
-          const light = saved==="light" || (!saved && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches);
-          root.dataset.theme = light ? "light" : "dark";
-          const ts = document.querySelector(".theme-switch");
-          if (ts) ts.textContent = light ? "☀️" : "🌙";
-        };
-        applyTheme();
-        const apply = (l) => {
-          const t = I18N[l];
-          root.lang = l; root.dir = l==="ar" ? "rtl" : "ltr";
-          document.title = t.docTitle;
-          const ls = document.querySelector(".lang-switch");
-          if (ls) { ls.textContent = t.text; ls.setAttribute("aria-label", t.langLabel); }
-          const ts = document.querySelector(".theme-switch");
-          if (ts) ts.setAttribute("aria-label", t.themeLabel);
-          const h1 = document.querySelector("h1"); if (h1) h1.textContent = t.h1;
-          const p = document.querySelector("p"); if (p) p.textContent = t.p;
-          const home = document.querySelector(".home-link"); if (home) home.textContent = t.home;
-        };
-        apply(cur);
-        const ls = document.querySelector(".lang-switch");
-        if (ls) ls.addEventListener("click", () => {
-          cur = cur==="ar" ? "en" : "ar";
-          apply(cur);
-          store.set("lang", cur);
-        });
-        const ts = document.querySelector(".theme-switch");
-        if (ts) ts.addEventListener("click", () => {
-          const next = root.dataset.theme==="dark" ? "light" : "dark";
-          root.dataset.theme = next;
-          store.set("theme", next);
-          ts.textContent = next==="dark" ? "🌙" : "☀️";
-        });
-        /* Absolute home link from any deep path */
-        document.querySelectorAll(".home-link").forEach((a) => {
-          a.setAttribute("href", "/Web/");
-        });
-      })();
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#101211" />
+  <title>الصفحة غير موجودة | عبدالرحمن الربيعي</title>
+  <link rel="icon" href="/Web/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/Web/css/styles.css" />
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')==='light'?'light':'dark'}catch(_){}</script>
+</head>
+<body class="error-page">
+  <main class="error-panel">
+    <a class="brand-mark" href="/Web/" dir="ltr" aria-label="الصفحة الرئيسية">ar<span>.</span></a>
+    <div class="error-controls"><button class="lang-toggle" type="button" lang="en" aria-label="Switch to English">EN</button><button class="error-theme icon-button" type="button" aria-label="تبديل المظهر"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16"/></svg></button></div>
+    <p class="error-code" dir="ltr" aria-hidden="true">404<span>.</span></p>
+    <h1>هذا المسار غير موجود.</h1>
+    <p class="error-description">قد يكون الرابط تغيّر. تقدر ترجع للموقع وتستكشف أعمالي من جديد.</p>
+    <a class="button button-primary error-home" href="/Web/">العودة إلى الرئيسية</a>
+  </main>
+  <script>
+    (()=>{
+      const root=document.documentElement;
+      const get=key=>{try{return localStorage.getItem(key)}catch(_){return null}};
+      const set=(key,value)=>{try{localStorage.setItem(key,value)}catch(_){}};
+      const content={ar:{title:'الصفحة غير موجودة | عبدالرحمن الربيعي',heading:'هذا المسار غير موجود.',description:'قد يكون الرابط تغيّر. تقدر ترجع للموقع وتستكشف أعمالي من جديد.',home:'العودة إلى الرئيسية',theme:'تبديل المظهر'},en:{title:'Page not found | Abdulrahman Al-Rubaie',heading:'A route that doesn’t exist.',description:'The link may have changed. Head back to explore my work.',home:'Back to home',theme:'Toggle theme'}};
+      let language=get('lang')==='en'?'en':'ar';
+      const apply=()=>{
+        const t=content[language];root.lang=language;root.dir=language==='ar'?'rtl':'ltr';document.title=t.title;
+        document.querySelector('h1').textContent=t.heading;
+        document.querySelector('.error-description').textContent=t.description;
+        document.querySelector('.error-home').textContent=t.home;
+        document.querySelector('.brand-mark').setAttribute('aria-label',t.home);
+        document.querySelector('.error-theme').setAttribute('aria-label',t.theme);
+        const toggle=document.querySelector('.lang-toggle');toggle.textContent=language==='ar'?'EN':'ع';toggle.lang=language==='ar'?'en':'ar';toggle.setAttribute('aria-label',language==='ar'?'Switch to English':'التبديل إلى العربية');
+        document.querySelector('meta[name="theme-color"]').content=root.dataset.theme==='dark'?'#101211':'#f4f6f0';
+      };
+      document.querySelector('.lang-toggle').addEventListener('click',()=>{language=language==='ar'?'en':'ar';set('lang',language);apply()});
+      document.querySelector('.error-theme').addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';set('theme',root.dataset.theme);apply()});
+      apply();
+    })();
+  </script>
+</body>
 </html>
