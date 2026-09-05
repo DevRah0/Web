@@ -1,40 +1,40 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <meta name="theme-color" content="#101211" />
-  <title>الصفحة غير موجودة | عبدالرحمن الربيعي</title>
+  <meta name="theme-color" content="#f5f4f1" />
+  <title>الصفحة غير موجودة | عبدالرحمن</title>
   <link rel="icon" href="/Web/assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/Web/css/styles.css" />
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')==='light'?'light':'dark'}catch(_){}</script>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')==='dark'?'dark':'light'}catch(_){}</script>
 </head>
 <body class="error-page">
   <main class="error-panel">
-    <a class="brand-mark" href="/Web/" dir="ltr" aria-label="الصفحة الرئيسية">ar<span>.</span></a>
+    <a class="brand-monogram" href="/Web/" dir="ltr" aria-label="الصفحة الرئيسية">a.</a>
     <div class="error-controls"><button class="lang-toggle" type="button" lang="en" aria-label="Switch to English">EN</button><button class="error-theme icon-button" type="button" aria-label="تبديل المظهر"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16"/></svg></button></div>
     <p class="error-code" dir="ltr" aria-hidden="true">404<span>.</span></p>
-    <h1>هذا المسار غير موجود.</h1>
-    <p class="error-description">قد يكون الرابط تغيّر. تقدر ترجع للموقع وتستكشف أعمالي من جديد.</p>
-    <a class="button button-primary error-home" href="/Web/">العودة إلى الرئيسية</a>
+    <h1>الصفحة غير موجودة.</h1>
+    <p class="error-description">قد يكون الرابط غير صحيح أو نُقلت الصفحة. يمكنكم العودة إلى الصفحة الرئيسية للاطلاع على الأعمال.</p>
+    <a class="text-link error-home" href="/Web/">العودة إلى الرئيسية</a>
   </main>
   <script>
     (()=>{
       const root=document.documentElement;
       const get=key=>{try{return localStorage.getItem(key)}catch(_){return null}};
       const set=(key,value)=>{try{localStorage.setItem(key,value)}catch(_){}};
-      const content={ar:{title:'الصفحة غير موجودة | عبدالرحمن الربيعي',heading:'هذا المسار غير موجود.',description:'قد يكون الرابط تغيّر. تقدر ترجع للموقع وتستكشف أعمالي من جديد.',home:'العودة إلى الرئيسية',theme:'تبديل المظهر'},en:{title:'Page not found | Abdulrahman Al-Rubaie',heading:'A route that doesn’t exist.',description:'The link may have changed. Head back to explore my work.',home:'Back to home',theme:'Toggle theme'}};
+      const content={ar:{title:'الصفحة غير موجودة | عبدالرحمن',heading:'الصفحة غير موجودة.',description:'قد يكون الرابط غير صحيح أو نُقلت الصفحة. يمكنكم العودة إلى الصفحة الرئيسية للاطلاع على الأعمال.',home:'العودة إلى الرئيسية',theme:'تبديل المظهر'},en:{title:'Page not found | Abdulrahman',heading:'Page not found.',description:'The link may be incorrect or the page may have moved. Return to the home page to view my work.',home:'Back to home',theme:'Toggle theme'}};
       let language=get('lang')==='en'?'en':'ar';
       const apply=()=>{
         const t=content[language];root.lang=language;root.dir=language==='ar'?'rtl':'ltr';document.title=t.title;
         document.querySelector('h1').textContent=t.heading;
         document.querySelector('.error-description').textContent=t.description;
         document.querySelector('.error-home').textContent=t.home;
-        document.querySelector('.brand-mark').setAttribute('aria-label',t.home);
+        document.querySelector('.brand-monogram').setAttribute('aria-label',t.home);
         document.querySelector('.error-theme').setAttribute('aria-label',t.theme);
         const toggle=document.querySelector('.lang-toggle');toggle.textContent=language==='ar'?'EN':'ع';toggle.lang=language==='ar'?'en':'ar';toggle.setAttribute('aria-label',language==='ar'?'Switch to English':'التبديل إلى العربية');
-        document.querySelector('meta[name="theme-color"]').content=root.dataset.theme==='dark'?'#101211':'#f4f6f0';
+        document.querySelector('meta[name="theme-color"]').content=root.dataset.theme==='dark'?'#191517':'#f5f4f1';
       };
       document.querySelector('.lang-toggle').addEventListener('click',()=>{language=language==='ar'?'en':'ar';set('lang',language);apply()});
       document.querySelector('.error-theme').addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';set('theme',root.dataset.theme);apply()});
