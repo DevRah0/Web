@@ -1,5 +1,5 @@
 import { CACHE_KEY, normalizeRepositories, repositoryPresentation, filterRepositories, readRepositoryCache, fetchPublicRepositories } from './repositories.mjs';
-import { setupMotion } from './motion.mjs';
+import { setupMotion } from './motion.mjs?v=interaction-1';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -142,6 +142,7 @@ function externalLink(url, label, className = 'repo-link') {
   link.href = url;
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
+  if (className === 'repo-link' || className === 'repo-title-link') link.setAttribute('data-cursor', '');
   link.append(element('span', '', label), externalIcon());
   return link;
 }
@@ -224,7 +225,6 @@ function repoCard(repo, index) {
   const titleLink = externalLink(repo.url, presentation.title, 'repo-title-link');
   titleLink.dir = 'ltr';
   titleLink.setAttribute('aria-label', t.openRepository(repo.name));
-  titleLink.setAttribute('data-cursor', '');
   heading.append(titleLink);
   const description = element('p', 'repo-description', presentation.description);
   description.dir = 'auto';
@@ -324,6 +324,7 @@ function renderRepositories() {
       $('#repo-pagination').append(button);
     }
   }
+  motion?.refreshCursor();
 }
 async function loadRepositories(force = false) {
   if (loading) return;

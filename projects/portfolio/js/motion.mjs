@@ -1,4 +1,5 @@
 /** Optional motion. Native scrolling, links, and content work without this layer. */
+import { setupProjectCursor } from './cursor.mjs?v=interaction-1';
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 export function scrollProgress(scrollY, documentHeight, viewportHeight) {
   const distance = documentHeight - viewportHeight;
@@ -19,8 +20,8 @@ export function setupMotion({ copy, storage }) {
   const animations = new Set();
   let preference = storage.get('motion') !== 'off';
   let frame = 0;
-  let pointer = { x: -200, y: -200 };
   const enabled = () => preference && !reduce.matches && typeof Element.prototype.animate === 'function';
+  const projectCursor = setupProjectCursor({ cursor, enabled: () => enabled() && fine.matches });
 
   function animate(node, frames, options = {}) {
     if (!node || !enabled()) return;
@@ -42,9 +43,10 @@ export function setupMotion({ copy, storage }) {
       animations.forEach(animation => animation.cancel());
       // Include preview transitions owned by the repository interface.
       document.getAnimations?.().forEach(animation => animation.cancel());
-      cursor.classList.remove('is-active');
+      projectCursor.hide();
       document.querySelectorAll('[data-magnetic]').forEach(node => node.style.removeProperty('transform'));
     }
+    projectCursor.refresh();
     schedule();
   }
 
@@ -59,7 +61,6 @@ export function setupMotion({ copy, storage }) {
       art.style.setProperty('--art-y', `${offset}px`);
       art.style.setProperty('--art-r', `${clamp(y * 0.002, 0, 1.8)}deg`);
     }
-    if (fine.matches) cursor.style.transform = `translate3d(${pointer.x - 37}px,${pointer.y - 37}px,0)`;
   }
   function schedule() { if (!frame) frame = requestAnimationFrame(draw); }
 
@@ -82,14 +83,6 @@ export function setupMotion({ copy, storage }) {
     });
   }
 
-  document.addEventListener('pointermove', event => {
-    if (!enabled() || !fine.matches || event.pointerType === 'touch') return;
-    pointer = { x: event.clientX, y: event.clientY };
-    cursor.classList.toggle('is-active', Boolean(event.target.closest('[data-cursor]')));
-    schedule();
-  }, { passive: true });
-  document.addEventListener('pointerout', event => { if (!event.relatedTarget) cursor.classList.remove('is-active'); });
-  window.addEventListener('blur', () => cursor.classList.remove('is-active'));
   document.querySelectorAll('[data-magnetic]').forEach(node => {
     node.addEventListener('pointermove', event => {
       if (!enabled() || !fine.matches || event.pointerType === 'touch') return;
@@ -129,16 +122,16 @@ export function setupMotion({ copy, storage }) {
   });
   const onMedia = (query, callback) => query.addEventListener ? query.addEventListener('change', callback) : query.addListener(callback);
   onMedia(reduce, updateControls);
-  onMedia(fine, () => { cursor.classList.remove('is-active'); schedule(); });
-  window.addEventListener('scroll', () => { cursor.classList.remove('is-active'); schedule(); }, { passive: true });
+  onMedia(fine, () => { projectCursor.hide(); projectCursor.refresh(); schedule(); });
+  window.addEventListener('scroll', schedule, { passive: true });
   window.addEventListener('resize', schedule, { passive: true });
   document.addEventListener('visibilitychange', () => { root.dataset.paused = String(document.hidden); schedule(); });
-  if ('ResizeObserver' in window) new ResizeObserver(schedule).observe(document.body);
+  if ('ResizeObserver' in window) new ResizeObserver(() => { schedule(); projectCursor.refresh(); }).observe(document.body);
 
   updateControls();
   document.fonts?.ready.then(schedule);
   [document.querySelector('.hero-topline'), document.querySelector('.hero-title-wrap'), document.querySelector('.hero-note')].forEach((node, index) => {
     animate(node, [{ opacity: 0, transform: 'translateY(32px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 1050, delay: index * 110 });
   });
-  return { enabled, updateControls, animateList };
+  return { enabled, updateControls, animateList, refreshCursor: projectCursor.refresh };
 }
