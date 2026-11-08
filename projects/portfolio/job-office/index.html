@@ -48,7 +48,7 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
   <button class="navbtn" data-nav="events"><span>◷</span> سجل الأنشطة</button>
   <button class="navbtn" data-nav="settings"><span>⚙</span> الإعدادات</button>
  </nav>
- <div class="sidebar-foot"><strong><span class="dot"></span> حالة النظام</strong><p>المهمة المجدولة يوميًا الساعة 9:00 صباحًا بتوقيت الرياض. نشاط الموظفين يعكس السجل المتاح، وليس تنفيذًا مستقلًا في المتصفح.</p></div>
+ <div class="sidebar-foot"><strong><span class="dot"></span> حالة النظام</strong><p>المنظومة مجدولة على خمس جولات كل ساعة بتوقيت الرياض، دون سقف يومي للتقديم. لا تظهر حالة تنفيذ فعلي إلا عند وجود سجل موثق.</p></div>
 </aside>
 <main>
  <div class="topbar">
@@ -108,7 +108,7 @@ const KEY="sb_publishable_zHB_lJ-kSGkVnU4F-9JcJA_OHPNCwlB";
 const LOCALKEY="job-office-manager-session-v1";
 const AGENTS=[
  {id:"research",area:"research",name:"باحث الوظائف",role:"قسم الاستكشاف",icon:"🔎",symbol:"⌕",desc:"يكتشف فرصًا جديدة في جدة ومكة والمدينة والطائف، ويتحقق من أنها ما زالت مفتوحة قبل إحالتها للتدقيق.",label1:"إعلانات",label2:"أنشطة",shirt:"#83b3f2",skin:"#cf9a7b",hair:"#182938"},
- {id:"manager",area:"manager",name:"المدير العام",role:"تنسيق المنظومة",icon:"👔",symbol:"♜",desc:"يراجع أداء الأقسام، ويتابع الهدف اليومي لعشرة تقديمات مؤكدة، وينبه إلى العوائق دون احتساب عروض العمل كتقديمات.",label1:"الجولات",label2:"مهام اليوم",shirt:"#88d9c3",skin:"#c68a67",hair:"#182835"},
+ {id:"manager",area:"manager",name:"المدير العام",role:"تنسيق المنظومة",icon:"👔",symbol:"♜",desc:"يراجع أداء الأقسام والتقديمات المؤكدة دون سقف يومي، وينبه إلى العوائق دون احتساب اكتشاف إعلان على أنه تقديم.",label1:"الجولات",label2:"مهام اليوم",shirt:"#88d9c3",skin:"#c68a67",hair:"#182835"},
  {id:"screening",area:"screening",name:"مدقق الوظائف",role:"المطابقة والتقييم",icon:"🧑‍💻",symbol:"✓",desc:"يفحص شروط المؤهل والخبرة والمدينة، ويعتمد الوظائف التي يمكن التقديم عليها بناءً على بياناتك المؤكدة.",label1:"تقييمات",label2:"مقبولة",shirt:"#ac9fec",skin:"#e0a987",hair:"#30232b"},
  {id:"applying",area:"applying",name:"مسؤول التقديم",role:"إرسال الطلبات",icon:"📤",symbol:"➤",desc:"يملأ نماذج التقديم ويرفع السيرة المناسبة ويرسل الطلبات المصرّح بها. لا يسجل «تم التقديم» دون إثبات الإرسال.",label1:"الطلبات",label2:"مكتملة",shirt:"#efae82",skin:"#aa765b",hair:"#342331"},
  {id:"followup",area:"followup",name:"مسؤول المتابعة",role:"البريد والمقابلات",icon:"📨",symbol:"◷",desc:"يراقب الردود وحالات الطلبات والمقابلات، ويسجل المطلوب منك ولا يوافق على عروض أو يتعهد نيابة عنك.",label1:"رسائل",label2:"تحتاج إجراء",shirt:"#eea1b7",skin:"#d8aa89",hair:"#402f3d"}
