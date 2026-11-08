@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b101a">
+<title>مكتب التوظيف | وكالة الوظائف الذكية</title>
+<style>
+:root{--bg:#080d15;--panel:#111a28;--panel2:#152234;--line:#26364b;--ink:#edf5fc;--muted:#9bacbd;--turq:#51dfc2;--blue:#77aaf8;--orange:#f4bb75;--pink:#ef96b5;--violet:#b2a4ff;--green:#8bdd9f}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic","Noto Sans Arabic",Tahoma,system-ui,sans-serif;font-size:14px;line-height:1.65}
+button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.app{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+aside{background:#0b121e;border-left:1px solid var(--line);padding:28px 17px 18px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:24px}
+.brand{display:flex;align-items:center;gap:13px;padding:5px 9px}.brand-icon{height:42px;width:42px;border:1px solid #277866;border-radius:13px;display:grid;place-items:center;background:#12382f;color:#87ffe1;font-size:22px;box-shadow:0 0 24px #1a8c7240}.brand h2{margin:0;font-size:17px;font-weight:800;letter-spacing:-.4px}.brand small{font-size:11px;color:var(--muted)}
+.nav-cap{color:#718499;font-size:11px;padding:0 13px;margin-bottom:9px;display:block}.navbtn{display:flex;width:100%;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;border:0;background:transparent;color:#adbdcd;text-align:right;margin:3px 0;font-size:13px}.navbtn span{font-size:18px}.navbtn.active,.navbtn:hover{background:#1b2a3a;color:#eaf9fb}.navbtn.active{box-shadow:inset -3px 0 0 var(--turq)}.navbtn em{font-style:normal;font-size:10px;background:#263a49;border-radius:8px;padding:1px 7px;margin-right:auto}
+.sidebar-foot{margin-top:auto;border:1px solid #244238;background:#112a26;padding:15px;border-radius:16px}.sidebar-foot strong{font-size:12px}.sidebar-foot p{color:#9abeb1;font-size:11px;line-height:1.8;margin:5px 0 0}.dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--turq);margin-left:6px;box-shadow:0 0 12px #51dfc277}
+main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:20px;border-bottom:1px solid #1c2a3b}.eyebrow{font-size:11px;letter-spacing:1.6px;color:var(--turq);text-transform:uppercase;font-weight:700}.topbar .rightmini{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.button{color:#e9f7f5;border:1px solid #31465a;background:#192737;border-radius:11px;padding:9px 14px;transition:background .18s}.button:hover{background:#25394b}.button.primary{border-color:transparent;background:var(--turq);color:#09221f;font-weight:800}.button.primary:hover{background:#82f1d8}.button.danger{background:#321b23;border-color:#66313c}.avatar-icon{width:34px;height:34px;background:#29374d;border-radius:50%;display:grid;place-items:center;font-weight:800;border:2px solid #4b697b}
+.hero{margin:26px 0 20px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}.hero h1{font-size:clamp(27px,3.1vw,43px);line-height:1.3;letter-spacing:-1.5px;margin:4px 0 7px}.hero p{margin:0;color:var(--muted);max-width:650px}.hero-highlight{color:var(--turq)}.hero-label{font-size:11px;background:#132b2b;color:#78ead0;border:1px solid #234941;border-radius:30px;padding:6px 12px}
+.banner{border:1px solid #62523b;background:linear-gradient(90deg,#30271d,#1c211f);padding:11px 15px;border-radius:13px;color:#f1cc8f;margin:0 0 17px;font-size:12px}.banner.live{background:#132a28;border-color:#2a6457;color:#98eed7}.banner b{font-weight:800}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.kpi{background:linear-gradient(143deg,#172337,#111a28);border:1px solid #283649;border-radius:17px;padding:17px 19px;position:relative;overflow:hidden}.kpi:after{content:"";height:70px;width:70px;border-radius:50%;background:var(--glow,#62ddc2);opacity:.065;position:absolute;top:-24px;left:-18px;filter:blur(10px)}.kpi-head{display:flex;justify-content:space-between;align-items:center;color:#a9b9c7;font-size:12px}.kpi-icon{height:30px;width:30px;border:1px solid #33465a;background:#25374c;border-radius:9px;display:grid;place-items:center;font-size:15px}.kpi strong{display:block;font-size:31px;line-height:1.2;font-variant-numeric:tabular-nums;margin-top:10px;letter-spacing:-1px}.kpi small{font-size:10px;color:#8095a9}
+.workspace-header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}.section-title{font-size:18px;font-weight:800}.section-sub{font-size:11px;color:#8396ab;margin-top:1px}.switch{display:flex;background:#101c2a;border:1px solid #2a3a4d;border-radius:12px;padding:3px;gap:3px}.switch button{border:0;border-radius:9px;padding:7px 14px;background:transparent;color:#8ba2b4;font-size:12px}.switch button.selected{background:#294052;color:white;box-shadow:0 2px 6px #0003}
+.workspace-grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;align-items:stretch}
+.office-shell{position:relative;min-width:0;overflow:hidden;border-radius:23px;border:1px solid #344c5a;background:linear-gradient(150deg,#1b3143,#12232f 65%,#1a2e3b);box-shadow:0 20px 60px #0002}.office-shell:before{content:"";position:absolute;inset:0;background:linear-gradient(20deg,transparent 70%,#75dbd309),repeating-linear-gradient(0deg,#d0efeb08 0 1px,transparent 1px 57px),repeating-linear-gradient(90deg,#d0efeb08 0 1px,transparent 1px 57px);pointer-events:none}
+.office-ceiling{display:flex;align-items:center;justify-content:space-between;position:relative;padding:17px 22px 4px;font-size:11px;color:#b4d6da}.office-logo{color:#a1f4e0;font-weight:800;letter-spacing:.4px}.office-windows{display:flex;gap:8px}.office-windows i{display:block;width:44px;height:10px;border-radius:3px 3px 1px 1px;background:linear-gradient(110deg,#46748b,#a6d8df44);border:1px solid #6896a0}
+.office-floor{position:relative;padding:12px 16px 15px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"research manager screening" "applying lounge followup";gap:12px;min-height:465px;direction:rtl}
+.station{border:1px solid #52728847;background:linear-gradient(145deg,#254152d9,#182e3dbb);border-radius:17px;min-height:203px;position:relative;padding:10px 12px;overflow:hidden;text-align:right;color:var(--ink);transition:transform .2s,border-color .2s,background .2s;cursor:pointer;display:block;width:100%}.station:hover,.station.selected{transform:translateY(-3px);border-color:#8bdcc4;box-shadow:0 10px 30px #09151a44}.station:focus-visible{outline:3px solid #7deedb;outline-offset:1px}.station.manager{background:linear-gradient(155deg,#304d53,#234043);border-color:#719e866c}.station .room-no{position:absolute;top:11px;left:12px;font-size:10px;color:#b2cad0;font-variant-numeric:tabular-nums}.station-head{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800}.station-head .sym{font-size:14px}.station .activity-label{position:absolute;bottom:10px;right:10px;left:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#101f29d9;border:1px solid #35505d;border-radius:9px;padding:5px 8px;font-size:10px;z-index:3}.station .status-lamp{height:7px;width:7px;flex:0 0 auto;background:#708797;border-radius:50%;display:inline-block}.station.isworking .status-lamp{background:#6cf4be;box-shadow:0 0 10px #6cf4be;animation:pulse 1.4s infinite}.station.isworking .activity-label{border-color:#43836f}.station .activity-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#bad5da}
+@keyframes pulse{50%{opacity:.45;transform:scale(.8)}}.desk-setup{position:absolute;top:42px;right:50%;transform:translateX(50%);width:116px;height:108px}.rug{position:absolute;bottom:4px;right:0;width:116px;height:58px;background:#8ac2d110;border:1px solid #7faeb132;border-radius:30px;transform:skew(-7deg)}.desk-top{width:107px;height:43px;position:absolute;top:26px;right:5px;background:linear-gradient(#ba9972,#876a4d);border:3px solid #d0a77f;border-radius:8px 8px 13px 13px;box-shadow:0 10px 0 #604d40,0 13px 16px #061f25a6}.screen{position:absolute;top:2px;right:37px;width:45px;height:35px;border-radius:5px;background:#17232b;border:4px solid #324651;box-shadow:0 3px 0 #71818c;z-index:1}.screen:after{content:"";position:absolute;inset:4px;background:linear-gradient(130deg,#4ae1c2,#3c84a2);opacity:.6;border-radius:1px}.screen:before{content:"";position:absolute;height:9px;width:4px;bottom:-11px;right:18px;background:#415664}.coffee{position:absolute;top:38px;right:13px;width:13px;height:11px;border-radius:6px 6px 5px 5px;background:#f9dbc0;z-index:2}.person{position:absolute;bottom:0;right:39px;width:43px;height:50px;z-index:2;filter:drop-shadow(0 4px 6px #041d2877)}.chair{position:absolute;bottom:3px;right:28px;width:64px;height:39px;border-radius:22px 22px 20px 20px;background:#22323f;border:2px solid #4c6473}.person .body{position:absolute;bottom:1px;right:4px;width:35px;height:27px;border-radius:12px 12px 8px 8px;background:var(--shirt,#69a8ba);border-bottom:5px solid #162f43}.person .head{width:26px;height:28px;border-radius:11px 11px 13px 13px;position:absolute;top:0;right:9px;background:var(--skin,#c98d6b);border:1px solid #362a2b40}.person .hair{position:absolute;right:0;top:-3px;width:25px;height:10px;background:var(--hair,#212b3a);border-radius:13px 13px 3px 4px}.person .arm{position:absolute;bottom:13px;width:8px;height:21px;background:var(--shirt,#69a8ba);border-radius:5px;transform-origin:top}.person .arm.left{right:-2px;transform:rotate(-35deg)}.person .arm.right{left:0;transform:rotate(35deg)}.station.isworking .person .arm.left{animation:typeL .35s infinite alternate}.station.isworking .person .arm.right{animation:typeR .35s infinite alternate-reverse}.station.isworking .screen:after{animation:screenlight 1.7s infinite alternate}@keyframes typeL{to{transform:rotate(-10deg)}}@keyframes typeR{to{transform:rotate(15deg)}}@keyframes screenlight{to{opacity:1}}.person .head{animation:breathe 2.8s ease-in-out infinite alternate}@keyframes breathe{to{transform:translateY(2px)}}
+.lounge{grid-area:lounge;background:#1023314d;border:1px dashed #56868f48;border-radius:18px;position:relative;min-height:203px;display:grid;place-items:center;overflow:hidden}.lounge:before{content:"";position:absolute;width:145px;height:95px;border-radius:50%;border:1px solid #5b958a46;box-shadow:0 0 0 20px #80d4bb0a,0 0 0 43px #70bcb108;top:18px}.lounge-center{text-align:center;position:relative;z-index:1}.lounge-center strong{font-size:28px;color:#ade5d5;letter-spacing:2px;display:block;font-variant-numeric:tabular-nums}.lounge-center small{font-size:10px;color:#80afae}.plant{position:absolute;font-size:27px;bottom:9px;opacity:.77}.plant.a{right:14px}.plant.b{left:12px}.office-footer{position:relative;display:flex;justify-content:space-between;gap:12px;color:#8db3b3;font-size:10px;padding:5px 19px 15px}.office-footer b{color:#cef4e8}
+.inspector{background:#111b2a;border:1px solid #2a3e52;border-radius:22px;padding:17px;display:flex;flex-direction:column;min-height:500px}.inspector-top{display:flex;align-items:center;justify-content:space-between;gap:7px}.inspector-top small{font-size:10px;color:#899bb0}.inspector-top .more{height:28px;width:28px;display:grid;place-items:center;border:1px solid #304458;background:#1c2d42;border-radius:8px;color:#acc8cd}
+.inspector-profile{margin:24px auto 17px;text-align:center}.profile-avatar{height:81px;width:81px;border-radius:27px;background:linear-gradient(145deg,#3e6c76,#254654);margin:auto auto 9px;position:relative;display:grid;place-items:center;font-size:41px;border:1px solid #5b9295}.profile-avatar:after{content:"";height:13px;width:13px;position:absolute;border-radius:50%;background:#8ba5ab;border:3px solid #152534;bottom:0;left:0}.profile-avatar.online:after{background:#67e4ac}.inspector-profile h3{font-size:17px;margin:5px 0 1px}.inspector-profile p{margin:0;color:#8195a9;font-size:11px}.inspector-status{text-align:center;background:#1b3141;border-radius:9px;padding:8px;color:#bde4e2;font-size:12px;margin-bottom:16px}.inspector-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini-stat{border:1px solid #293e52;border-radius:13px;padding:11px;background:#142133}.mini-stat strong{display:block;font-size:21px;font-variant-numeric:tabular-nums}.mini-stat small{color:#8698ab;font-size:10px}.inspector-desc{border-top:1px solid #2a3c4c;margin:18px 0 0;padding-top:13px}.inspector-desc h4{font-size:12px;margin:0 0 8px}.inspector-desc p{font-size:12px;color:#99afbf;margin:0;line-height:1.85}.inspector-bottom{margin-top:auto;font-size:11px;color:#87a9b3;background:#122637;padding:9px;border-radius:10px;text-align:center}
+.below{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(270px,1fr);gap:16px;margin-top:22px}.pane{border:1px solid #27384c;background:#121b29;border-radius:19px;padding:18px;min-width:0}.pane-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px}.pane-head h3{font-size:15px;margin:0}.pane-head small{font-size:11px;color:#91a5b7}.filterbar{display:flex;gap:7px;flex-wrap:wrap}.filterbar button{border:1px solid #304255;border-radius:8px;background:transparent;color:#9fb6c8;padding:5px 9px;font-size:11px}.filterbar button.sel{color:#b5fce4;border-color:#3b806f;background:#1a3b36}
+.table-scroll{overflow:auto;max-height:330px}table{width:100%;border-collapse:collapse;text-align:right;font-size:12px}th{color:#839bb0;font-size:10px;font-weight:500;padding:10px 7px;border-bottom:1px solid #354357;white-space:nowrap}td{padding:11px 7px;border-bottom:1px solid #243347;color:#c6d5dd;vertical-align:middle;max-width:260px}td.titlecell{font-weight:700;color:#eef7f9}td a{color:#80e8d0;text-decoration:underline;text-underline-offset:3px}.state{display:inline-block;border-radius:7px;padding:2px 8px;font-size:10px;white-space:nowrap;background:#2a3748;color:#b3c1cf}.state.green{background:#214d3a;color:#a3efba}.state.orange{background:#4b3724;color:#f4c686}.state.blue{background:#203e58;color:#9bd0f5}.empty{text-align:center;color:#869dae;padding:37px 20px;line-height:2}.timeline{display:flex;flex-direction:column;gap:15px;max-height:327px;overflow:auto}.event{display:flex;gap:12px;position:relative}.event-marker{height:29px;width:29px;flex:0 0 auto;border:1px solid #456477;border-radius:9px;display:grid;place-items:center;background:#1d3344}.event-body strong{font-size:12px;display:block}.event-body p{font-size:11px;color:#8ca6b6;margin:3px 0;line-height:1.6}.event-body time{font-size:10px;color:#7690a0}.footnote{margin:19px 0 0;color:#778e9c;font-size:11px;text-align:center}
+.modal-overlay{position:fixed;inset:0;background:#03080ccf;backdrop-filter:blur(9px);z-index:20;display:none;align-items:center;justify-content:center;padding:20px}.modal-overlay.open{display:flex}.modal{width:min(440px,100%);background:#132131;border:1px solid #3e6070;border-radius:23px;padding:26px;box-shadow:0 30px 90px #0008}.modal h3{font-size:21px;margin:0 0 5px}.modal p{color:#a3b6c8;font-size:12px;line-height:1.8;margin:0 0 19px}.modal label{display:block;font-size:11px;margin:0 0 5px;color:#abc0ce}.modal input{background:#0d1827;border:1px solid #345064;padding:12px 13px;border-radius:11px;color:white;display:block;width:100%;margin-bottom:15px;direction:ltr;text-align:left}.modal input:focus{outline:2px solid #54e0c0}.modal .links{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap}.modal .message{font-size:12px;margin-top:14px;border-radius:10px;padding:9px;background:#1a3a3b;color:#b6f9ec;display:none}.close{float:left;background:none;border:0;color:#a5c0c8;font-size:23px;line-height:1}
+@media(max-width:1250px){.workspace-grid{grid-template-columns:minmax(0,1fr) 255px}.office-floor{gap:7px;padding:11px}.station{min-height:188px}.lounge{min-height:188px}.desk-setup{transform:translateX(50%) scale(.87);transform-origin:top center}.app{grid-template-columns:208px minmax(0,1fr)}main{padding-inline:22px}}
+@media(max-width:1060px){.workspace-grid{grid-template-columns:1fr}.inspector{min-height:auto}.inspector-profile{margin:12px auto}.inspector-desc{margin-bottom:12px}.inspector-bottom{margin-top:12px}.below{grid-template-columns:1fr 1fr}.office-floor{min-height:430px}.station{min-height:198px}}
+@media(max-width:800px){.app{display:block}aside{position:relative;height:auto;padding:14px 16px;display:block;border-left:0;border-bottom:1px solid #29394a}.brand{display:inline-flex;padding:0}.nav,.sidebar-foot,.nav-cap{display:none}main{padding:17px 13px 28px}.topbar{padding-bottom:14px}.topbar .rightmini{display:none}.top-actions .avatar-icon{display:none}.hero h1{font-size:28px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.kpi{padding:14px}.kpi strong{font-size:28px}.below{grid-template-columns:1fr}.office-floor{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"manager manager" "research screening" "applying followup" "lounge lounge";gap:9px;padding:10px;min-height:unset}.station,.lounge{min-height:176px}.station.manager{min-height:190px}.desk-setup{top:39px}.office-ceiling{padding:13px 14px 2px}.office-footer{padding:8px 12px 14px}.lounge{min-height:100px}.lounge:before{top:-10px}.lounge-center strong{font-size:20px}}
+@media(max-width:420px){.top-actions{gap:6px}.button{font-size:11px;padding:8px 10px}.hero{margin:18px 0}.hero h1{font-size:25px}.station-head{font-size:11px}.station{padding:10px 8px}.desk-setup{transform:translateX(50%) scale(.8)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+ <div class="brand"><div class="brand-icon">▦</div><div><h2>وكالة التوظيف</h2><small>مركز العمليات الذكي</small></div></div>
+ <nav class="nav"><span class="nav-cap">مساحة العمل</span>
+  <button class="navbtn active" data-nav="office"><span>▦</span> المكتب الافتراضي</button>
+  <button class="navbtn" data-nav="applications"><span>▤</span> طلبات التوظيف <em id="nav-apps">0</em></button>
+  <button class="navbtn" data-nav="events"><span>◷</span> سجل الأنشطة</button>
+  <button class="navbtn" data-nav="settings"><span>⚙</span> الإعدادات</button>
+ </nav>
+ <div class="sidebar-foot"><strong><span class="dot"></span> حالة النظام</strong><p>المهمة المجدولة يوميًا الساعة 9:00 صباحًا بتوقيت الرياض. نشاط الموظفين يعكس السجل المتاح، وليس تنفيذًا مستقلًا في المتصفح.</p></div>
+</aside>
+<main>
+ <div class="topbar">
+   <div><div class="eyebrow">JOB OPERATIONS HQ · V1.0</div><div class="rightmini"><span class="dot"></span><span id="top-caption">مركز مراقبة أقسام التوظيف</span></div></div>
+   <div class="top-actions">
+     <button class="button" id="refresh">↻ تحديث</button>
+     <button class="button primary" id="authbtn">الدخول للبيانات الفعلية</button>
+     <div class="avatar-icon" title="المدير">م</div>
+   </div>
+ </div>
+ <div class="hero"><div><div class="hero-label">✦ منظومة التوظيف متعددة الأقسام</div><h1>صباح الخير، <span class="hero-highlight">أيها المدير!</span></h1><p>مكتب افتراضي يعرض الباحث والمدقق ومسؤول التقديم والمتابع والمدير العام، وتفاصيل أدائهم من سجل العمل الموحد.</p></div><div class="hero-label" id="clock">الرياض · --:--</div></div>
+ <div class="banner" id="mode-banner"><b>عرض تجريبي:</b> هذه الحركة والأرقام تمثيلية. سجّل الدخول لعرض النشاط الحقيقي من Supabase.</div>
+ <div class="kpis">
+  <div class="kpi" style="--glow:#77aaf8"><div class="kpi-head">الوظائف المكتشفة <span class="kpi-icon">⌕</span></div><strong id="metric-jobs">—</strong><small>فرص مسجلة</small></div>
+  <div class="kpi" style="--glow:#b2a4ff"><div class="kpi-head">اجتازت التدقيق <span class="kpi-icon">✓</span></div><strong id="metric-screen">—</strong><small>الوظائف الموافق عليها</small></div>
+  <div class="kpi" style="--glow:#51dfc2"><div class="kpi-head">طلبات مكتملة <span class="kpi-icon">➤</span></div><strong id="metric-submit">—</strong><small>تقديمات مؤكدة</small></div>
+  <div class="kpi" style="--glow:#f4bb75"><div class="kpi-head">بانتظار المتابعة <span class="kpi-icon">◷</span></div><strong id="metric-follow">—</strong><small>إجراءات أو طلبات متعثرة</small></div>
+ </div>
+ <section id="office">
+ <div class="workspace-header"><div><div class="section-title">المكتب الافتراضي <span style="color:#89a7ad;font-weight:normal;font-size:12px">/ غرفة العمليات</span></div><div class="section-sub">اضغط على أي موظف لمعرفة مسؤولياته وحالته الفعلية</div></div><div class="switch" role="group" aria-label="وضع العرض"><button id="demo-mode" class="selected">◈ معاينة</button><button id="live-mode">● مباشر</button></div></div>
+ <div class="workspace-grid">
+ <div class="office-shell">
+   <div class="office-ceiling"><span class="office-logo">◈ SMART JOB OFFICE</span><div class="office-windows"><i></i><i></i><i></i></div><span>FLOOR 01</span></div>
+   <div class="office-floor" id="floor"></div>
+   <div class="office-footer"><span>◉ <b id="office-status">عرض توضيحي</b></span><span>آخر مزامنة: <b id="lastsync">—</b></span></div>
+ </div>
+ <div class="inspector" id="inspector">
+   <div class="inspector-top"><small>بطاقة الموظف / القسم</small><span class="more">⋯</span></div>
+   <div class="inspector-profile"><div class="profile-avatar" id="agent-avatar">👔</div><h3 id="agent-name">المدير العام</h3><p id="agent-role">إدارة العمليات</p></div>
+   <div class="inspector-status" id="agent-status">بانتظار رصد النشاط</div>
+   <div class="inspector-stats"><div class="mini-stat"><strong id="agent-stat1">0</strong><small id="agent-label1">المهام المسجلة</small></div><div class="mini-stat"><strong id="agent-stat2">0</strong><small id="agent-label2">النتائج</small></div></div>
+   <div class="inspector-desc"><h4>ماذا يفعل هذا القسم؟</h4><p id="agent-description">اختر أحد الأقسام لرؤية التفاصيل.</p></div>
+   <div class="inspector-bottom" id="agent-last">لا توجد أنشطة حديثة مسجلة.</div>
+ </div>
+ </div>
+ </section>
+ <div class="below">
+ <section class="pane" id="applications"><div class="pane-head"><div><h3>ملف التقديمات</h3><small>حالات مرتبطة بالإعلانات الوظيفية</small></div><div class="filterbar"><button data-filter="all" class="sel">الكل</button><button data-filter="approved">مناسبة</button><button data-filter="submitted">قُدمت</button><button data-filter="blocked">متعثر</button></div></div><div class="table-scroll"><table><thead><tr><th>الشركة</th><th>المسمى الوظيفي</th><th>المدينة</th><th>الحالة</th><th>الرابط</th></tr></thead><tbody id="jobs-body"></tbody></table></div></section>
+ <section class="pane" id="events"><div class="pane-head"><div><h3>سجل النشاط</h3><small>آخر أعمال الأقسام الخمسة</small></div><span style="color:#7bc3b8;font-size:12px">◉ سجل الأحداث</span></div><div class="timeline" id="timeline"></div></section>
+ </div>
+ <div class="footnote" id="settings">بيانات المكاتب تأتي من Supabase عند تسجيل الدخول. وضع المعاينة منفصل ولا يُنشئ طلبات أو يرسلها.</div>
+</main></div>
+<div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-label="تسجيل الدخول">
+ <div class="modal"><button class="close" id="close-modal" aria-label="إغلاق">×</button><div class="eyebrow">SECURE ACCESS</div><h3>تسجيل دخول المدير</h3><p>استخدم بريدك المعتمد في المشروع. الحساب الموثّق فقط يستطيع قراءة معلومات التقديمات الفعلية.</p>
+  <form id="login-form"><label for="email">البريد الإلكتروني</label><input type="email" id="email" autocomplete="email" required placeholder="name@example.com">
+  <label for="password">كلمة مرور جديدة أو الحالية</label><input type="password" id="password" autocomplete="current-password" minlength="8" required placeholder="8 أحرف على الأقل">
+  <div class="links"><button type="submit" class="button primary" id="login-btn">تسجيل الدخول</button><button type="button" class="button" id="signup-btn">إنشاء حساب أول مرة</button></div></form>
+  <div class="message" id="auth-msg"></div>
+  <div style="color:#7898ad;font-size:11px;margin-top:14px">بعد إنشاء الحساب، فعّل البريد من الرسالة التي تصلك. لا تدخل كلمة مرورك في المحادثة.</div>
+ </div>
+</div>
+<script>
+(function(){
+"use strict";
+const PROJECT="https://jclycoagtotikxskgkju.supabase.co";
+const KEY="sb_publishable_zHB_lJ-kSGkVnU4F-9JcJA_OHPNCwlB";
+const LOCALKEY="job-office-manager-session-v1";
+const AGENTS=[
+ {id:"research",area:"research",name:"باحث الوظائف",role:"قسم الاستكشاف",icon:"🔎",symbol:"⌕",desc:"يكتشف فرصًا جديدة في جدة ومكة والمدينة والطائف، ويتحقق من أنها ما زالت مفتوحة قبل إحالتها للتدقيق.",label1:"إعلانات",label2:"أنشطة",shirt:"#83b3f2",skin:"#cf9a7b",hair:"#182938"},
+ {id:"manager",area:"manager",name:"المدير العام",role:"تنسيق المنظومة",icon:"👔",symbol:"♜",desc:"يراجع أداء الأقسام، ويتابع الهدف اليومي لعشرة تقديمات مؤكدة، وينبه إلى العوائق دون احتساب عروض العمل كتقديمات.",label1:"الجولات",label2:"مهام اليوم",shirt:"#88d9c3",skin:"#c68a67",hair:"#182835"},
+ {id:"screening",area:"screening",name:"مدقق الوظائف",role:"المطابقة والتقييم",icon:"🧑‍💻",symbol:"✓",desc:"يفحص شروط المؤهل والخبرة والمدينة، ويعتمد الوظائف التي يمكن التقديم عليها بناءً على بياناتك المؤكدة.",label1:"تقييمات",label2:"مقبولة",shirt:"#ac9fec",skin:"#e0a987",hair:"#30232b"},
+ {id:"applying",area:"applying",name:"مسؤول التقديم",role:"إرسال الطلبات",icon:"📤",symbol:"➤",desc:"يملأ نماذج التقديم ويرفع السيرة المناسبة ويرسل الطلبات المصرّح بها. لا يسجل «تم التقديم» دون إثبات الإرسال.",label1:"الطلبات",label2:"مكتملة",shirt:"#efae82",skin:"#aa765b",hair:"#342331"},
+ {id:"followup",area:"followup",name:"مسؤول المتابعة",role:"البريد والمقابلات",icon:"📨",symbol:"◷",desc:"يراقب الردود وحالات الطلبات والمقابلات، ويسجل المطلوب منك ولا يوافق على عروض أو يتعهد نيابة عنك.",label1:"رسائل",label2:"تحتاج إجراء",shirt:"#eea1b7",skin:"#d8aa89",hair:"#402f3d"}
+];
+const demoJobs=[
+ {id:"d1",company:"شركة تجريبية (أ)",job_title:"Junior Systems Engineer",city:"جدة",status:"approved",appStatus:null},
+ {id:"d2",company:"شركة تجريبية (ب)",job_title:"Electronics Engineer",city:"مكة",status:"applied",appStatus:"submitted"},
+ {id:"d3",company:"شركة تجريبية (ج)",job_title:"Project Engineer",city:"المدينة",status:"in_review",appStatus:null},
+ {id:"d4",company:"شركة تجريبية (د)",job_title:"ICT Engineer",city:"جدة",status:"applying",appStatus:"blocked"}
+];
+const demoActivity=[
+ {actor_section:"research",event_type:"example",note:"اكتشاف إعلان توضيحي - لا يمثل وظيفة حقيقية",occurred_at:new Date(Date.now()-3*60000).toISOString()},
+ {actor_section:"screening",event_type:"example",note:"تقييم متطلبات وظيفة افتراضية",occurred_at:new Date(Date.now()-8*60000).toISOString()},
+ {actor_section:"applying",event_type:"example",note:"نموذج إرسال افتراضي - لم يُرسل أي طلب",occurred_at:new Date(Date.now()-14*60000).toISOString()}
+];
+let selected="manager", view="demo", filter="all", session=null, workspaceId=null, liveData={jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[]},syncedAt=null;
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function fmt(t){if(!t)return "—";const d=new Date(t);return Number.isNaN(+d)?"—":new Intl.DateTimeFormat("ar-SA",{timeZone:"Asia/Riyadh",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(d);}
+function n(id,val){$("#"+id).textContent=String(val);}
+function current(){if(view==="demo")return {jobs:demoJobs,reviews:demoJobs.filter(j=>j.status==="approved").map(j=>({job_id:j.id,approved_to_apply:true})),applications:demoJobs.filter(j=>j.appStatus).map(j=>({job_id:j.id,status:j.appStatus})),messages:[],activities:demoActivity,runs:[]};return liveData;}
+function statusInfo(j,a){if(a){const st=a.status||a.appStatus;if(st==="submitted")return ["تم التقديم","green"];if(st==="blocked")return ["متعثر","orange"];if(st==="interview")return ["مقابلة","blue"];if(st==="offer")return ["عرض عمل","green"];if(st==="rejected")return ["مرفوض","orange"];if(st==="draft")return ["مسودة","blue"];}return ({discovered:["مكتشفة","blue"],in_review:["قيد التدقيق","blue"],approved:["مناسبة","green"],rejected:["غير مناسبة","orange"],applying:["قيد التقديم","blue"],applied:["تم التقديم","green"],closed:["مغلقة","orange"]})[j.status]||["جديدة","blue"];}
+function renderFloor(){
+ const d=current(),now=Date.now(),demo=view==="demo";
+ const busy=a=>{
+  if(demo)return ["research","screening","applying"].includes(a.id);
+  const event=d.activities.some(v=>v.actor_section===a.id && now-new Date(v.occurred_at).getTime()<20*60000);
+  const run=d.runs.some(v=>v.section===a.id&&v.status==="started"&& now-new Date(v.started_at).getTime()<30*60000);
+  return event||run;
+ };
+ $("#floor").innerHTML=AGENTS.map((a,i)=>{
+ const isWorking=busy(a);
+ const text=demo?(isWorking?"محاكاة العمل":"بانتظار مهمة"):(isWorking?"نشاط مسجل مؤخرًا":"لا يوجد نشاط جارٍ مسجل");
+ return '<button type="button" class="station '+a.id+(isWorking?' isworking':'')+(selected===a.id?' selected':'')+'" style="grid-area:'+a.area+';--shirt:'+a.shirt+';--skin:'+a.skin+';--hair:'+a.hair+'" data-agent="'+a.id+'" aria-label="تفاصيل '+a.name+'"><div class="room-no">0'+(i+1)+'</div><div class="station-head"><span class="sym">'+a.symbol+'</span>'+a.name+'</div><div class="desk-setup"><div class="rug"></div><div class="desk-top"></div><div class="screen"></div><div class="coffee"></div><div class="chair"></div><div class="person"><div class="head"><div class="hair"></div></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div></div></div><div class="activity-label"><span class="status-lamp"></span><span class="activity-text">'+text+'</span><span>◦</span></div></button>';
+ }).join("")+'<div class="lounge"><div class="plant a">🪴</div><div class="lounge-center"><strong id="lounge-clock">--:--</strong><small>توقيت غرفة العمليات · الرياض</small></div><div class="plant b">🌿</div></div>';
+ $$(".station").forEach(el=>el.addEventListener("click",()=>{selected=el.dataset.agent;renderFloor();renderInspector();}));
+}
+function renderInspector(){
+ const a=AGENTS.find(t=>t.id===selected),d=current();
+ const tasks=d.activities.filter(x=>x.actor_section===selected);
+ const approved=d.reviews.filter(x=>x.approved_to_apply).length;
+ const submitted=d.applications.filter(x=>x.status==="submitted").length;
+ const metrics={
+  manager:[d.runs.length,d.activities.length],
+  research:[d.jobs.length,tasks.length],
+  screening:[d.reviews.length,approved],
+  applying:[d.applications.length,submitted],
+  followup:[d.messages.length,d.messages.filter(x=>x.requires_user_action).length]
+ };
+ const working=$('.station[data-agent="'+selected+'"]')?.classList.contains("isworking");
+ n("agent-avatar",a.icon);n("agent-name",a.name);n("agent-role",a.role);
+ n("agent-status",view==="demo"?(working?"يعمل الآن — محاكاة":"في وضع الانتظار — محاكاة"):(working?"تم تسجيل نشاط خلال آخر 20 دقيقة":"لا يوجد نشاط جاري مؤكد"));
+ $("#agent-avatar").classList.toggle("online",!!working);
+ n("agent-label1",a.label1);n("agent-label2",a.label2);
+ n("agent-stat1",metrics[selected][0]);n("agent-stat2",metrics[selected][1]);
+ n("agent-description",a.desc);
+ const last=tasks.sort((x,y)=>new Date(y.occurred_at)-new Date(x.occurred_at))[0];
+ n("agent-last",last?(view==="demo"?"محاكاة: ":"آخر نشاط: ")+(last.note||last.event_type)+" · "+fmt(last.occurred_at):"لم يتم تسجيل أي نشاط لهذا القسم بعد.");
+}
+function renderTable(){
+ const d=current(),amap=new Map(d.applications.map(x=>[x.job_id,x]));
+ const list=d.jobs.filter(j=>{const a=amap.get(j.id);if(filter==="submitted")return a&&a.status==="submitted";if(filter==="blocked")return a&&a.status==="blocked";if(filter==="approved")return j.status==="approved";return true;});
+ $("#jobs-body").innerHTML=list.length?list.map(j=>{const st=statusInfo(j,amap.get(j.id));const url=j.application_url||j.posting_url;const link=view==="demo"?"—":url&&/^https?:\/\//i.test(url)?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">فتح ↗</a>':"—";return '<tr><td>'+safe(j.company)+'</td><td class="titlecell">'+safe(j.job_title)+'</td><td>'+safe(j.city)+'</td><td><span class="state '+st[1]+'">'+st[0]+'</span></td><td>'+link+'</td></tr>';}).join(""):'<tr><td class="empty" colspan="5">لا توجد فرص في هذا التصنيف حاليًا.</td></tr>';
+}
+function renderTimeline(){
+ const ev=current().activities.slice().sort((a,b)=>new Date(b.occurred_at)-new Date(a.occurred_at)).slice(0,14);
+ $("#timeline").innerHTML=ev.length?ev.map(e=>{const a=AGENTS.find(k=>k.id===e.actor_section);return '<div class="event"><div class="event-marker">'+(a?a.symbol:"✦")+'</div><div class="event-body"><strong>'+safe(a?a.name:e.actor_section)+'</strong><p>'+safe(e.note||e.event_type||"تحديث مسجل")+'</p><time>'+fmt(e.occurred_at)+'</time></div></div>';}).join(""):'<div class="empty">لا توجد أحداث مسجلة حتى الآن.<br>ستظهر هنا عند حفظ نشاط حقيقي.</div>';
+}
+function render(){
+ const d=current(),approval=d.reviews.filter(r=>r.approved_to_apply).length,submit=d.applications.filter(a=>a.status==="submitted").length;
+ const need=d.applications.filter(a=>a.status==="blocked").length+d.messages.filter(m=>m.requires_user_action).length;
+ n("metric-jobs",d.jobs.length);n("metric-screen",approval);n("metric-submit",submit);n("metric-follow",need);
+ n("nav-apps",d.applications.length);n("top-caption",view==="demo"?"المعاينة التفاعلية · ليست بيانات حقيقية":"عرض السجل الفعلي المحمي");
+ const b=$("#mode-banner");b.classList.toggle("live",view==="live");
+ b.innerHTML=view==="demo"?"<b>عرض تجريبي:</b> الأسماء والأرقام وحركة العمل تمثيلية بالكامل، ولا توجد تقديمات مرسلة من هذه المعاينة.":"<b>البيانات الفعلية:</b> تعرض هذه الشاشة السجلات المحفوظة في Supabase فقط. الحركة تعني نشاطًا حديثًا مسجلًا، ولا تؤكد أن الموظف يعمل في هذه اللحظة.";
+ $("#demo-mode").classList.toggle("selected",view==="demo");$("#live-mode").classList.toggle("selected",view==="live");
+ n("office-status",view==="demo"?"تجريبي / محاكاة":"متصل بقاعدة البيانات");
+ n("lastsync",view==="demo"?"بيانات عرض":fmt(syncedAt));
+ renderFloor();renderInspector();renderTable();renderTimeline();
+}
+function clock(){
+ const d=new Date();const t=new Intl.DateTimeFormat("ar-SA",{timeZone:"Asia/Riyadh",hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+ n("clock","الرياض · "+t);const e=$("#lounge-clock");if(e)e.textContent=t;
+}
+function authMessage(msg,error=false){const e=$("#auth-msg");e.style.display="block";e.style.background=error?"#43252a":"#1a3a3b";e.style.color=error?"#ffb4b8":"#b6f9ec";e.textContent=msg;}
+function apiHeaders(token){return {"apikey":KEY,"Authorization":"Bearer "+(token||KEY),"Accept":"application/json"};}
+async function jsonRequest(url,opts={}){
+ const r=await fetch(url,opts);let body={};try{body=await r.json();}catch(e){}
+ if(!r.ok){const err=new Error(body.msg||body.message||body.error_description||body.error||"تعذر الاتصال بالخادم");err.status=r.status;throw err;}
+ return body;
+}
+async function authRequest(path,data){
+ return jsonRequest(PROJECT+"/auth/v1/"+path,{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify(data)});
+}
+function saveSession(s){session=s;try{if(s)localStorage.setItem(LOCALKEY,JSON.stringify(s));else localStorage.removeItem(LOCALKEY);}catch(e){}}
+async function getValidSession(){
+ if(!session)return false;
+ const exp=session.expires_at||(Date.now()/1000+Number(session.expires_in||0));
+ if(exp > Date.now()/1000+60)return true;
+ if(!session.refresh_token){saveSession(null);return false;}
+ try{const res=await authRequest("token?grant_type=refresh_token",{refresh_token:session.refresh_token});res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);return true;}
+ catch(e){saveSession(null);return false;}
+}
+async function getRows(table,query){
+ const h=apiHeaders(session.access_token);
+ return jsonRequest(PROJECT+"/rest/v1/"+table+"?"+query,{headers:h});
+}
+async function loadLive(){
+ if(!await getValidSession()){showModal();throw new Error("تسجيل الدخول مطلوب لعرض البيانات الحقيقية.");}
+ const ws=await getRows("job_workspaces","select=id,name&limit=1");
+ if(!ws.length){throw new Error("تم تسجيل الدخول لكن لم يُربط هذا الحساب بمساحة المدير. تأكد من تفعيل البريد المعتمد.");}
+ workspaceId=ws[0].id;
+ const w="workspace_id=eq."+encodeURIComponent(workspaceId);
+ const [jobs,reviews,applications,messages,activities,runs]=await Promise.all([
+ getRows("job_leads","select=id,company,job_title,city,status,posting_url,application_url,created_at&"+w+"&order=created_at.desc&limit=250"),
+ getRows("job_reviews","select=job_id,approved_to_apply,score,verdict&"+w+"&limit=250"),
+ getRows("job_applications","select=id,job_id,status,submitted_at,blocked_reason&"+w+"&limit=250"),
+ getRows("job_messages","select=id,requires_user_action,status,occurred_at&"+w+"&limit=250"),
+ getRows("job_activity","select=actor_section,event_type,note,occurred_at&"+w+"&order=occurred_at.desc&limit=150"),
+ getRows("job_workflow_runs","select=section,status,started_at&"+w+"&order=started_at.desc&limit=150")
+ ]);
+ liveData={jobs,reviews,applications,messages,activities,runs};syncedAt=new Date();view="live";$("#authbtn").textContent="الحساب متصل • خروج";render();
+}
+function showModal(){ $("#auth-modal").classList.add("open"); }
+function hideModal(){ $("#auth-modal").classList.remove("open"); }
+$("#close-modal").addEventListener("click",hideModal);
+$("#auth-modal").addEventListener("click",e=>{if(e.target.id==="auth-modal")hideModal();});
+$("#authbtn").addEventListener("click",()=>{if(session){if(confirm("هل تريد تسجيل الخروج من بيانات المدير؟")){saveSession(null);view="demo";workspaceId=null;liveData={jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[]};$("#authbtn").textContent="الدخول للبيانات الفعلية";render();}}else showModal();});
+$("#login-form").addEventListener("submit",async e=>{
+ e.preventDefault();n("login-btn","جار التحقق...");
+ try{const email=$("#email").value.trim(),password=$("#password").value;const res=await authRequest("token?grant_type=password",{email,password});res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);authMessage("تم تسجيل الدخول. جارٍ تحميل السجل.");await loadLive();hideModal();}catch(err){authMessage(err.message,true);}finally{n("login-btn","تسجيل الدخول");}
+});
+$("#signup-btn").addEventListener("click",async()=>{
+ const email=$("#email").value.trim(),password=$("#password").value;if(!email||password.length<8){authMessage("أدخل بريدًا صحيحًا وكلمة مرور لا تقل عن 8 أحرف.",true);return;}
+ $("#signup-btn").disabled=true;
+ try{const res=await authRequest("signup",{email,password});if(res.access_token){res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);await loadLive();hideModal();}else authMessage("تم إرسال رسالة التفعيل إذا كان البريد مسموحًا. افتح بريدك وفعّل الحساب ثم ارجع لتسجيل الدخول.");}
+ catch(err){authMessage(err.message,true);}finally{$("#signup-btn").disabled=false;}
+});
+$("#demo-mode").addEventListener("click",()=>{view="demo";render();});
+$("#live-mode").addEventListener("click",async()=>{if(!session){showModal();return;}try{await loadLive();}catch(e){alert(e.message);}});
+$("#refresh").addEventListener("click",async()=>{const b=$("#refresh");b.disabled=true;b.textContent="جار التحديث...";try{if(view==="live")await loadLive();else{render();} }catch(e){alert("تعذر جلب البيانات: "+e.message);}finally{b.disabled=false;b.textContent="↻ تحديث";}});
+$$(".filterbar button").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;$$(".filterbar button").forEach(k=>k.classList.toggle("sel",k===b));renderTable();document.getElementById("applications").scrollIntoView({behavior:"smooth",block:"start"});}));
+$$(".navbtn").forEach(b=>b.addEventListener("click",()=>{$$(".navbtn").forEach(k=>k.classList.remove("active"));b.classList.add("active");const id=b.dataset.nav;if(id==="settings")document.getElementById("settings").scrollIntoView({behavior:"smooth"});else document.getElementById(id).scrollIntoView({behavior:"smooth"});}));
+render();clock();setInterval(clock,1000);
+try{const s=localStorage.getItem(LOCALKEY);if(s){session=JSON.parse(s);$("#authbtn").textContent="التحقق من الحساب...";loadLive().catch(()=>{view="demo";$("#authbtn").textContent="الدخول للبيانات الفعلية";render();});}}catch(e){}
+})();
+</script>
+</body></html>
