@@ -106,6 +106,7 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
 const PROJECT="https://jclycoagtotikxskgkju.supabase.co";
 const KEY="sb_publishable_zHB_lJ-kSGkVnU4F-9JcJA_OHPNCwlB";
 const LOCALKEY="job-office-manager-session-v1";
+const AUTH_REDIRECT="https://devrah0.github.io/Web/job-office/";
 const AGENTS=[
  {id:"research",area:"research",name:"باحث الوظائف",role:"قسم الاستكشاف",icon:"🔎",symbol:"⌕",desc:"يكتشف فرصًا جديدة في جدة ومكة والمدينة والطائف، ويتحقق من أنها ما زالت مفتوحة قبل إحالتها للتدقيق.",label1:"إعلانات",label2:"أنشطة",shirt:"#83b3f2",skin:"#cf9a7b",hair:"#182938"},
  {id:"manager",area:"manager",name:"المدير العام",role:"تنسيق المنظومة",icon:"👔",symbol:"♜",desc:"يراجع أداء الأقسام والتقديمات المؤكدة دون سقف يومي، وينبه إلى العوائق دون احتساب اكتشاف إعلان على أنه تقديم.",label1:"الجولات",label2:"مهام اليوم",shirt:"#88d9c3",skin:"#c68a67",hair:"#182835"},
@@ -244,7 +245,7 @@ $("#login-form").addEventListener("submit",async e=>{
 $("#signup-btn").addEventListener("click",async()=>{
  const email=$("#email").value.trim(),password=$("#password").value;if(!email||password.length<8){authMessage("أدخل بريدًا صحيحًا وكلمة مرور لا تقل عن 8 أحرف.",true);return;}
  $("#signup-btn").disabled=true;
- try{const res=await authRequest("signup",{email,password});if(res.access_token){res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);await loadLive();hideModal();}else authMessage("تم إرسال رسالة التفعيل إذا كان البريد مسموحًا. افتح بريدك وفعّل الحساب ثم ارجع لتسجيل الدخول.");}
+ try{const res=await authRequest("signup?redirect_to="+encodeURIComponent(AUTH_REDIRECT),{email,password});if(res.access_token){res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);await loadLive();hideModal();}else authMessage("تم إرسال رسالة التفعيل إذا كان البريد مسموحًا. افتح بريدك وفعّل الحساب ثم ارجع لتسجيل الدخول.");}
  catch(err){authMessage(err.message,true);}finally{$("#signup-btn").disabled=false;}
 });
 $("#demo-mode").addEventListener("click",()=>{view="demo";render();});
