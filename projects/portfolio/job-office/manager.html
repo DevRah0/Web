@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a1422"><title>مكتب المدير • منظومة التوظيف</title>
+<style>
+:root{color-scheme:dark;--bg:#08111e;--panel:#122236;--line:#2d4359;--ink:#f0f7ff;--muted:#a1b5c9;--turq:#5de2c6;--blue:#79aef6}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#183950 0%,transparent 44%),var(--bg);color:var(--ink);font:14px/1.65 Tahoma,"Noto Sans Arabic",system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:#c7f9ee;text-decoration:none}
+main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.back{display:inline-flex;align-items:center;gap:8px;background:#183145;padding:9px 14px;border:1px solid #34536a;border-radius:12px;font-weight:700}.top-status{font-size:12px;color:var(--muted)}.head{display:flex;align-items:center;gap:15px;margin:24px 0}.boss-avatar{width:70px;height:70px;border:1px solid #65b6ab;border-radius:22px;display:grid;place-items:center;font-size:40px;background:linear-gradient(145deg,#3e7778,#193e4b);box-shadow:0 0 38px #1c807544}.head h1{font-size:26px;margin:0}.head p{margin:4px 0;color:var(--muted);font-size:13px}
+.status-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:15px 0 20px}.metric{background:linear-gradient(135deg,#152b40,#112132);border:1px solid var(--line);border-radius:16px;padding:13px}.metric strong{font-size:24px;display:block;color:var(--turq)}.metric small{color:var(--muted);font-size:12px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:15px;align-items:start}.panel{background:#101e30;border:1px solid #2b4357;border-radius:19px;overflow:hidden}.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid #263f53}.panel-h h2{font-size:16px;margin:0}.panel-h small{color:var(--muted)}.conversation{height:min(54vh,470px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:18px;scroll-behavior:smooth}.note{background:#1d3245;border:1px solid #35536a;color:#c3ddec;border-radius:13px;padding:11px 13px;font-size:12px}.bubble{max-width:90%;width:fit-content;background:#203248;border:1px solid #35506a;border-radius:17px 17px 5px 17px;padding:10px 14px;overflow-wrap:anywhere}.bubble.me{background:#145044;border-color:#328a77;margin-right:auto;border-radius:17px 17px 17px 5px}.bubble.manager{background:#2b3151;border-color:#60659b}.bubble small{color:#b0c7d7;font-size:10px;display:block;margin-bottom:4px}.bubble div{white-space:pre-wrap;line-height:1.8}.write-area{padding:12px 15px;border-top:1px solid #2b4357}.write-area form{display:flex;align-items:flex-end;gap:8px}.write-area textarea{background:#0d1b2a;border:1px solid #365670;border-radius:13px;color:white;flex:1;min-height:60px;padding:10px 12px;resize:vertical;max-height:140px}.btn{background:#1c374c;border:1px solid #38576d;border-radius:11px;padding:9px 13px;color:white;font-weight:700}.btn.primary{background:#4fdec0;border-color:#4fdec0;color:#08352b}.btn:disabled{opacity:.5}.feedback{color:var(--muted);font-size:11px;min-height:22px;margin-top:7px}.staff{padding:10px;display:grid;gap:8px}.staff-card{display:flex;align-items:center;gap:9px;text-align:right;width:100%;padding:11px;background:#192e42;border:1px solid #345069;border-radius:13px;color:var(--ink)}.staff-card.selected{border-color:#64ddc3;background:#204539}.staff-avatar{font-size:24px;background:#254459;border-radius:11px;width:42px;height:42px;display:grid;place-items:center}.staff-main{flex:1}.staff-main b{display:block}.staff-main small{font-size:11px;color:var(--muted)}.bulb{width:9px;height:9px;border-radius:50%;background:#f3b971}.bulb.ok{background:#8de2ab}.bulb.wait{background:#b4b9c8}.quick-actions{display:flex;flex-wrap:wrap;gap:8px;padding:12px}.quick-actions .btn{font-size:12px;flex:1 1 130px}.task-list{padding:10px 15px;display:grid;gap:7px;max-height:250px;overflow:auto}.task{border:1px solid #35495e;background:#182c3e;border-radius:11px;padding:10px;font-size:12px}.task small{display:block;color:var(--muted)}.task b{color:#c8f6eb}.footnote{font-size:12px;color:#9aafc2;margin:16px 0}.sign-in{padding:20px}.sign-in input{display:block;width:100%;background:#0e1b2b;border:1px solid #42617a;color:white;padding:12px;border-radius:10px;margin:9px 0}.sign-in form{max-width:400px}.sign-in label{font-size:12px;color:#bcd4df}.hidden{display:none!important}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.status-cards{grid-template-columns:repeat(3,1fr)}.staff{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){main{padding:12px}.head h1{font-size:21px}.head{margin:16px 0}.metric{padding:10px}.metric strong{font-size:21px}.status-cards{grid-template-columns:repeat(3,1fr);gap:7px}.staff{grid-template-columns:1fr}.conversation{height:48vh}.panel-h{padding:12px}.write-area{padding:9px}.back{font-size:12px}}
+</style></head>
+<body><main>
+ <header class="top"><a class="back" href="./">↩ الرجوع إلى المكتب الافتراضي</a><span class="top-status" id="connection">🔒 غرفة المدير • يجري التحقق من الجلسة</span></header>
+ <section class="head"><div class="boss-avatar">👔</div><div><h1>مركز قيادة المدير العام</h1><p>تحادث مع المدير وأصدر تكليفات للأقسام الخمسة — كل أمر وحالته محفوظان في Supabase.</p></div></section>
+ <section id="login" class="panel sign-in hidden"><h2>الدخول الآمن إلى مكتب المدير</h2><p>سجل دخولك بنفس حساب منظومة التوظيف. لا تُدخل كلمة مرورك في المحادثة.</p><form id="login-form"><label for="email">البريد الإلكتروني</label><input id="email" required type="email" autocomplete="email"><label for="password">كلمة المرور</label><input id="password" required type="password" autocomplete="current-password"><button class="btn primary" type="submit" id="login-submit">تسجيل الدخول</button></form><p id="login-feedback"></p></section>
+ <section id="workspace" class="hidden">
+  <div class="status-cards">
+   <div class="metric"><strong id="m-leads">—</strong><small>إعلانات مكتشفة</small></div>
+   <div class="metric"><strong id="m-reviewed">—</strong><small>دُققت</small></div>
+   <div class="metric"><strong id="m-pending">—</strong><small>بانتظار التدقيق</small></div>
+   <div class="metric"><strong id="m-sent">—</strong><small>تقديمات موثقة</small></div>
+   <div class="metric"><strong id="m-commands">—</strong><small>أوامر معلقة</small></div>
+  </div>
+  <div class="layout">
+   <div class="panel">
+    <div class="panel-h"><div><h2>💬 تحدث مع المدير مباشرة</h2><small id="chat-target-label">الجهة المستقبلة: المدير العام</small></div><button class="btn" id="refresh" type="button">↻ تحديث</button></div>
+    <div id="conversation" class="conversation"><div class="note">اختر الموظف أو اكتب سؤالك للمدير. الردود الفورية تشغيلية مبنية على قاعدة البيانات، وليست محادثة مع إنسان.</div></div>
+    <div class="write-area"><form id="send-form"><textarea id="message" maxlength="3000" required placeholder="مثال: يا مدير، لماذا لم نرسل طلبات اليوم؟"></textarea><button class="btn primary" id="send" type="submit">إرسال</button></form><div class="feedback" id="feedback">الرسائل تحفظ في حسابك؛ أوامر التدقيق والتقديم تُنفّذ عبر جولات الأقسام.</div></div>
+   </div>
+   <div>
+    <section class="panel" style="margin-bottom:14px"><div class="panel-h"><h2>🏢 الموظفون والأقسام</h2><small>اضغط للتوجيه</small></div><div id="staff" class="staff"></div></section>
+    <section class="panel" style="margin-bottom:14px"><div class="panel-h"><h2>⚡ توجيهات المدير العاجلة</h2><small>حالة التنفيذ موثّقة</small></div><div class="quick-actions">
+     <button class="btn primary" data-command="dispatch_all">اضغط على الجميع</button>
+     <button class="btn" data-command="search_now">ابدأ بحثًا عاجلًا</button>
+     <button class="btn" data-command="screening_urgent">سرّع التدقيق</button>
+     <button class="btn" data-command="applications_urgent">عجّل التقديم</button>
+     <button class="btn" data-command="followup_urgent">راجع الردود</button>
+     <button class="btn" data-command="audit_now">اطلب تقرير المدير</button>
+    </div></section>
+    <section class="panel"><div class="panel-h"><h2>📋 سجل التكليفات</h2><small>الأحدث أولًا</small></div><div id="tasks" class="task-list">لا توجد أوامر بعد.</div></section>
+   </div>
+  </div>
+  <p class="footnote">«تم إرسال التكليف» لا تعني أن طلب التوظيف أُرسل. البحث المباشر يمكنه فحص مصادر جديدة فورًا إذا لم تُفحص مؤخرًا؛ أما التدقيق والتقديم والمتابعة فتعالجها جولاتها المجدولة. لا توقيع عقود أو ردود على مسؤولي التوظيف دون مراجعتك.</p>
+ </section>
+</main>
+<script>
+(function(){"use strict";
+const P="https://jclycoagtotikxskgkju.supabase.co",KEY="sb_publishable_zHB_lJ-kSGkVnU4F-9JcJA_OHPNCwlB",STORE="job-office-manager-session-v1";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const clean=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=t=>t?new Intl.DateTimeFormat("ar-SA",{timeZone:"Asia/Riyadh",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(t)):"—";
+const N=["manager","research","screening","applying","followup"],name={manager:"المدير العام",research:"موظف البحث",screening:"موظف التدقيق",applying:"موظف التقديم",followup:"موظف المتابعة"},
+icons={manager:"👔",research:"🔎",screening:"🛡️",applying:"📨",followup:"📬"};
+const statusNames={queued:"بانتظار القسم",running:"جارٍ التنفيذ",completed:"اكتمل الأمر",failed:"تعثر",cancelled:"أُلغي"};
+let session=null,ws=null,target="manager",busy=false,messages=[],commands=[],runs=[];
+try{session=JSON.parse(localStorage.getItem(STORE)||"null")}catch{}
+function save(s){session=s;try{s?localStorage.setItem(STORE,JSON.stringify(s)):localStorage.removeItem(STORE)}catch{}}
+async function request(u,o={}){const r=await fetch(u,o);let v;try{v=await r.json()}catch{v={}}if(!r.ok)throw Error(v.error_description||v.error||v.message||"خطأ اتصال "+r.status);return v}
+async function valid(){if(!session)return false;const exp=Number(session.expires_at||0);if(exp>Date.now()/1000+60)return true;if(!session.refresh_token){save(null);return false}try{const v=await request(P+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:session.refresh_token})});v.expires_at=Math.floor(Date.now()/1000)+v.expires_in;save(v);return true}catch{save(null);return false}}
+const headers=()=>({"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Accept":"application/json"});
+async function rows(table,q){return request(P+"/rest/v1/"+table+"?"+q,{headers:headers()})}
+async function control(body){return request(P+"/functions/v1/job-manager-control",{method:"POST",headers:{...headers(),"Content-Type":"application/json"},body:JSON.stringify(body)})}
+function targetSet(section){target=N.includes(section)?section:"manager";$("#chat-target-label").textContent="الجهة المستقبلة: "+name[target];renderStaff()}
+function renderStaff(){
+ const last={};for(const r of runs)if(!last[r.section])last[r.section]=r;
+ $("#staff").innerHTML=N.map(section=>{
+  const cur=last[section],done=cur?.status==="completed",txt=cur?(done?"آخر جولة مكتملة: ":"آخر جولة: ")+fmt(cur.started_at):"لا توجد جولة مسجلة";
+  return '<button type="button" data-target="'+section+'" class="staff-card '+(target===section?"selected":"")+'"><span class="staff-avatar">'+icons[section]+'</span><span class="staff-main"><b>'+name[section]+'</b><small>'+clean(txt)+'</small></span><i class="bulb '+(done?"ok":"wait")+'"></i></button>';
+ }).join("");
+ $$(".staff-card").forEach(b=>b.addEventListener("click",()=>targetSet(b.dataset.target)));
+}
+function renderChat(){
+ const list=messages.slice().reverse();const c=$("#conversation"),atEnd=c.scrollHeight-c.scrollTop-c.clientHeight<140;
+ c.innerHTML=list.length?list.map(m=>{
+  const who=m.sender==="owner"?"أنت":m.sender==="system"?"الرد التشغيلي":name[m.sender]||m.sender;
+  return '<article class="bubble '+(m.sender==="owner"?"me":m.sender==="manager"?"manager":"")+'"><small>'+clean(who)+" • "+clean(fmt(m.created_at))+'</small><div>'+clean(m.body)+'</div></article>';
+ }).join(""):'<div class="note">اكتب رسالة للمدير أو اضغط زر «اضغط على الجميع». جميع الأوامر والردود التشغيلية تُحفظ هنا.</div>';
+ if(atEnd||list.length<=3)c.scrollTop=c.scrollHeight;
+ $("#tasks").innerHTML=commands.length?commands.slice(0,14).map(o=>'<div class="task"><b>'+clean(name[o.target_section]||o.target_section)+" · "+clean(statusNames[o.status]||o.status)+'</b><small>'+clean(fmt(o.created_at))+'</small><div>'+clean(o.instruction)+'</div>'+(o.last_error?'<small style="color:#ffb5aa">'+clean(o.last_error)+'</small>':"")+"</div>").join(""):"لا توجد أوامر مسجلة حتى الآن.";
+ $("#m-commands").textContent=commands.filter(x=>x.status==="queued"||x.status==="running").length;
+}
+async function load(){
+ if(!await valid()){showLogin();return}
+ if(!ws){const a=await rows("job_workspaces","select=id&limit=1");if(!a.length)throw Error("لم يُربط حساب المدير بمساحة العمل");ws=a[0].id}
+ const w="workspace_id=eq."+encodeURIComponent(ws);
+ const [a,b,c,d,e,f]=await Promise.all([
+  rows("job_leads","select=id,status&"+w+"&limit=700"),
+  rows("job_reviews","select=job_id&"+w+"&limit=700"),
+  rows("job_applications","select=id,status&"+w+"&limit=700"),
+  rows("job_manager_messages","select=id,sender,target_section,body,created_at&"+w+"&order=created_at.desc&limit=100"),
+  rows("job_manager_commands","select=id,action,target_section,status,instruction,last_error,created_at&"+w+"&order=created_at.desc&limit=100"),
+  rows("job_workflow_runs","select=section,status,started_at&"+w+"&order=started_at.desc&limit=80")
+ ]);
+ messages=d;commands=e;runs=f;
+ $("#m-leads").textContent=a.length;$("#m-reviewed").textContent=b.length;
+ const ids=new Set(b.map(x=>x.job_id));$("#m-pending").textContent=a.filter(x=>!ids.has(x.id)).length;
+ $("#m-sent").textContent=c.filter(x=>x.status==="submitted").length;
+ $("#connection").textContent="🔒 متصل بالبيانات الحقيقية • آخر تحديث "+fmt(new Date().toISOString());
+ $("#login").classList.add("hidden");$("#workspace").classList.remove("hidden");
+ renderStaff();renderChat();
+}
+function showLogin(){$("#login").classList.remove("hidden");$("#workspace").classList.add("hidden");$("#connection").textContent="🔒 يتطلب تسجيل الدخول"}
+async function doAction(payload){
+ if(busy)return;if(!await valid()){showLogin();return}
+ busy=true;$("#feedback").textContent="جار تنفيذ الطلب والتحقق من النتيجة...";$("#send").disabled=true;$$("[data-command]").forEach(b=>b.disabled=true);
+ try{const r=await control(payload);$("#message").value="";$("#feedback").textContent=r.reply||"تم تسجيل العملية";await load()}
+ catch(e){$("#feedback").textContent="تعذر تنفيذ الأمر: "+e.message}
+ finally{busy=false;$("#send").disabled=false;$$("[data-command]").forEach(b=>b.disabled=false)}
+}
+$("#send-form").addEventListener("submit",e=>{e.preventDefault();const t=$("#message").value.trim();if(t)doAction({type:"message",text:t,target_section:target})});
+$("#message").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#send-form").requestSubmit()}});
+$$("[data-command]").forEach(b=>b.addEventListener("click",()=>doAction({type:"command",action:b.dataset.command,target_section:target})));
+$("#refresh").addEventListener("click",()=>load().catch(e=>$("#feedback").textContent=e.message));
+$("#login-form").addEventListener("submit",async e=>{e.preventDefault();$("#login-submit").disabled=true;$("#login-feedback").textContent="جار التحقق...";
+ try{const v=await request(P+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({email:$("#email").value.trim(),password:$("#password").value})});
+ v.expires_at=Math.floor(Date.now()/1000)+v.expires_in;save(v);$("#password").value="";await load();
+ }catch(err){$("#login-feedback").textContent=err.message}finally{$("#login-submit").disabled=false}});
+const query=new URLSearchParams(location.search);if(N.includes(query.get("target")))target=query.get("target");
+load().catch(e=>{$("#connection").textContent="تعذر تحميل البيانات";$("#feedback").textContent=e.message;showLogin()});
+setInterval(()=>{if(!document.hidden&&!busy&&ws)load().catch(()=>{})},20000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!busy)load().catch(()=>{})});
+})();
+</script></body></html>
