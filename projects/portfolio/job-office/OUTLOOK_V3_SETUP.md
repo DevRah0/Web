@@ -15,7 +15,7 @@
 ```
 https://jclycoagtotikxskgkju.supabase.co/functions/v1/job-outlook-connect
 ```
-3. في API permissions أضف Microsoft Graph **delegated** scopes: `User.Read`, `Mail.Send`, `Mail.Read`, `offline_access`. لا تمنح application-wide permissions. إضافة هذه الصلاحيات/الموافقة عليها تخضع لإعدادات Microsoft والحساب.
+3. في API permissions أضف Microsoft Graph **delegated** scopes: `User.Read`, `Mail.Send`, `Mail.ReadBasic`, `offline_access`. لا تمنح application-wide permissions. إضافة هذه الصلاحيات/الموافقة عليها تخضع لإعدادات Microsoft والحساب.
 4. أنشئ Client Secret من صفحة Certificates & secrets. انسخ قيمة السر إلى **Supabase Dashboard > Edge Functions > Secrets** (ليس إلى ملف GitHub أو رسالة ChatGPT).
 5. أضف متغيري:
    - `OUTLOOK_GRAPH_CLIENT_ID` = Application (client) ID.
