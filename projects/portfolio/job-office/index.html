@@ -53,9 +53,9 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
 </aside>
 <main>
  <div class="topbar">
-   <div><div class="eyebrow">JOB OPERATIONS HQ · V2.0</div><div class="rightmini"><span class="dot"></span><span id="top-caption">مركز مراقبة أقسام التوظيف</span></div></div>
+   <div><div class="eyebrow">JOB OPERATIONS HQ · V2.3</div><div class="rightmini"><span class="dot"></span><span id="top-caption">مركز مراقبة أقسام التوظيف</span></div></div>
    <div class="top-actions">
-     <button class="button" id="scan-now" title="يفحص المصادر التي حان موعدها">⌕ بحث الآن</button><button class="button" id="refresh">↻ تحديث</button>
+     <a class="button primary" href="./manager.html" title="محادثة المدير وإدارة الموظفين">👔 كلم المدير</a> <button class="button" id="scan-now" title="يفحص المصادر التي حان موعدها">⌕ بحث الآن</button><button class="button" id="refresh">↻ تحديث</button>
      <button class="button primary" id="authbtn">الدخول للبيانات الفعلية</button>
      <div class="avatar-icon" title="المدير">م</div>
    </div>
@@ -83,7 +83,7 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
    <div class="inspector-status" id="agent-status">بانتظار رصد النشاط</div>
    <div class="inspector-stats"><div class="mini-stat"><strong id="agent-stat1">0</strong><small id="agent-label1">المهام المسجلة</small></div><div class="mini-stat"><strong id="agent-stat2">0</strong><small id="agent-label2">النتائج</small></div></div>
    <div class="inspector-desc"><h4>ماذا يفعل هذا القسم؟</h4><p id="agent-description">اختر أحد الأقسام لرؤية التفاصيل.</p></div>
-   <div class="inspector-bottom" id="agent-last">لا توجد أنشطة حديثة مسجلة.</div>
+   <div class="inspector-bottom" id="agent-last">لا توجد أنشطة حديثة مسجلة.</div><a class="button" style="display:block;text-align:center;margin-top:12px" id="agent-direct" href="./manager.html">💬 محادثة وتوجيه مهام</a>
  </div>
  </div>
  </section>
@@ -151,7 +151,7 @@ function renderFloor(){
  const state=workerState(a,d,now,demo);
  return '<button type="button" class="station '+a.id+(state.mode==="working"?' isworking':state.mode==="onduty"?' onduty':state.mode==="issue"?' issue':'')+(selected===a.id?' selected':'')+'" style="grid-area:'+a.area+';--shirt:'+a.shirt+';--skin:'+a.skin+';--hair:'+a.hair+'" data-agent="'+a.id+'" aria-label="تفاصيل '+a.name+'"><div class="room-no">0'+(i+1)+'</div><div class="station-head"><span class="sym">'+a.symbol+'</span>'+a.name+'</div><div class="desk-setup"><div class="rug"></div><div class="desk-top"></div><div class="screen"></div><div class="coffee"></div><div class="chair"></div><div class="person"><div class="head"><div class="hair"></div></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div></div></div><div class="activity-label"><span class="status-lamp"></span><span class="activity-text">'+safe(state.label)+'</span><span>◦</span></div></button>';
  }).join("")+'<div class="lounge"><div class="plant a">🪴</div><div class="lounge-center"><strong id="lounge-clock">--:--</strong><small>توقيت غرفة العمليات · الرياض</small></div><div class="plant b">🌿</div></div>';
- $$(".station").forEach(el=>el.addEventListener("click",()=>{selected=el.dataset.agent;renderFloor();renderInspector();}));
+ $(".station").forEach(el=>el.addEventListener("click",()=>{selected=el.dataset.agent;if(selected==="manager"){window.location.href="./manager.html";return;}renderFloor();renderInspector();}));
 }
 function renderInspector(){
  const a=AGENTS.find(t=>t.id===selected),d=current();
@@ -171,7 +171,7 @@ function renderInspector(){
  $("#agent-avatar").classList.toggle("online",state.mode==="working"||state.mode==="onduty");
  n("agent-label1",a.label1);n("agent-label2",a.label2);
  n("agent-stat1",metrics[selected][0]);n("agent-stat2",metrics[selected][1]);
- n("agent-description",a.desc);
+ n("agent-description",a.desc);$("#agent-direct").href="./manager.html?target="+encodeURIComponent(a.id);$("#agent-direct").textContent=selected==="manager"?"💬 تحدث مع المدير مباشرة":"💬 تحدث مع "+a.name+" وأرسل له أمرًا";
  const last=tasks.sort((x,y)=>new Date(y.occurred_at)-new Date(x.occurred_at))[0];
  n("agent-last",last?(view==="demo"?"محاكاة: ":"آخر نشاط: ")+(last.note||last.event_type)+" · "+fmt(last.occurred_at):"لم يتم تسجيل أي نشاط لهذا القسم بعد.");
 }
