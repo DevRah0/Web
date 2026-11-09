@@ -25,6 +25,7 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
 .office-ceiling{display:flex;align-items:center;justify-content:space-between;position:relative;padding:17px 22px 4px;font-size:11px;color:#b4d6da}.office-logo{color:#a1f4e0;font-weight:800;letter-spacing:.4px}.office-windows{display:flex;gap:8px}.office-windows i{display:block;width:44px;height:10px;border-radius:3px 3px 1px 1px;background:linear-gradient(110deg,#46748b,#a6d8df44);border:1px solid #6896a0}
 .office-floor{position:relative;padding:12px 16px 15px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"research manager screening" "applying lounge followup";gap:12px;min-height:465px;direction:rtl}
 .station{border:1px solid #52728847;background:linear-gradient(145deg,#254152d9,#182e3dbb);border-radius:17px;min-height:203px;position:relative;padding:10px 12px;overflow:hidden;text-align:right;color:var(--ink);transition:transform .2s,border-color .2s,background .2s;cursor:pointer;display:block;width:100%}.station:hover,.station.selected{transform:translateY(-3px);border-color:#8bdcc4;box-shadow:0 10px 30px #09151a44}.station:focus-visible{outline:3px solid #7deedb;outline-offset:1px}.station.manager{background:linear-gradient(155deg,#304d53,#234043);border-color:#719e866c}.station .room-no{position:absolute;top:11px;left:12px;font-size:10px;color:#b2cad0;font-variant-numeric:tabular-nums}.station-head{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800}.station-head .sym{font-size:14px}.station .activity-label{position:absolute;bottom:10px;right:10px;left:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#101f29d9;border:1px solid #35505d;border-radius:9px;padding:5px 8px;font-size:10px;z-index:3}.station .status-lamp{height:7px;width:7px;flex:0 0 auto;background:#708797;border-radius:50%;display:inline-block}.station.isworking .status-lamp{background:#6cf4be;box-shadow:0 0 10px #6cf4be;animation:pulse 1.4s infinite}.station.isworking .activity-label{border-color:#43836f}.station .activity-text{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#bad5da}
+.station.onduty .status-lamp{background:#8bdd9f;box-shadow:0 0 7px #8bdd9f70}.station.onduty .activity-label{border-color:#396d56}.station.issue .status-lamp{background:#ff8d75}.station.issue .activity-label{border-color:#9b5a45}
 @keyframes pulse{50%{opacity:.45;transform:scale(.8)}}.desk-setup{position:absolute;top:42px;right:50%;transform:translateX(50%);width:116px;height:108px}.rug{position:absolute;bottom:4px;right:0;width:116px;height:58px;background:#8ac2d110;border:1px solid #7faeb132;border-radius:30px;transform:skew(-7deg)}.desk-top{width:107px;height:43px;position:absolute;top:26px;right:5px;background:linear-gradient(#ba9972,#876a4d);border:3px solid #d0a77f;border-radius:8px 8px 13px 13px;box-shadow:0 10px 0 #604d40,0 13px 16px #061f25a6}.screen{position:absolute;top:2px;right:37px;width:45px;height:35px;border-radius:5px;background:#17232b;border:4px solid #324651;box-shadow:0 3px 0 #71818c;z-index:1}.screen:after{content:"";position:absolute;inset:4px;background:linear-gradient(130deg,#4ae1c2,#3c84a2);opacity:.6;border-radius:1px}.screen:before{content:"";position:absolute;height:9px;width:4px;bottom:-11px;right:18px;background:#415664}.coffee{position:absolute;top:38px;right:13px;width:13px;height:11px;border-radius:6px 6px 5px 5px;background:#f9dbc0;z-index:2}.person{position:absolute;bottom:0;right:39px;width:43px;height:50px;z-index:2;filter:drop-shadow(0 4px 6px #041d2877)}.chair{position:absolute;bottom:3px;right:28px;width:64px;height:39px;border-radius:22px 22px 20px 20px;background:#22323f;border:2px solid #4c6473}.person .body{position:absolute;bottom:1px;right:4px;width:35px;height:27px;border-radius:12px 12px 8px 8px;background:var(--shirt,#69a8ba);border-bottom:5px solid #162f43}.person .head{width:26px;height:28px;border-radius:11px 11px 13px 13px;position:absolute;top:0;right:9px;background:var(--skin,#c98d6b);border:1px solid #362a2b40}.person .hair{position:absolute;right:0;top:-3px;width:25px;height:10px;background:var(--hair,#212b3a);border-radius:13px 13px 3px 4px}.person .arm{position:absolute;bottom:13px;width:8px;height:21px;background:var(--shirt,#69a8ba);border-radius:5px;transform-origin:top}.person .arm.left{right:-2px;transform:rotate(-35deg)}.person .arm.right{left:0;transform:rotate(35deg)}.station.isworking .person .arm.left{animation:typeL .35s infinite alternate}.station.isworking .person .arm.right{animation:typeR .35s infinite alternate-reverse}.station.isworking .screen:after{animation:screenlight 1.7s infinite alternate}@keyframes typeL{to{transform:rotate(-10deg)}}@keyframes typeR{to{transform:rotate(15deg)}}@keyframes screenlight{to{opacity:1}}.person .head{animation:breathe 2.8s ease-in-out infinite alternate}@keyframes breathe{to{transform:translateY(2px)}}
 .lounge{grid-area:lounge;background:#1023314d;border:1px dashed #56868f48;border-radius:18px;position:relative;min-height:203px;display:grid;place-items:center;overflow:hidden}.lounge:before{content:"";position:absolute;width:145px;height:95px;border-radius:50%;border:1px solid #5b958a46;box-shadow:0 0 0 20px #80d4bb0a,0 0 0 43px #70bcb108;top:18px}.lounge-center{text-align:center;position:relative;z-index:1}.lounge-center strong{font-size:28px;color:#ade5d5;letter-spacing:2px;display:block;font-variant-numeric:tabular-nums}.lounge-center small{font-size:10px;color:#80afae}.plant{position:absolute;font-size:27px;bottom:9px;opacity:.77}.plant.a{right:14px}.plant.b{left:12px}.office-footer{position:relative;display:flex;justify-content:space-between;gap:12px;color:#8db3b3;font-size:10px;padding:5px 19px 15px}.office-footer b{color:#cef4e8}
 .inspector{background:#111b2a;border:1px solid #2a3e52;border-radius:22px;padding:17px;display:flex;flex-direction:column;min-height:500px}.inspector-top{display:flex;align-items:center;justify-content:space-between;gap:7px}.inspector-top small{font-size:10px;color:#899bb0}.inspector-top .more{height:28px;width:28px;display:grid;place-items:center;border:1px solid #304458;background:#1c2d42;border-radius:8px;color:#acc8cd}
@@ -132,18 +133,22 @@ function fmt(t){if(!t)return "—";const d=new Date(t);return Number.isNaN(+d)?"
 function n(id,val){$("#"+id).textContent=String(val);}
 function current(){if(view==="demo")return {jobs:demoJobs,reviews:demoJobs.filter(j=>j.status==="approved").map(j=>({job_id:j.id,approved_to_apply:true})),applications:demoJobs.filter(j=>j.appStatus).map(j=>({job_id:j.id,status:j.appStatus})),messages:[],activities:demoActivity,runs:[]};return liveData;}
 function statusInfo(j,a){if(a){const st=a.status||a.appStatus;if(st==="submitted")return ["تم التقديم","green"];if(st==="blocked")return ["متعثر","orange"];if(st==="interview")return ["مقابلة","blue"];if(st==="offer")return ["عرض عمل","green"];if(st==="rejected")return ["مرفوض","orange"];if(st==="draft")return ["مسودة","blue"];}return ({discovered:["مكتشفة","blue"],in_review:["قيد التدقيق","blue"],approved:["مناسبة","green"],rejected:["غير مناسبة","orange"],applying:["قيد التقديم","blue"],applied:["تم التقديم","green"],closed:["مغلقة","orange"]})[j.status]||["جديدة","blue"];}
+// A scheduled worker can be on duty without executing a task at this exact minute.
+function workerState(a,d,now,preview){
+ if(preview)return {mode:["research","screening","applying"].includes(a.id)?"working":"scheduled",label:"عرض تجريبي"};
+ const run=d.runs.filter(x=>x.section===a.id).sort((x,y)=>new Date(y.started_at)-new Date(x.started_at))[0];
+ if(!run)return {mode:"scheduled",label:"مجدول • لا توجد جولة مسجلة"};
+ const started=new Date(run.started_at).getTime(),age=now-started;
+ if(run.status==="started"&&age>=0&&age<45*60000)return {mode:"working",label:"ينفذ جولة الآن"};
+ if(run.status==="failed")return {mode:"issue",label:"تعثر آخر تشغيل • "+fmt(run.started_at)};
+ if(age>=0&&age<=2*3600000&&["completed","partial"].includes(run.status))return {mode:"onduty",label:"مداوم • آخر جولة "+fmt(run.started_at)};
+ return {mode:"scheduled",label:"مجدول • آخر جولة "+fmt(run.started_at)};
+}
 function renderFloor(){
  const d=current(),now=Date.now(),demo=view==="demo";
- const busy=a=>{
-  if(demo)return ["research","screening","applying"].includes(a.id);
-  const event=d.activities.some(v=>v.actor_section===a.id && now-new Date(v.occurred_at).getTime()<20*60000);
-  const run=d.runs.some(v=>v.section===a.id&&v.status==="started"&& now-new Date(v.started_at).getTime()<30*60000);
-  return event||run;
- };
  $("#floor").innerHTML=AGENTS.map((a,i)=>{
- const isWorking=busy(a);
- const text=demo?(isWorking?"محاكاة العمل":"بانتظار مهمة"):(isWorking?"نشاط مسجل مؤخرًا":"لا يوجد نشاط جارٍ مسجل");
- return '<button type="button" class="station '+a.id+(isWorking?' isworking':'')+(selected===a.id?' selected':'')+'" style="grid-area:'+a.area+';--shirt:'+a.shirt+';--skin:'+a.skin+';--hair:'+a.hair+'" data-agent="'+a.id+'" aria-label="تفاصيل '+a.name+'"><div class="room-no">0'+(i+1)+'</div><div class="station-head"><span class="sym">'+a.symbol+'</span>'+a.name+'</div><div class="desk-setup"><div class="rug"></div><div class="desk-top"></div><div class="screen"></div><div class="coffee"></div><div class="chair"></div><div class="person"><div class="head"><div class="hair"></div></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div></div></div><div class="activity-label"><span class="status-lamp"></span><span class="activity-text">'+text+'</span><span>◦</span></div></button>';
+ const state=workerState(a,d,now,demo);
+ return '<button type="button" class="station '+a.id+(state.mode==="working"?' isworking':state.mode==="onduty"?' onduty':state.mode==="issue"?' issue':'')+(selected===a.id?' selected':'')+'" style="grid-area:'+a.area+';--shirt:'+a.shirt+';--skin:'+a.skin+';--hair:'+a.hair+'" data-agent="'+a.id+'" aria-label="تفاصيل '+a.name+'"><div class="room-no">0'+(i+1)+'</div><div class="station-head"><span class="sym">'+a.symbol+'</span>'+a.name+'</div><div class="desk-setup"><div class="rug"></div><div class="desk-top"></div><div class="screen"></div><div class="coffee"></div><div class="chair"></div><div class="person"><div class="head"><div class="hair"></div></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div></div></div><div class="activity-label"><span class="status-lamp"></span><span class="activity-text">'+safe(state.label)+'</span><span>◦</span></div></button>';
  }).join("")+'<div class="lounge"><div class="plant a">🪴</div><div class="lounge-center"><strong id="lounge-clock">--:--</strong><small>توقيت غرفة العمليات · الرياض</small></div><div class="plant b">🌿</div></div>';
  $$(".station").forEach(el=>el.addEventListener("click",()=>{selected=el.dataset.agent;renderFloor();renderInspector();}));
 }
@@ -159,10 +164,10 @@ function renderInspector(){
   applying:[d.applications.length,submitted],
   followup:[d.messages.length,d.messages.filter(x=>x.requires_user_action).length]
  };
- const working=$('.station[data-agent="'+selected+'"]')?.classList.contains("isworking");
+ const state=workerState(a,d,Date.now(),view==="demo");
  n("agent-avatar",a.icon);n("agent-name",a.name);n("agent-role",a.role);
- n("agent-status",view==="demo"?(working?"يعمل الآن — محاكاة":"في وضع الانتظار — محاكاة"):(working?"تم تسجيل نشاط خلال آخر 20 دقيقة":"لا يوجد نشاط جاري مؤكد"));
- $("#agent-avatar").classList.toggle("online",!!working);
+ n("agent-status",view==="demo"?"وضع المعاينة التجريبية":state.label);
+ $("#agent-avatar").classList.toggle("online",state.mode==="working"||state.mode==="onduty");
  n("agent-label1",a.label1);n("agent-label2",a.label2);
  n("agent-stat1",metrics[selected][0]);n("agent-stat2",metrics[selected][1]);
  n("agent-description",a.desc);
@@ -184,7 +189,7 @@ function render(){
  n("metric-jobs",d.jobs.length);n("metric-screen",approval);n("metric-submit",submit);n("metric-follow",need);
  n("nav-apps",d.applications.length);n("top-caption",view==="demo"?"المعاينة التفاعلية · ليست بيانات حقيقية":"عرض السجل الفعلي المحمي");
  const b=$("#mode-banner");b.classList.toggle("live",view==="live");
- b.innerHTML=view==="demo"?"<b>عرض تجريبي:</b> الأسماء والأرقام وحركة العمل تمثيلية بالكامل، ولا توجد تقديمات مرسلة من هذه المعاينة.":"<b>البيانات الفعلية:</b> تعرض هذه الشاشة السجلات المحفوظة في Supabase فقط. الحركة تعني نشاطًا حديثًا مسجلًا، ولا تؤكد أن الموظف يعمل في هذه اللحظة.";
+ b.innerHTML=view==="demo"?"<b>عرض تجريبي:</b> الأسماء والأرقام وحركة العمل تمثيلية بالكامل، ولا توجد تقديمات مرسلة من هذه المعاينة.":"<b>الحالة الفعلية:</b> «مداوم» تعني أن القسم أتم جولة خلال آخر ساعتين. «ينفذ جولة» تعني أن هناك مهمة بدأت ولم تكتمل بعد. يتم تحديث السجلات دوريًا.";
  $("#demo-mode").classList.toggle("selected",view==="demo");$("#live-mode").classList.toggle("selected",view==="live");
  n("office-status",view==="demo"?"تجريبي / محاكاة":"متصل بقاعدة البيانات");
  n("lastsync",view==="demo"?"بيانات عرض":fmt(syncedAt));
@@ -254,6 +259,18 @@ $("#refresh").addEventListener("click",async()=>{const b=$("#refresh");b.disable
 $$(".filterbar button").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;$$(".filterbar button").forEach(k=>k.classList.toggle("sel",k===b));renderTable();document.getElementById("applications").scrollIntoView({behavior:"smooth",block:"start"});}));
 $$(".navbtn").forEach(b=>b.addEventListener("click",()=>{$$(".navbtn").forEach(k=>k.classList.remove("active"));b.classList.add("active");const id=b.dataset.nav;if(id==="settings")document.getElementById("settings").scrollIntoView({behavior:"smooth"});else document.getElementById(id).scrollIntoView({behavior:"smooth"});}));
 render();clock();setInterval(clock,1000);
+// Refresh worker status in the UI, and re-fetch authenticated records regularly.
+setInterval(()=>{if(view==="live")renderFloor(),renderInspector();},30000);
+let backgroundRefreshBusy=false;
+async function refreshLiveInBackground(){
+ if(view!=="live"||backgroundRefreshBusy||document.hidden)return;
+ backgroundRefreshBusy=true;
+ try{await loadLive();}
+ catch(err){console.warn("تعذر تحديث سجلات الموظفين",err.message);}
+ finally{backgroundRefreshBusy=false;}
+}
+setInterval(refreshLiveInBackground,120000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshLiveInBackground();});
 try{const s=localStorage.getItem(LOCALKEY);if(s){session=JSON.parse(s);$("#authbtn").textContent="التحقق من الحساب...";loadLive().catch(()=>{view="demo";$("#authbtn").textContent="الدخول للبيانات الفعلية";render();});}}catch(e){}
 })();
 </script>
