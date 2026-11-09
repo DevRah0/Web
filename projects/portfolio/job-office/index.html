@@ -88,7 +88,7 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
  </div>
  </section>
  <div class="below">
- <section class="pane" id="applications"><div class="pane-head"><div><h3>ملف التقديمات</h3><small>حالات مرتبطة بالإعلانات الوظيفية</small></div><div class="filterbar"><button data-filter="all" class="sel">الكل</button><button data-filter="approved">مناسبة</button><button data-filter="submitted">قُدمت</button><button data-filter="blocked">متعثر</button></div></div><div class="table-scroll"><table><thead><tr><th>الشركة</th><th>المسمى الوظيفي</th><th>المدينة</th><th>الحالة</th><th>الرابط</th></tr></thead><tbody id="jobs-body"></tbody></table></div></section>
+ <section class="pane" id="applications"><div class="pane-head"><div><h3>ملف التقديمات</h3><small>الوظائف التي تنتظر التدقيق تظهر أولًا، وأولوية البحث الآلية ليست موافقة على التقديم</small></div><div class="filterbar"><button data-filter="all" class="sel">الكل</button><button data-filter="pending">تحتاج تدقيقًا</button><button data-filter="approved">مناسبة</button><button data-filter="submitted">قُدمت</button><button data-filter="blocked">متعثر</button></div></div><div class="table-scroll"><table><thead><tr><th>الشركة</th><th>المسمى الوظيفي</th><th>المدينة</th><th>الحالة</th><th>أولوية الفحص</th><th>الرابط</th></tr></thead><tbody id="jobs-body"></tbody></table></div></section>
  <section class="pane" id="events"><div class="pane-head"><div><h3>سجل النشاط</h3><small>آخر أعمال الأقسام الخمسة</small></div><span style="color:#7bc3b8;font-size:12px">◉ سجل الأحداث</span></div><div class="timeline" id="timeline"></div></section>
  </div>
  <div class="footnote" id="settings">بيانات المكاتب تأتي من Supabase عند تسجيل الدخول. وضع المعاينة منفصل ولا يُنشئ طلبات أو يرسلها.</div>
@@ -176,9 +176,13 @@ function renderInspector(){
  n("agent-last",last?(view==="demo"?"محاكاة: ":"آخر نشاط: ")+(last.note||last.event_type)+" · "+fmt(last.occurred_at):"لم يتم تسجيل أي نشاط لهذا القسم بعد.");
 }
 function renderTable(){
- const d=current(),amap=new Map(d.applications.map(x=>[x.job_id,x]));
- const list=d.jobs.filter(j=>{const a=amap.get(j.id);if(filter==="submitted")return a&&a.status==="submitted";if(filter==="blocked")return a&&a.status==="blocked";if(filter==="approved")return j.status==="approved";return true;});
- $("#jobs-body").innerHTML=list.length?list.map(j=>{const st=statusInfo(j,amap.get(j.id));const url=j.application_url||j.posting_url;const link=view==="demo"?"—":url&&/^https?:\/\//i.test(url)?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">فتح ↗</a>':"—";return '<tr><td>'+safe(j.company)+'</td><td class="titlecell">'+safe(j.job_title)+'</td><td>'+safe(j.city)+'</td><td><span class="state '+st[1]+'">'+st[0]+'</span></td><td>'+link+'</td></tr>';}).join(""):'<tr><td class="empty" colspan="5">لا توجد فرص في هذا التصنيف حاليًا.</td></tr>';
+ const d=current(),amap=new Map(d.applications.map(x=>[x.job_id,x]));const reviewed=new Set(d.reviews.map(x=>x.job_id));
+ const pending=j=>!reviewed.has(j.id)&&j.status==="discovered";
+ const list=d.jobs.filter(j=>{const a=amap.get(j.id);if(filter==="submitted")return a&&a.status==="submitted";if(filter==="blocked")return a&&a.status==="blocked";if(filter==="approved")return j.status==="approved";if(filter==="pending")return pending(j);return true;})
+ .sort((a,b)=>Number(pending(b))-Number(pending(a)) || Number(b.machine_priority??0)-Number(a.machine_priority??0) || new Date(b.created_at)-new Date(a.created_at));
+ $("#jobs-body").innerHTML=list.length?list.map(j=>{const st=statusInfo(j,amap.get(j.id));const url=j.application_url||j.posting_url;const link=view==="demo"?"—":url&&/^https?:\/\//i.test(url)?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">فتح ↗</a>':"—";
+ const rank=view==="live"&&j.machine_priority!=null?(pending(j)?"أولوية آلية "+safe(j.machine_priority):"تمت مراجعته"):"—";
+ return '<tr><td>'+safe(j.company)+'</td><td class="titlecell">'+safe(j.job_title)+'</td><td>'+safe(j.city)+'</td><td><span class="state '+st[1]+'">'+st[0]+'</span></td><td>'+rank+'</td><td>'+link+'</td></tr>';}).join(""):'<tr><td class="empty" colspan="6">لا توجد فرص في هذا التصنيف حاليًا.</td></tr>';
 }
 function renderTimeline(){
  const ev=current().activities.slice().sort((a,b)=>new Date(b.occurred_at)-new Date(a.occurred_at)).slice(0,14);
@@ -235,7 +239,7 @@ async function loadLive(){
  workspaceId=ws[0].id;
  const w="workspace_id=eq."+encodeURIComponent(workspaceId);
  const [jobs,reviews,applications,messages,activities,runs,sources,scans]=await Promise.all([
- getRows("job_leads","select=id,company,job_title,city,status,posting_url,application_url,created_at&"+w+"&order=created_at.desc&limit=250"),
+ getRows("job_leads","select=id,company,job_title,city,status,machine_priority,posting_url,application_url,created_at&"+w+"&order=created_at.desc&limit=250"),
  getRows("job_reviews","select=job_id,approved_to_apply,score,verdict&"+w+"&limit=250"),
  getRows("job_applications","select=id,job_id,status,submitted_at,blocked_reason&"+w+"&limit=250"),
  getRows("job_messages","select=id,requires_user_action,status,occurred_at&"+w+"&limit=250"),
