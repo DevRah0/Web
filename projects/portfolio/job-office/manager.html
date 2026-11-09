@@ -165,8 +165,7 @@ async function refreshOutlook(){
  outStatus("Graph: "+(status.connected?"متصل "+status.account:"غير متصل"),status.connected,"#outlook-connected");
  outStatus("السيرة PDF: "+(status.resume_uploaded?"مرفوعة":"غير مرفوعة"),status.resume_uploaded,"#outlook-cv");
  outStatus("الإرسال: "+(status.auto_send_enabled?"مفعّل":"متوقف"),status.auto_send_enabled,"#outlook-auto");
- const entries=await rows("job_outlook_queue","select=company,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30")
- .catch(async()=>rows("job_outlook_queue","select=id,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30"));
+ const entries=await rows("job_outlook_queue","select=id,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30");
  const queued=(entries||[]).filter(x=>x.status==="queued").length;
  outStatus("الطابور: "+queued+" بانتظار الإرسال",queued===0,"#outlook-queued");
  $("#outlook-overall").textContent=status.auto_send_enabled?"نشط ومستقل":"لم يُفعّل إرسال البريد";
