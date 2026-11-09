@@ -151,7 +151,7 @@ function renderFloor(){
  const state=workerState(a,d,now,demo);
  return '<button type="button" class="station '+a.id+(state.mode==="working"?' isworking':state.mode==="onduty"?' onduty':state.mode==="issue"?' issue':'')+(selected===a.id?' selected':'')+'" style="grid-area:'+a.area+';--shirt:'+a.shirt+';--skin:'+a.skin+';--hair:'+a.hair+'" data-agent="'+a.id+'" aria-label="تفاصيل '+a.name+'"><div class="room-no">0'+(i+1)+'</div><div class="station-head"><span class="sym">'+a.symbol+'</span>'+a.name+'</div><div class="desk-setup"><div class="rug"></div><div class="desk-top"></div><div class="screen"></div><div class="coffee"></div><div class="chair"></div><div class="person"><div class="head"><div class="hair"></div></div><div class="body"></div><div class="arm left"></div><div class="arm right"></div></div></div><div class="activity-label"><span class="status-lamp"></span><span class="activity-text">'+safe(state.label)+'</span><span>◦</span></div></button>';
  }).join("")+'<div class="lounge"><div class="plant a">🪴</div><div class="lounge-center"><strong id="lounge-clock">--:--</strong><small>توقيت غرفة العمليات · الرياض</small></div><div class="plant b">🌿</div></div>';
- $(".station").forEach(el=>el.addEventListener("click",()=>{selected=el.dataset.agent;if(selected==="manager"){window.location.href="./manager.html";return;}renderFloor();renderInspector();}));
+ $$(".station").forEach(el=>el.addEventListener("click",()=>{selected=el.dataset.agent;if(selected==="manager"){window.location.href="./manager.html";return;}renderFloor();renderInspector();}));
 }
 function renderInspector(){
  const a=AGENTS.find(t=>t.id===selected),d=current();
