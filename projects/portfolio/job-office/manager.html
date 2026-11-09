@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a1422"><title>مكتب المدير • منظومة التوظيف</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a1422"><title>مكتب المدير • Outlook V3 • منظومة التوظيف</title>
 <style>
 :root{color-scheme:dark;--bg:#08111e;--panel:#122236;--line:#2d4359;--ink:#f0f7ff;--muted:#a1b5c9;--turq:#5de2c6;--blue:#79aef6}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#183950 0%,transparent 44%),var(--bg);color:var(--ink);font:14px/1.65 Tahoma,"Noto Sans Arabic",system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:#c7f9ee;text-decoration:none}
@@ -8,6 +8,21 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
 .status-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:15px 0 20px}.metric{background:linear-gradient(135deg,#152b40,#112132);border:1px solid var(--line);border-radius:16px;padding:13px}.metric strong{font-size:24px;display:block;color:var(--turq)}.metric small{color:var(--muted);font-size:12px}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:15px;align-items:start}.panel{background:#101e30;border:1px solid #2b4357;border-radius:19px;overflow:hidden}.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid #263f53}.panel-h h2{font-size:16px;margin:0}.panel-h small{color:var(--muted)}.conversation{height:min(54vh,470px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:18px;scroll-behavior:smooth}.note{background:#1d3245;border:1px solid #35536a;color:#c3ddec;border-radius:13px;padding:11px 13px;font-size:12px}.bubble{max-width:90%;width:fit-content;background:#203248;border:1px solid #35506a;border-radius:17px 17px 5px 17px;padding:10px 14px;overflow-wrap:anywhere}.bubble.me{background:#145044;border-color:#328a77;margin-right:auto;border-radius:17px 17px 17px 5px}.bubble.manager{background:#2b3151;border-color:#60659b}.bubble small{color:#b0c7d7;font-size:10px;display:block;margin-bottom:4px}.bubble div{white-space:pre-wrap;line-height:1.8}.write-area{padding:12px 15px;border-top:1px solid #2b4357}.write-area form{display:flex;align-items:flex-end;gap:8px}.write-area textarea{background:#0d1b2a;border:1px solid #365670;border-radius:13px;color:white;flex:1;min-height:60px;padding:10px 12px;resize:vertical;max-height:140px}.btn{background:#1c374c;border:1px solid #38576d;border-radius:11px;padding:9px 13px;color:white;font-weight:700}.btn.primary{background:#4fdec0;border-color:#4fdec0;color:#08352b}.btn:disabled{opacity:.5}.feedback{color:var(--muted);font-size:11px;min-height:22px;margin-top:7px}.staff{padding:10px;display:grid;gap:8px}.staff-card{display:flex;align-items:center;gap:9px;text-align:right;width:100%;padding:11px;background:#192e42;border:1px solid #345069;border-radius:13px;color:var(--ink)}.staff-card.selected{border-color:#64ddc3;background:#204539}.staff-avatar{font-size:24px;background:#254459;border-radius:11px;width:42px;height:42px;display:grid;place-items:center}.staff-main{flex:1}.staff-main b{display:block}.staff-main small{font-size:11px;color:var(--muted)}.bulb{width:9px;height:9px;border-radius:50%;background:#f3b971}.bulb.ok{background:#8de2ab}.bulb.wait{background:#b4b9c8}.quick-actions{display:flex;flex-wrap:wrap;gap:8px;padding:12px}.quick-actions .btn{font-size:12px;flex:1 1 130px}.task-list{padding:10px 15px;display:grid;gap:7px;max-height:250px;overflow:auto}.task{border:1px solid #35495e;background:#182c3e;border-radius:11px;padding:10px;font-size:12px}.task small{display:block;color:var(--muted)}.task b{color:#c8f6eb}.footnote{font-size:12px;color:#9aafc2;margin:16px 0}.sign-in{padding:20px}.sign-in input{display:block;width:100%;background:#0e1b2b;border:1px solid #42617a;color:white;padding:12px;border-radius:10px;margin:9px 0}.sign-in form{max-width:400px}.sign-in label{font-size:12px;color:#bcd4df}.hidden{display:none!important}
 @media(max-width:950px){.layout{grid-template-columns:1fr}.status-cards{grid-template-columns:repeat(3,1fr)}.staff{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){main{padding:12px}.head h1{font-size:21px}.head{margin:16px 0}.metric{padding:10px}.metric strong{font-size:21px}.status-cards{grid-template-columns:repeat(3,1fr);gap:7px}.staff{grid-template-columns:1fr}.conversation{height:48vh}.panel-h{padding:12px}.write-area{padding:9px}.back{font-size:12px}}
+
+.outlook-panel{margin:15px 0 20px}
+.outlook-main{padding:14px 18px}
+.outlook-status{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.status-pill{background:#1c344b;border:1px solid #376079;color:#d4ecf8;padding:5px 10px;border-radius:20px;font-size:11px}
+.status-pill.ready{border-color:#438f76;color:#a5f7c9}.status-pill.waiting{border-color:#a17a3b;color:#ffd59b}
+.outlook-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.outlook-btns .btn{font-size:12px}
+.outlook-help{font-size:12px;color:#bdd4e2;margin-top:10px;line-height:1.9}
+.outlook-help code{font-size:11px;direction:ltr;display:inline-block;background:#091b2e;border:1px solid #38506b;border-radius:6px;padding:1px 5px;color:#b9ffe4;word-break:break-all}
+.outlook-queue{margin-top:12px;display:grid;gap:6px}
+.outlook-queue-item{font-size:12px;display:flex;justify-content:space-between;gap:10px;border:1px solid #304b5e;background:#172a3e;border-radius:10px;padding:8px}
+.outlook-resume{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:12px;color:#c7dce9}
+.outlook-resume input{max-width:100%;font-size:12px}
+#outlook-feedback{min-height:20px;font-size:12px;margin-top:9px;color:#b2deee}
+
 </style></head>
 <body><main>
  <header class="top"><a class="back" href="./">↩ الرجوع إلى المكتب الافتراضي</a><span class="top-status" id="connection">🔒 غرفة المدير • يجري التحقق من الجلسة</span></header>
@@ -21,7 +36,42 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
    <div class="metric"><strong id="m-sent">—</strong><small>تقديمات موثقة</small></div>
    <div class="metric"><strong id="m-commands">—</strong><small>أوامر معلقة</small></div>
   </div>
-  <div class="layout">
+  <section class="panel outlook-panel" id="outlook-panel">
+  <div class="panel-h">
+   <div><h2>📨 Outlook التلقائي — V3</h2><small>محرك إرسال مستقل كل 5 دقائق بعد التفويض</small></div>
+   <span class="status-pill" id="outlook-overall">جار فحص الربط...</span>
+  </div>
+  <div class="outlook-main">
+   <div class="outlook-status">
+    <span class="status-pill" id="outlook-connected">Microsoft Graph: غير متصل</span>
+    <span class="status-pill" id="outlook-cv">السيرة: غير مرفوعة</span>
+    <span class="status-pill" id="outlook-auto">الإرسال التلقائي: متوقف</span>
+    <span class="status-pill" id="outlook-queued">الطابور: —</span>
+   </div>
+   <div class="outlook-btns">
+    <button type="button" class="btn" id="outlook-link">🔗 ربط Outlook</button>
+    <button type="button" class="btn" id="outlook-prepare">📋 تجهيز طلبات البريد</button>
+    <button type="button" class="btn primary" id="outlook-enable" disabled>▶ تشغيل الإرسال التلقائي</button>
+    <button type="button" class="btn" id="outlook-disable">⏸ إيقاف مؤقت</button>
+    <button type="button" class="btn" id="outlook-disconnect">فصل Microsoft Graph</button>
+   </div>
+   <div class="outlook-resume"><label for="outlook-pdf"><b>ملف السيرة الخاص (PDF، حتى 3 MB):</b></label>
+     <input type="file" id="outlook-pdf" accept=".pdf,application/pdf" aria-label="رفع السيرة الذاتية الخاصة">
+     <button type="button" class="btn" id="outlook-upload">رفع السيرة بأمان</button>
+   </div>
+   <div id="outlook-feedback" aria-live="polite">اتصال Outlook داخل ChatGPT منفصل عن تفويض Microsoft Graph لهذا الخادم.</div>
+   <details class="outlook-help" id="outlook-setup">
+    <summary>إعداد Microsoft Graph لأول مرة (يلزم مرة واحدة)</summary>
+    <p>أنشئ تطبيقًا في <a href="https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank" rel="noopener noreferrer"><u>Microsoft Entra — App registrations</u></a> يدعم الحسابات الشخصية من Microsoft. أضف منصة <b>Web</b> وعنوان العودة الآمن التالي:</p>
+    <p><code>https://jclycoagtotikxskgkju.supabase.co/functions/v1/job-outlook-connect</code></p>
+    <p>امنح صلاحيات Microsoft Graph المفوضة: <code>Mail.Send</code> و <code>Mail.Read</code> و <code>User.Read</code> و <code>offline_access</code>. ضع معرّف التطبيق <code>OUTLOOK_GRAPH_CLIENT_ID</code> وسر التطبيق <code>OUTLOOK_GRAPH_CLIENT_SECRET</code> داخل <a href="https://supabase.com/dashboard/project/jclycoagtotikxskgkju/functions/secrets" target="_blank" rel="noopener noreferrer"><u>Supabase Edge Function Secrets</u></a>، ولا تضعها في GitHub أو هذه المحادثة.</p>
+    <p>بعد حفظ الإعدادات، حدّث الصفحة، ثم اربط حساب Outlook وارفع نسخة PDF من سيرتك وفعّل التشغيل. لا تُرسل المنظومة أي طلب قبل إتمام هذه الخطوات.</p>
+   </details>
+   <div class="outlook-queue" id="outlook-queue-list"><div class="outlook-queue-item">لا توجد رسائل في طابور Outlook حاليًا.</div></div>
+  </div>
+ </section>
+
+<div class="layout">
    <div class="panel">
     <div class="panel-h"><div><h2>💬 تحدث مع المدير مباشرة</h2><small id="chat-target-label">الجهة المستقبلة: المدير العام</small></div><button class="btn" id="refresh" type="button">↻ تحديث</button></div>
     <div id="conversation" class="conversation"><div class="note">اختر الموظف أو اكتب سؤالك للمدير. الردود الفورية تشغيلية مبنية على قاعدة البيانات، وليست محادثة مع إنسان.</div></div>
@@ -97,8 +147,76 @@ async function load(){
  $("#m-sent").textContent=c.filter(x=>x.status==="submitted").length;
  $("#connection").textContent="🔒 متصل بالبيانات الحقيقية • آخر تحديث "+fmt(new Date().toISOString());
  $("#login").classList.add("hidden");$("#workspace").classList.remove("hidden");
- renderStaff();renderChat();
+ renderStaff();renderChat();refreshOutlook().catch(e=>{$("#outlook-feedback").textContent="تعذر تحديث Outlook: "+e.message;});
 }
+
+let outlookBusy=false,outlookState=null;
+async function outlookControl(action){
+ return request(P+"/functions/v1/job-outlook-connect",{
+  method:"POST",headers:{...headers(),"Content-Type":"application/json"},body:JSON.stringify({action})
+ });
+}
+function outStatus(s,ready,id){
+ const el=$(id);el.textContent=s;el.classList.toggle("ready",!!ready);el.classList.toggle("waiting",!ready);
+}
+async function refreshOutlook(){
+ if(!ws||!session||!await valid())return;
+ const status=await outlookControl("status");outlookState=status;
+ outStatus("Graph: "+(status.connected?"متصل "+status.account:"غير متصل"),status.connected,"#outlook-connected");
+ outStatus("السيرة PDF: "+(status.resume_uploaded?"مرفوعة":"غير مرفوعة"),status.resume_uploaded,"#outlook-cv");
+ outStatus("الإرسال: "+(status.auto_send_enabled?"مفعّل":"متوقف"),status.auto_send_enabled,"#outlook-auto");
+ const entries=await rows("job_outlook_queue","select=company,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30")
+ .catch(async()=>rows("job_outlook_queue","select=id,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30"));
+ const queued=(entries||[]).filter(x=>x.status==="queued").length;
+ outStatus("الطابور: "+queued+" بانتظار الإرسال",queued===0,"#outlook-queued");
+ $("#outlook-overall").textContent=status.auto_send_enabled?"نشط ومستقل":"لم يُفعّل إرسال البريد";
+ $("#outlook-overall").classList.toggle("ready",!!status.auto_send_enabled);
+ $("#outlook-enable").disabled=!status.configured||!status.connected||!status.resume_uploaded||status.auto_send_enabled;
+ $("#outlook-link").disabled=!status.configured;
+ $("#outlook-link").textContent=status.configured?"🔗 "+(status.connected?"إعادة ربط Outlook":"ربط Outlook"):"يتطلب إعداد Microsoft Graph";
+ $("#outlook-queue-list").innerHTML=(entries?.length?entries.map(x=>
+  '<div class="outlook-queue-item"><div><b>'+clean(x.subject)+'</b><div>'+clean(x.recipient_email)+'</div>'+(x.last_error?'<small style="color:#ffc2ad">'+clean(x.last_error)+'</small>':"")+'</div><span>'+clean(({queued:"بانتظار الإرسال",claimed:"تجهيز",pending_verification:"بانتظار التحقق",sent:"أُرسل وتم التحقق",manual_review:"يحتاج مراجعة",blocked:"ممنوع",failed:"تعثر",cancelled:"ملغي"})[x.status]||x.status)+'</span></div>'
+ ).join(""):'<div class="outlook-queue-item">لا توجد طلبات بريد جديدة معتمدة. الطلبات المرسلة سابقًا محفوظة في سجل التقديمات.</div>');
+ if(!status.configured)$("#outlook-feedback").textContent="يلزم تسجيل تطبيق Microsoft في Entra وإضافة Client ID وClient Secret إلى Supabase؛ الربط داخل ChatGPT وحده لا يكفي.";
+}
+async function runOutlook(action){
+ if(outlookBusy)return;if(!await valid())return showLogin();
+ if(action==="enable"&&!confirm("هل تسمح للمحرك بإرسال الوظائف المناسبة المعتمدة عبر Outlook تلقائيًا مع السيرة المرفوعة، دون سقف يومي، بعد منع التكرار والتحقق؟"))return;
+ if(action==="disconnect"&&!confirm("فصل Microsoft Graph وإيقاف الإرسال الآلي؟ لن تُحذف طلبات التوظيف السابقة."))return;
+ outlookBusy=true;
+ const el=$("#outlook-feedback");el.textContent="جار معالجة طلب Outlook...";
+ for(const b of $$(".outlook-btns button"))b.disabled=true;
+ try{
+  const ans=await outlookControl(action);
+  if(action==="begin"&&ans.url){location.assign(ans.url);return;}
+  el.textContent=action==="enqueue"?"تم تجهيز "+(ans.prepared||0)+" طلب جديد بحسب الشروط.":action==="enable"?"تم اعتماد الإرسال الآلي بعد ربط الحساب والسيرة.":action==="disable"?"أوقفت الإرسال الآلي.":action==="disconnect"?"تم فصل الاتصال بأمان.":"تم تحديث الحالة.";
+  await refreshOutlook();
+ }catch(e){el.textContent="تعذر تنفيذ العملية: "+e.message;}
+ finally{outlookBusy=false;if(outlookState)$("#outlook-link").disabled=!outlookState.configured;$("#outlook-disable").disabled=false;$("#outlook-disconnect").disabled=false;$("#outlook-prepare").disabled=false;}
+}
+$("#outlook-link").addEventListener("click",()=>runOutlook("begin"));
+$("#outlook-prepare").addEventListener("click",()=>runOutlook("enqueue"));
+$("#outlook-enable").addEventListener("click",()=>runOutlook("enable"));
+$("#outlook-disable").addEventListener("click",()=>runOutlook("disable"));
+$("#outlook-disconnect").addEventListener("click",()=>runOutlook("disconnect"));
+$("#outlook-upload").addEventListener("click",async()=>{
+ if(!ws||!await valid())return showLogin();
+ const file=$("#outlook-pdf").files?.[0];
+ if(!file){$("#outlook-feedback").textContent="اختر ملف PDF أولًا.";return;}
+ if(file.size>3000000||file.size<100||!(/\.pdf$/i.test(file.name)||file.type==="application/pdf")){
+  $("#outlook-feedback").textContent="يجب اختيار PDF صالح لا يتجاوز 3 MB.";return;
+ }
+ const button=$("#outlook-upload");button.disabled=true;$("#outlook-feedback").textContent="جار رفع PDF إلى التخزين الخاص...";
+ try{
+  const u=P+"/storage/v1/object/job-office-resumes/"+encodeURIComponent(ws)+"/resume.pdf";
+  await request(u,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/pdf","x-upsert":"true"},body:file});
+  $("#outlook-feedback").textContent="تم رفع السيرة في حاوية خاصة. لا تُنشر للعامة.";
+  $("#outlook-pdf").value="";
+  await refreshOutlook();
+ }catch(e){$("#outlook-feedback").textContent="تعذر رفع PDF: "+e.message;}
+ finally{button.disabled=false;}
+});
+
 function showLogin(){$("#login").classList.remove("hidden");$("#workspace").classList.add("hidden");$("#connection").textContent="🔒 يتطلب تسجيل الدخول"}
 async function doAction(payload){
  if(busy)return;if(!await valid()){showLogin();return}
@@ -115,7 +233,7 @@ $("#login-form").addEventListener("submit",async e=>{e.preventDefault();$("#logi
  try{const v=await request(P+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({email:$("#email").value.trim(),password:$("#password").value})});
  v.expires_at=Math.floor(Date.now()/1000)+v.expires_in;save(v);$("#password").value="";await load();
  }catch(err){$("#login-feedback").textContent=err.message}finally{$("#login-submit").disabled=false}});
-const query=new URLSearchParams(location.search);if(N.includes(query.get("target")))target=query.get("target");
+const query=new URLSearchParams(location.search);if(N.includes(query.get("target")))target=query.get("target");if(query.get("outlook")==="connected")$("#outlook-feedback").textContent="تمت إعادة التوجيه من Microsoft. تحقق من حالة الاتصال أعلاه.";else if(query.has("outlook"))$("#outlook-feedback").textContent="تعذر إكمال ربط Microsoft: "+query.get("outlook");
 load().catch(e=>{$("#connection").textContent="تعذر تحميل البيانات";$("#feedback").textContent=e.message;showLogin()});
 setInterval(()=>{if(!document.hidden&&!busy&&ws)load().catch(()=>{})},20000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!busy)load().catch(()=>{})});
