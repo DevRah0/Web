@@ -50,7 +50,7 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
     <span class="status-pill" id="outlook-queued">الطابور: —</span>
    </div>
    <div class="outlook-btns">
-    <button type="button" class="btn" id="outlook-link">🔗 ربط Outlook</button>
+    <button type="button" class="btn" id="outlook-link">🔗 ربط Outlook</button><button type="button" class="btn" id="outlook-setup-open">⚙ إعداد ربط Microsoft</button>
     <button type="button" class="btn" id="outlook-prepare">📋 تجهيز طلبات البريد</button>
     <button type="button" class="btn primary" id="outlook-enable" disabled>▶ تشغيل الإرسال التلقائي</button>
     <button type="button" class="btn" id="outlook-disable">⏸ إيقاف مؤقت</button>
@@ -58,7 +58,7 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
    </div>
    <div class="outlook-resume"><label for="outlook-pdf"><b>ملف السيرة الخاص (PDF، حتى 3 MB):</b></label>
      <input type="file" id="outlook-pdf" accept=".pdf,application/pdf" aria-label="رفع السيرة الذاتية الخاصة">
-     <button type="button" class="btn" id="outlook-upload">رفع السيرة بأمان</button>
+     <button type="button" class="btn" id="outlook-upload">⬆ رفع السيرة المختارة</button><span id="outlook-file-hint" aria-live="polite" style="color:#d0e9f8">اختر الملف، ثم اضغط رفع السيرة</span>
    </div>
    <div id="outlook-feedback" aria-live="polite">اتصال Outlook داخل ChatGPT منفصل عن تفويض Microsoft Graph لهذا الخادم.</div>
    <details class="outlook-help" id="outlook-setup">
@@ -195,7 +195,7 @@ async function refreshOutlook(){
  $("#outlook-queue-list").innerHTML=(entries?.length?entries.map(x=>
   '<div class="outlook-queue-item"><div><b>'+clean(x.subject)+'</b><div>'+clean(x.recipient_email)+'</div>'+(x.last_error?'<small style="color:#ffc2ad">'+clean(x.last_error)+'</small>':"")+'</div><span>'+clean(({queued:"بانتظار الإرسال",claimed:"تجهيز",pending_verification:"بانتظار التحقق",sent:"أُرسل وتم التحقق",manual_review:"يحتاج مراجعة",blocked:"ممنوع",failed:"تعثر",cancelled:"ملغي"})[x.status]||x.status)+'</span></div>'
  ).join(""):'<div class="outlook-queue-item">لا توجد طلبات بريد جديدة معتمدة. الطلبات المرسلة سابقًا محفوظة في سجل التقديمات.</div>');
- if(!status.configured)$("#outlook-feedback").textContent="يلزم تسجيل تطبيق Microsoft في Entra وإضافة Client ID وClient Secret إلى Supabase؛ الربط داخل ChatGPT وحده لا يكفي.";
+ if(!status.configured){$("#outlook-feedback").textContent="تسجيل الدخول يعمل، لكن الإرسال الآلي يحتاج إعداد Microsoft Graph مرة واحدة. يمكنك رفع السيرة الآن، ثم اضغط «⚙ إعداد ربط Microsoft» لعرض الخطوات.";$("#outlook-setup-open").disabled=false;}
 }
 async function runOutlook(action){
  if(outlookBusy)return;if(!await valid())return showLogin();
@@ -217,6 +217,15 @@ $("#outlook-prepare").addEventListener("click",()=>runOutlook("enqueue"));
 $("#outlook-enable").addEventListener("click",()=>runOutlook("enable"));
 $("#outlook-disable").addEventListener("click",()=>runOutlook("disable"));
 $("#outlook-disconnect").addEventListener("click",()=>runOutlook("disconnect"));
+$("#outlook-setup-open").addEventListener("click",()=>{
+ const d=$("#outlook-setup");d.open=true;d.scrollIntoView({behavior:"smooth",block:"start"});
+});
+$("#outlook-pdf").addEventListener("change",()=>{
+ const file=$("#outlook-pdf").files?.[0], hint=$("#outlook-file-hint");
+ hint.textContent=file
+  ?"تم اختيار "+file.name+" ("+(file.size/1024).toFixed(0)+" كيلوبايت)، لم يُرفع بعد. اضغط «رفع السيرة المختارة»."
+  :"لم يُختر ملف بعد.";
+});
 $("#outlook-upload").addEventListener("click",async()=>{
  if(!ws||!await valid())return showLogin();
  const file=$("#outlook-pdf").files?.[0];
@@ -224,15 +233,23 @@ $("#outlook-upload").addEventListener("click",async()=>{
  if(file.size>3000000||file.size<100||!(/\.pdf$/i.test(file.name)||file.type==="application/pdf")){
   $("#outlook-feedback").textContent="يجب اختيار PDF صالح لا يتجاوز 3 MB.";return;
  }
- const button=$("#outlook-upload");button.disabled=true;$("#outlook-feedback").textContent="جار رفع PDF إلى التخزين الخاص...";
+ const button=$("#outlook-upload");button.disabled=true;button.textContent="جار الرفع...";
+ $("#outlook-feedback").textContent="جار رفع ملف السيرة إلى التخزين الخاص، لا تغلق الصفحة...";
  try{
+  const signature=await file.slice(0,4).text();
+  if(signature!=="%PDF")throw Error("محتوى الملف ليس PDF صحيحًا.");
   const u=P+"/storage/v1/object/job-office-resumes/"+encodeURIComponent(ws)+"/resume.pdf";
   await request(u,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/pdf","x-upsert":"true"},body:file});
-  $("#outlook-feedback").textContent="تم رفع السيرة في حاوية خاصة. لا تُنشر للعامة.";
+  const confirmation=await outlookControl("status");
+  if(!confirmation.resume_uploaded)throw Error("تم قبول الرفع لكن لم يؤكد الخادم وجود الملف. أعد تحديث الصفحة للتحقق.");
   $("#outlook-pdf").value="";
+  $("#outlook-file-hint").textContent="✅ السيرة محفوظة في التخزين الخاص.";
   await refreshOutlook();
- }catch(e){$("#outlook-feedback").textContent="تعذر رفع PDF: "+e.message;}
- finally{button.disabled=false;}
+  $("#outlook-feedback").textContent="✅ تم رفع السيرة وحفظها في حسابك بنجاح. ربط Outlook Graph خطوة منفصلة للإرسال الآلي.";
+ }catch(e){
+  $("#outlook-feedback").textContent="❌ تعذر رفع PDF: "+e.message;
+  $("#outlook-file-hint").textContent="لم يثبت رفع الملف. ما زال مختارًا ويمكنك إعادة المحاولة.";
+ }finally{button.disabled=false;button.textContent="⬆ رفع السيرة المختارة";}
 });
 
 function showLogin(){$("#login").classList.remove("hidden");$("#workspace").classList.add("hidden");$("#connection").textContent="🔒 يتطلب تسجيل الدخول"}
