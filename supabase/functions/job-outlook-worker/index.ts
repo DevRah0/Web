@@ -190,7 +190,7 @@ Deno.serve(async(req)=>{
    }catch(_e){/* Remain pending; no resend. Reconcile in later scheduled ticks. */}
   }
   // A crash after claim might have sent the message. Never automatically retry it.
-  await db.from("job_outlook_queue").update({status:"manual_review",last_error:"Send attempt expired without a final outcome; inspect Sent Items before retrying.",updated_at:new Date().toISOString()}).eq("status","claimed").lt("lease_until",new Date().toISOString());
+  await db.from("job_outlook_queue").update({status:"manual_review",last_error:"Send attempt expired without a final outcome; inspect Sent Items before retrying.",updated_at:new Date().toISOString()}).eq("status","claimed").eq("execution_provider","graph").lt("lease_until",new Date().toISOString());
 
   const {data:claimed,error:claimErr}=await db.rpc("job_outlook_claim_ready",{p_limit:3});
   if(claimErr)throw Error("Queue claim failed");

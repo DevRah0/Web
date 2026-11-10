@@ -97,15 +97,19 @@ Deno.serve(async req=>{
  const conn=connection.data;
  const resumeReady=files.data.some(file=>file.name==="resume.pdf");
  const summary={configured:graphConfigured,connected:conn?.status==="connected",connection_status:conn?.status||"disconnected",account:conn?.account_email||null,auto_send_enabled:settings.data.outlook_auto_send_enabled===true,resume_uploaded:resumeReady};
+ const connector=action==="status"||action==="enqueue"
+  ?await db.rpc("job_outlook_connector_state",{p_workspace:workspace.id}).maybeSingle()
+  :{data:null,error:null};
+ if(connector.error)return respond({error:"تعذر قراءة حالة اتصال Outlook عبر ChatGPT."},503);
  if(action==="status"){
-  const waiting=["queued","claimed","pending_verification"];
+  const waiting=["queued","claimed","pending_verification","drafted"];
   const [queue,portal,followup]=await Promise.all([
    Promise.all(waiting.map(status=>db.from("job_outlook_queue").select("id",{count:"exact",head:true}).eq("workspace_id",workspace.id).eq("status",status))),
    db.from("job_leads").select("id",{count:"exact",head:true}).eq("workspace_id",workspace.id).eq("status","approved").eq("application_channel","portal"),
    db.from("job_workflow_runs").select("status,started_at,completed_at,found_count").eq("workspace_id",workspace.id).eq("section","followup").like("notes","Outlook Graph inbox sync%").order("started_at",{ascending:false}).limit(1).maybeSingle()
   ]);
   if(queue.some(entry=>entry.error)||portal.error||followup.error)return respond({error:"تعذر التحقق من الطابور أو المتابعة."},503);
-  return respond({...summary,queue:Object.fromEntries(waiting.map((status,index)=>[status,queue[index].count||0])),portal_ready:portal.count||0,followup:followup.data});
+  return respond({...summary,connector:connector.data,queue:Object.fromEntries(waiting.map((status,index)=>[status,queue[index].count||0])),portal_ready:portal.count||0,followup:followup.data});
  }
  if(action==="begin"){
   if(!graphConfigured)return respond({...summary,error:"Microsoft Graph app registration is required (client ID and client secret)."},409);
@@ -137,9 +141,11 @@ Deno.serve(async req=>{
   return respond({configured:graphConfigured,connected:false,auto_send_enabled:false,resume_uploaded:resumeReady});
  }
  if(action==="enqueue"){
-  const {data,error}=await db.rpc("job_outlook_enqueue_for_workspace",{p_workspace:workspace.id});
+  const provider=connector.data&&!(graphConfigured&&summary.connected)?"connector":"graph";
+  if(provider==="graph"&&!graphConfigured)return respond({error:"انتظر أول جولة متابعة ناجحة لربط Outlook عبر ChatGPT."},409);
+  const {data,error}=await db.rpc("job_outlook_enqueue_for_workspace",{p_workspace:workspace.id,p_provider:provider});
   if(error)return respond({error:"Could not prepare safe Outlook queue"},500);
-  return respond({prepared:data||0,...summary});
+  return respond({prepared:data||0,provider,...summary});
  }
  return respond({error:"Unsupported action"},400);
 });

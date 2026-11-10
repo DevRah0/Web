@@ -42,7 +42,7 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
   </div>
   <section class="panel outlook-panel" id="outlook-panel">
   <div class="panel-h">
-   <div><h2>📨 Outlook والسيرة الذاتية</h2><small>إرسال الطلبات المعتمدة ومتابعة الردود بعد الربط</small></div>
+   <div><h2>📨 Outlook والسيرة الذاتية</h2><small>تجهيز الطلبات المعتمدة ومتابعة ردود الشركات</small></div>
    <span class="status-pill" id="outlook-overall">جار فحص الربط...</span>
   </div>
   <div class="outlook-main">
@@ -52,7 +52,7 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
     <span class="status-pill" id="outlook-auto">الإرسال التلقائي: متوقف</span>
     <span class="status-pill" id="outlook-queued">الطابور: —</span>
    </div>
-   <ul class="setup-grid" aria-label="خطوات تفعيل Outlook">
+   <ul class="setup-grid" id="outlook-graph-steps" aria-label="خطوات تفعيل Outlook">
     <li id="step-microsoft">١. إعداد Entra</li><li id="step-account">٢. ربط حساب Outlook</li>
     <li id="step-resume">٣. رفع السيرة PDF</li><li id="step-sending">٤. تفعيل إرسال الطلبات</li>
    </ul>
@@ -62,10 +62,11 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
     <button type="button" class="btn primary" id="outlook-enable" disabled>▶ تشغيل الإرسال التلقائي</button>
     <button type="button" class="btn" id="outlook-disable" disabled>⏸ إيقاف مؤقت</button>
     <button type="button" class="btn" id="outlook-disconnect" disabled>فصل Microsoft Graph</button>
+    <a class="btn hidden" id="outlook-drafts" href="https://outlook.live.com/mail/0/drafts/" target="_blank" rel="noopener noreferrer">فتح مسودات Outlook</a>
    </div>
    <div class="outlook-resume"><label for="outlook-pdf"><b>ملف السيرة الخاص (PDF، حتى 3 MB):</b></label>
      <input type="file" id="outlook-pdf" accept=".pdf,application/pdf" aria-label="رفع السيرة الذاتية الخاصة">
-     <button type="button" class="btn" id="outlook-upload">⬆ رفع السيرة المختارة</button><span id="outlook-file-hint" aria-live="polite" style="color:#d0e9f8">اختر الملف، ثم اضغط رفع السيرة</span>
+     <button type="button" class="btn" id="outlook-upload">⬆ رفع السيرة المختارة</button><button type="button" class="btn hidden" id="outlook-download">تنزيل السيرة PDF</button><span id="outlook-file-hint" aria-live="polite" style="color:#d0e9f8">اختر الملف، ثم اضغط رفع السيرة</span>
    </div>
    <div id="outlook-guidance" class="outlook-help" aria-live="polite">جار التحقق من ربط Outlook والسيرة…</div><div id="outlook-feedback" aria-live="polite"></div>
    <details class="outlook-help" id="outlook-setup">
@@ -201,7 +202,7 @@ function outStatus(s,ready,id){
 function outlookButtons(){
  const status=outlookState;
  $("#outlook-link").disabled=outlookBusy||!status?.configured;
- $("#outlook-prepare").disabled=outlookBusy||!status;
+ $("#outlook-prepare").disabled=outlookBusy||(!status?.configured&&!status?.connector);
  $("#outlook-enable").disabled=outlookBusy||!status?.configured||!status.connected||!status.resume_uploaded||status.auto_send_enabled;
  $("#outlook-disable").disabled=outlookBusy||!status?.auto_send_enabled;
  $("#outlook-disconnect").disabled=outlookBusy||!status?.account;
@@ -209,9 +210,14 @@ function outlookButtons(){
 function renderOutlook(status){
  outlookState=status;
  const needsAuth=status.connection_status==="reauth_required";
+ const connectorMode=!!status.connector&&!(status.configured&&status.connected);
+ const connectorReady=connectorMode&&status.connector.is_recent;
  const canSend=status.configured&&status.connected&&status.resume_uploaded;
  const sending=canSend&&status.auto_send_enabled;
- const state=!status.configured?["بانتظار إعداد Entra","أضف معرّف تطبيق Microsoft وسرّه في Supabase، ثم حدّث الصفحة."]:
+ const state=connectorMode?(connectorReady
+  ?["متصل عبر ChatGPT","تُفحص الردود كل ساعة. يمكنك طلب تجهيز مسودات الفرص المعتمدة ثم فتحها في Outlook وإرفاق سيرتك ومراجعتها وإرسالها."]
+  :["بانتظار جولة المتابعة","آخر فحص حديث غير متاح. تُجهّز المسودات بعد عودة اتصال Outlook في مهمة المتابعة."]):
+  !status.configured?["بانتظار ربط Outlook","تظهر حالة الربط هنا بعد أول جولة متابعة ناجحة عبر ChatGPT."]:
   needsAuth?["يلزم تجديد تفويض Outlook","اضغط «إعادة ربط Outlook» وجدّد التفويض بحسابك المعتمد."]:
   !status.connected?["بانتظار ربط Outlook","اضغط «ربط Outlook» ووافق من حساب Microsoft المعتمد."]:
   !status.resume_uploaded?["السيرة مطلوبة","ارفع سيرتك PDF من هذا القسم."]:
@@ -219,19 +225,25 @@ function renderOutlook(status){
   ["الإرسال مفعّل","يفحص العامل الطابور دوريًا ويسجّل الإرسال بعد ظهوره في عناصر Outlook المرسلة."];
  const counts=status.queue||{};
  const waiting=(counts.queued||0)+(counts.claimed||0)+(counts.pending_verification||0);
- outStatus(state[0],canSend,"#outlook-overall");
- outStatus("Outlook: "+(status.connected?"متصل · "+status.account:needsAuth?"التفويض يحتاج تجديدًا":"غير متصل"),status.connected,"#outlook-connected");
+ outStatus(state[0],canSend||connectorReady,"#outlook-overall");
+ outStatus("Outlook: "+(status.connected?"متصل · "+status.account:connectorReady?"متصل عبر ChatGPT":needsAuth?"التفويض يحتاج تجديدًا":"بانتظار التحقق"),status.connected||connectorReady,"#outlook-connected");
  outStatus("السيرة PDF: "+(status.resume_uploaded?"مرفوعة":"غير مرفوعة"),status.resume_uploaded,"#outlook-cv");
- outStatus("الإرسال التلقائي: "+(sending?"مفعّل":"متوقف"),sending,"#outlook-auto");
- outStatus("الطابور: "+waiting+" قيد الإرسال أو التحقق",waiting===0,"#outlook-queued");
+ outStatus(connectorMode?"الإرسال من Outlook بعد مراجعتك":"الإرسال التلقائي: "+(sending?"مفعّل":"متوقف"),sending,"#outlook-auto");
+ outStatus(connectorMode?"الطابور: "+waiting+" للتجهيز، "+(counts.drafted||0)+" مسودة للمراجعة":"الطابور: "+waiting+" قيد الإرسال أو التحقق",waiting===0,"#outlook-queued");
  $("#step-microsoft").dataset.ready=String(!!status.configured);
  $("#step-account").dataset.ready=String(!!status.connected);
  $("#step-resume").dataset.ready=String(!!status.resume_uploaded);
  $("#step-sending").dataset.ready=String(!!sending);
  $("#outlook-link").textContent=status.configured?"🔗 "+(status.connected||needsAuth?"إعادة ربط Outlook":"ربط Outlook"):"ربط Outlook";
  $("#outlook-guidance").textContent=state[1];
- if(!status.configured)$("#outlook-setup").open=true;
- const last=status.followup;
+ const hideGraph=connectorMode&&!status.configured;
+ for(const id of ["outlook-graph-steps","outlook-link","outlook-setup-open","outlook-setup","outlook-enable","outlook-disable","outlook-disconnect"]){
+  $("#"+id).classList.toggle("hidden",hideGraph);
+ }
+ $("#outlook-drafts").classList.toggle("hidden",!connectorMode&&!counts.drafted);
+ $("#outlook-download").classList.toggle("hidden",!status.resume_uploaded);
+ $("#outlook-prepare").textContent=connectorMode?"📋 تجهيز مسودات Outlook":"📋 تجهيز طلبات البريد";
+ const last=connectorMode?status.connector:status.followup;
  $("#outlook-followup").textContent=last?"آخر متابعة للبريد · "+fmt(last.completed_at||last.started_at)+" · "+(last.status==="failed"?"تعذر فحص البريد":(last.status==="partial"?"فحص جزئي. ":"")+"ردود جديدة مسجلة "+last.found_count):"تظهر آخر متابعة هنا بعد فحص الردود المرتبطة بطلباتك.";
  const portal=$("#portal-ready");
  portal.replaceChildren();
@@ -246,10 +258,12 @@ async function refreshOutlook(){
  if(!ws||!await auth.valid())return;
  const status=await outlookControl("status");
  renderOutlook(status);
- const entries=await rows("job_outlook_queue","select=id,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30");
- $("#outlook-queue-list").innerHTML=entries.length?entries.map(x=>
-  '<div class="outlook-queue-item"><div><b>'+clean(x.subject)+'</b><div>'+clean(x.recipient_email)+'</div>'+(x.last_error?'<small style="color:#ffc2ad">'+clean(x.last_error)+'</small>':"")+'</div><span>'+clean(({queued:"بانتظار الإرسال",claimed:"تجهيز",pending_verification:"بانتظار التحقق",sent:"أُرسل وتم التحقق",manual_review:"يحتاج مراجعة",blocked:"ممنوع",failed:"تعثر",cancelled:"ملغي"})[x.status]||x.status)+'</span></div>'
- ).join(""):'<div class="outlook-queue-item">الطابور فارغ. تجد الطلبات السابقة في سجل التقديمات.</div>';
+ const entries=await rows("job_outlook_queue","select=recipient_email,status,subject,body_text,last_error,execution_provider&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30");
+ $("#outlook-queue-list").innerHTML=entries.length?entries.map(x=>{
+  const labels={queued:x.execution_provider==="connector"?"بانتظار تجهيز المسودة":"بانتظار الإرسال",claimed:"تجهيز",drafted:"مسودة في Outlook",pending_verification:"بانتظار التحقق",sent:"أُرسل وتم التحقق",manual_review:"يحتاج مراجعة",blocked:"ممنوع",failed:"تعثر",cancelled:"ملغي"};
+  const preview=x.execution_provider==="connector"?'<details><summary>معاينة نص الرسالة</summary><div style="white-space:pre-wrap" dir="auto">'+clean(x.body_text)+'</div></details>':"";
+  return '<div class="outlook-queue-item"><div><b>'+clean(x.subject)+'</b><div>'+clean(x.recipient_email)+'</div>'+preview+(x.last_error?'<small style="color:#ffc2ad">'+clean(x.last_error)+'</small>':"")+'</div><span>'+clean(labels[x.status]||x.status)+'</span></div>';
+ }).join(""):'<div class="outlook-queue-item">الطابور فارغ. تجد الطلبات السابقة في سجل التقديمات.</div>';
 }
 async function runOutlook(action){
  if(outlookBusy)return;
@@ -265,7 +279,7 @@ async function runOutlook(action){
    if(url.origin!=="https://login.microsoftonline.com")throw Error("عنوان تسجيل الدخول غير متوقع.");
    location.assign(url);return;
   }
-  el.textContent=action==="enqueue"?"تجهز "+(ans.prepared||0)+" طلب بريد جديد بحسب الشروط.":action==="enable"?"تم تفعيل الإرسال التلقائي.":action==="disable"?"توقف الإرسال التلقائي.":"تم فصل حساب Outlook.";
+  el.textContent=action==="enqueue"?(ans.prepared?"أضيف "+ans.prepared+(ans.provider==="connector"?" طلب إلى طابور المسودات.":" طلب إلى طابور البريد."):"ما فيه طلبات بريد معتمدة جديدة للتجهيز."):action==="enable"?"تم تفعيل الإرسال التلقائي.":action==="disable"?"توقف الإرسال التلقائي.":"تم فصل حساب Outlook.";
   await refreshOutlook().catch(error=>{$("#outlook-guidance").textContent="تعذر تحديث الحالة. "+error.message;});
  }catch(error){el.textContent="تعذر تنفيذ العملية. "+error.message;}
  finally{outlookBusy=false;outlookButtons();}
@@ -277,6 +291,19 @@ $("#outlook-disable").addEventListener("click",()=>runOutlook("disable"));
 $("#outlook-disconnect").addEventListener("click",()=>runOutlook("disconnect"));
 $("#outlook-setup-open").addEventListener("click",()=>{
  const d=$("#outlook-setup");d.open=true;d.scrollIntoView({behavior:"smooth",block:"start"});
+});
+$("#outlook-download").addEventListener("click",async()=>{
+ const button=$("#outlook-download");button.disabled=true;
+ try{
+  if(!ws||!await auth.valid())return showLogin();
+  const url=P+"/storage/v1/object/authenticated/job-office-resumes/"+encodeURIComponent(ws)+"/resume.pdf";
+  const response=await fetch(url,{headers:{...headers(),Accept:"application/pdf"}});
+  if(!response.ok)throw Error("تعذر تنزيل السيرة من التخزين الخاص.");
+  const file=URL.createObjectURL(await response.blob());
+  const link=document.createElement("a");link.href=file;link.download="resume.pdf";document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(file),60000);
+ }catch(error){$("#outlook-feedback").textContent=error.message;}
+ finally{button.disabled=false;}
 });
 $("#outlook-pdf").addEventListener("change",()=>{
  const file=$("#outlook-pdf").files?.[0], hint=$("#outlook-file-hint");
