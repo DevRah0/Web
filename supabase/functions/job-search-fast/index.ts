@@ -116,6 +116,7 @@ Deno.serve(async req=>{
  const {data:sources,error:claimError}=await db.rpc("job_claim_due_sources",workspace?{p_limit:4,p_workspace:workspace}:{p_limit:8});
  if(claimError)return send({error:"Could not claim sources",detail:claimError.message},500);
  if(!Array.isArray(sources)||sources.length===0)return send({status:"idle",scanned:0,inserted:0,detail:"Next source scans are not due"});
+ const startedAt=new Date().toISOString();
  const summary:{workspace:string;source:string;found:number;matched:number;inserted:number;error?:string}[]=[];
  for(const src of sources as Source[]){
   let found=0,matchedRegion=0,matchedRoles=0,newCount=0,err="";
@@ -200,7 +201,7 @@ Deno.serve(async req=>{
  const day=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Riyadh",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
  for(const id of new Set(summary.map(item=>item.workspace))){
   const items=summary.filter(item=>item.workspace===id),failed=items.filter(item=>item.error).length;
-  const {error}=await db.from("job_workflow_runs").insert({workspace_id:id,section:"research",run_date:day,status:failed===items.length?"failed":failed?"partial":"completed",found_count:items.reduce((n,item)=>n+item.inserted,0),errors_count:failed,completed_at:new Date().toISOString(),notes:"ATS scan: "+items.length+" sources. Source-level details in job_search_scans."});
+  const {error}=await db.from("job_workflow_runs").insert({workspace_id:id,section:"research",run_date:day,status:failed===items.length?"failed":failed?"partial":"completed",found_count:items.reduce((n,item)=>n+item.inserted,0),errors_count:failed,started_at:startedAt,completed_at:new Date().toISOString(),notes:"ATS scan: "+items.length+" sources. Source-level details in job_search_scans."});
   if(error)return send({error:"Could not record search results"},500);
  }
  return send({status:errors?"partial":"completed",scanned,inserted,errors,results:summary.map(({workspace:_workspace,...item})=>item),auth_method:authMethod});
