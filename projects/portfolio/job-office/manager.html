@@ -23,9 +23,12 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
 .outlook-resume input{max-width:100%;font-size:12px}
 #outlook-feedback{min-height:20px;font-size:12px;margin-top:9px;color:#b2deee}
 
+.setup-grid{display:flex;flex-wrap:wrap;gap:6px 14px;padding:0;list-style:none;margin:12px 0 0;font-size:12px;color:#c7dce9}
+.setup-grid li{border-inline-start:2px solid #68808b;padding-inline-start:8px}
+.setup-grid li[data-ready="true"]{border-color:#71d8b6;color:#b9ffe4}
 </style></head>
 <body><main>
- <header class="top"><a class="back" href="./">↩ الرجوع إلى المكتب الافتراضي</a><span class="top-status" id="connection">🔒 غرفة المدير • يجري التحقق من الجلسة</span></header>
+ <header class="top"><a class="back" href="./">↩ الرجوع إلى المكتب الافتراضي</a><button type="button" class="btn hidden" id="manager-signout">خروج</button><span class="top-status" id="connection">🔒 غرفة المدير • يجري التحقق من الجلسة</span></header>
  <section class="head"><div class="boss-avatar">👔</div><div><h1>مركز قيادة المدير العام</h1><p>تحادث مع المدير وأصدر تكليفات للأقسام الخمسة — كل أمر وحالته محفوظان في Supabase.</p></div></section>
  <section id="login" class="panel sign-in hidden"><h2>الدخول الآمن إلى مكتب المدير</h2><p>سجل دخولك بنفس حساب منظومة التوظيف. لا تُدخل كلمة مرورك في المحادثة.</p><form id="login-form"><label for="email">البريد الإلكتروني</label><input id="email" required type="email" autocomplete="email"><label for="password">كلمة المرور</label><input id="password" required type="password" autocomplete="current-password"><button class="btn primary" type="submit" id="login-submit">تسجيل الدخول</button></form><p id="login-feedback"></p></section>
  <section id="workspace" class="hidden">
@@ -39,36 +42,43 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
   </div>
   <section class="panel outlook-panel" id="outlook-panel">
   <div class="panel-h">
-   <div><h2>📨 Outlook التلقائي — V3</h2><small>محرك إرسال مستقل كل 5 دقائق بعد التفويض</small></div>
+   <div><h2>📨 Outlook والسيرة الذاتية</h2><small>إرسال الطلبات المعتمدة ومتابعة الردود بعد الربط</small></div>
    <span class="status-pill" id="outlook-overall">جار فحص الربط...</span>
   </div>
   <div class="outlook-main">
    <div class="outlook-status">
-    <span class="status-pill" id="outlook-connected">Microsoft Graph: غير متصل</span>
-    <span class="status-pill" id="outlook-cv">السيرة: غير مرفوعة</span>
+    <span class="status-pill" id="outlook-connected">Outlook: جار فحص الحالة</span>
+    <span class="status-pill" id="outlook-cv">السيرة: جار فحص الحالة</span>
     <span class="status-pill" id="outlook-auto">الإرسال التلقائي: متوقف</span>
     <span class="status-pill" id="outlook-queued">الطابور: —</span>
    </div>
+   <ul class="setup-grid" aria-label="خطوات تفعيل Outlook">
+    <li id="step-microsoft">١. إعداد Entra</li><li id="step-account">٢. ربط حساب Outlook</li>
+    <li id="step-resume">٣. رفع السيرة PDF</li><li id="step-sending">٤. تفعيل إرسال الطلبات</li>
+   </ul>
    <div class="outlook-btns">
-    <button type="button" class="btn" id="outlook-link">🔗 ربط Outlook</button><button type="button" class="btn" id="outlook-setup-open">⚙ إعداد ربط Microsoft</button>
-    <button type="button" class="btn" id="outlook-prepare">📋 تجهيز طلبات البريد</button>
+    <button type="button" class="btn" id="outlook-link" disabled>🔗 ربط Outlook</button><button type="button" class="btn" id="outlook-setup-open">⚙ إعداد ربط Microsoft</button>
+    <button type="button" class="btn" id="outlook-prepare" disabled>📋 تجهيز طلبات البريد</button>
     <button type="button" class="btn primary" id="outlook-enable" disabled>▶ تشغيل الإرسال التلقائي</button>
-    <button type="button" class="btn" id="outlook-disable">⏸ إيقاف مؤقت</button>
-    <button type="button" class="btn" id="outlook-disconnect">فصل Microsoft Graph</button>
+    <button type="button" class="btn" id="outlook-disable" disabled>⏸ إيقاف مؤقت</button>
+    <button type="button" class="btn" id="outlook-disconnect" disabled>فصل Microsoft Graph</button>
    </div>
    <div class="outlook-resume"><label for="outlook-pdf"><b>ملف السيرة الخاص (PDF، حتى 3 MB):</b></label>
      <input type="file" id="outlook-pdf" accept=".pdf,application/pdf" aria-label="رفع السيرة الذاتية الخاصة">
      <button type="button" class="btn" id="outlook-upload">⬆ رفع السيرة المختارة</button><span id="outlook-file-hint" aria-live="polite" style="color:#d0e9f8">اختر الملف، ثم اضغط رفع السيرة</span>
    </div>
-   <div id="outlook-feedback" aria-live="polite">اتصال Outlook داخل ChatGPT منفصل عن تفويض Microsoft Graph لهذا الخادم.</div>
+   <div id="outlook-guidance" class="outlook-help" aria-live="polite">جار التحقق من ربط Outlook والسيرة…</div><div id="outlook-feedback" aria-live="polite"></div>
    <details class="outlook-help" id="outlook-setup">
     <summary>إعداد Microsoft Graph لأول مرة (يلزم مرة واحدة)</summary>
     <p>أنشئ تطبيقًا في <a href="https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank" rel="noopener noreferrer"><u>Microsoft Entra — App registrations</u></a> يدعم الحسابات الشخصية من Microsoft. أضف منصة <b>Web</b> وعنوان العودة الآمن التالي:</p>
     <p><code>https://jclycoagtotikxskgkju.supabase.co/functions/v1/job-outlook-connect</code></p>
     <p>امنح صلاحيات Microsoft Graph المفوضة: <code>Mail.Send</code> و <code>Mail.ReadBasic</code> و <code>User.Read</code> و <code>offline_access</code>. ضع معرّف التطبيق <code>OUTLOOK_GRAPH_CLIENT_ID</code> وسر التطبيق <code>OUTLOOK_GRAPH_CLIENT_SECRET</code> داخل <a href="https://supabase.com/dashboard/project/jclycoagtotikxskgkju/functions/secrets" target="_blank" rel="noopener noreferrer"><u>Supabase Edge Function Secrets</u></a>، ولا تضعها في GitHub أو هذه المحادثة.</p>
-    <p>بعد حفظ الإعدادات، حدّث الصفحة، ثم اربط حساب Outlook وارفع نسخة PDF من سيرتك وفعّل التشغيل. لا تُرسل المنظومة أي طلب قبل إتمام هذه الخطوات.</p>
+    <p>انسخ قيمة السر من خانة <b>Value</b>. بعد حفظ الإعدادات حدّث الصفحة واضغط «ربط Outlook» واختر البريد المعتمد في المنظومة. سيظهر لك متى يصبح زر الإرسال متاحًا.</p>
    </details>
-   <div class="outlook-queue" id="outlook-queue-list"><div class="outlook-queue-item">لا توجد رسائل في طابور Outlook حاليًا.</div></div>
+   <div class="outlook-queue" id="outlook-queue-list"><div class="outlook-queue-item">جار فحص الطابور…</div></div>
+   <div class="outlook-help" id="outlook-followup">تظهر آخر متابعة هنا بعد ربط Outlook.</div>
+   <details class="outlook-help"><summary>ردود الشركات المسجلة</summary><ul id="outlook-replies"><li>جار تحميل السجل…</li></ul></details>
+   <div class="outlook-help" id="portal-ready"></div>
   </div>
  </section>
 
@@ -94,21 +104,18 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
   <p class="footnote">«تم إرسال التكليف» لا تعني أن طلب التوظيف أُرسل. البحث المباشر يمكنه فحص مصادر جديدة فورًا إذا لم تُفحص مؤخرًا؛ أما التدقيق والتقديم والمتابعة فتعالجها جولاتها المجدولة. لا توقيع عقود أو ردود على مسؤولي التوظيف دون مراجعتك.</p>
  </section>
 </main>
+<script src="./auth.js?v=20261110"></script>
 <script>
 (function(){"use strict";
-const P="https://jclycoagtotikxskgkju.supabase.co",KEY="sb_publishable_zHB_lJ-kSGkVnU4F-9JcJA_OHPNCwlB",STORE="job-office-manager-session-v1";
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const auth=window.JobOfficeAuth;
+const P=auth.project,request=auth.request,headers=auth.headers;
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
 const clean=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt=t=>t?new Intl.DateTimeFormat("ar-SA",{timeZone:"Asia/Riyadh",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(t)):"—";
 const N=["manager","research","screening","applying","followup"],name={manager:"المدير العام",research:"موظف البحث",screening:"موظف التدقيق",applying:"موظف التقديم",followup:"موظف المتابعة"},
 icons={manager:"👔",research:"🔎",screening:"🛡️",applying:"📨",followup:"📬"};
 const statusNames={queued:"بانتظار القسم",running:"جارٍ التنفيذ",completed:"اكتمل الأمر",failed:"تعثر",cancelled:"أُلغي"};
-let session=null,ws=null,target="manager",busy=false,messages=[],commands=[],runs=[];
-try{session=JSON.parse(localStorage.getItem(STORE)||"null")}catch{}
-function save(s){session=s;try{s?localStorage.setItem(STORE,JSON.stringify(s)):localStorage.removeItem(STORE)}catch{}}
-async function request(u,o={}){const r=await fetch(u,o);let v;try{v=await r.json()}catch{v={}}if(!r.ok)throw Error(v.error_description||v.error||v.message||"خطأ اتصال "+r.status);return v}
-async function valid(){if(!session)return false;const exp=Number(session.expires_at||0);if(exp>Date.now()/1000+60)return true;if(!session.refresh_token){save(null);return false}try{const v=await request(P+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:session.refresh_token})});v.expires_at=Math.floor(Date.now()/1000)+v.expires_in;save(v);return true}catch{save(null);return false}}
-const headers=()=>({"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Accept":"application/json"});
+let ws=null,target="manager",busy=false,messages=[],commands=[],runs=[],loading;
 async function rows(table,q){return request(P+"/rest/v1/"+table+"?"+q,{headers:headers()})}
 async function control(body){return request(P+"/functions/v1/job-manager-control",{method:"POST",headers:{...headers(),"Content-Type":"application/json"},body:JSON.stringify(body)})}
 function targetSet(section){target=N.includes(section)?section:"manager";$("#chat-target-label").textContent="الجهة المستقبلة: "+name[target];renderStaff()}
@@ -132,10 +139,10 @@ function renderStaff(){
  const box=$("#operations-health");if(!box)return;
  if(inactive.length){
   box.style.borderColor="#ac7250";box.style.background="#30261d";
-  box.textContent="⚠️ تشغيل جزئي: البحث عبر المصادر الرسمية مستمر، لكن "+inactive.map(s=>name[s]).join("، ")+" ليس له تشغيل مكتمل حديث ومثبت. أوامر المدير تُعالج كل 3 دقائق، وقد يظهر التعذر عند غياب اتصال Outlook أو عامل التقديم.";
+  box.textContent="التشغيل جزئي. الأقسام التالية بانتظار جولة مكتملة أو تحتاج متابعة: "+inactive.map(s=>name[s]).join("، ")+". يعالج الخادم أوامر المدير كل 3 دقائق.";
  }else{
   box.style.borderColor="#428b77";box.style.background="#17392f";
-  box.textContent="✅ توجد جولات حديثة مسجلة لكل الأقسام؛ حالة تشغيل الوظائف لا تعني أن جميع الموظفين يعملون طوال الوقت.";
+  box.textContent="✅ توجد جولات حديثة مسجلة لكل الأقسام.";
  }
 }
 function renderChat(){
@@ -148,25 +155,38 @@ function renderChat(){
  $("#tasks").innerHTML=commands.length?commands.slice(0,14).map(o=>'<div class="task"><b>'+clean(name[o.target_section]||o.target_section)+" · "+clean(statusNames[o.status]||o.status)+'</b><small>'+clean(fmt(o.created_at))+'</small><div>'+clean(o.instruction)+'</div>'+(o.last_error?'<small style="color:#ffb5aa">'+clean(o.last_error)+'</small>':"")+"</div>").join(""):"لا توجد أوامر مسجلة حتى الآن.";
  $("#m-commands").textContent=commands.filter(x=>x.status==="queued"||x.status==="running").length;
 }
-async function load(){
- if(!await valid()){showLogin();return}
+function load(){
+ if(!loading)loading=loadWorkspace().finally(()=>{loading=undefined;});
+ return loading;
+}
+async function loadWorkspace(){
+ if(!await auth.valid()){showLogin();return;}
  if(!ws){const a=await rows("job_workspaces","select=id&limit=1");if(!a.length)throw Error("لم يُربط حساب المدير بمساحة العمل");ws=a[0].id}
  const w="workspace_id=eq."+encodeURIComponent(ws);
- const [a,b,c,d,e,f]=await Promise.all([
+ const [a,b,c,d,e,f,replies]=await Promise.all([
   rows("job_leads","select=id,status&"+w+"&limit=700"),
   rows("job_reviews","select=job_id&"+w+"&limit=700"),
   rows("job_applications","select=id,status&"+w+"&limit=700"),
   rows("job_manager_messages","select=id,sender,target_section,body,created_at&"+w+"&order=created_at.desc&limit=100"),
   rows("job_manager_commands","select=id,action,target_section,status,instruction,last_error,created_at&"+w+"&order=created_at.desc&limit=100"),
-  rows("job_workflow_runs","select=section,status,started_at&"+w+"&order=started_at.desc&limit=80")
+  rows("job_workflow_runs","select=section,status,started_at&"+w+"&order=started_at.desc&limit=80"),
+  rows("job_messages","select=subject,sender_or_recipient,occurred_at&"+w+"&channel=eq.email&direction=eq.incoming&application_id=not.is.null&order=occurred_at.desc&limit=10")
  ]);
+ if(!auth.session)return showLogin();
  messages=d;commands=e;runs=f;
  $("#m-leads").textContent=a.length;$("#m-reviewed").textContent=b.length;
  const ids=new Set(b.map(x=>x.job_id));$("#m-pending").textContent=a.filter(x=>!ids.has(x.id)).length;
  $("#m-sent").textContent=c.filter(x=>x.status==="submitted").length;
  $("#connection").textContent="🔒 متصل بالبيانات الحقيقية • آخر تحديث "+fmt(new Date().toISOString());
- $("#login").classList.add("hidden");$("#workspace").classList.remove("hidden");
- renderStaff();renderChat();refreshOutlook().catch(e=>{$("#outlook-feedback").textContent="تعذر تحديث Outlook: "+e.message;});
+ $("#login").classList.add("hidden");$("#workspace").classList.remove("hidden");$("#manager-signout").classList.remove("hidden");
+ $("#chat-target-label").textContent="الجهة المستقبلة: "+name[target];
+ $("#outlook-replies").innerHTML=replies.length?replies.map(reply=>
+  "<li>"+clean(reply.subject||"رد على تقديم")+" · "+clean(reply.sender_or_recipient)+" · "+clean(fmt(reply.occurred_at))+"</li>"
+ ).join(""):"<li>لا توجد ردود مرتبطة بطلبات في السجل حتى الآن.</li>";
+ renderStaff();renderChat();
+ if(!outlookBusy)await refreshOutlook().catch(error=>{
+  $("#outlook-guidance").textContent="تعذر تحديث حالة Outlook. "+error.message;
+ });
 }
 
 let outlookBusy=false,outlookState=null;
@@ -178,39 +198,77 @@ async function outlookControl(action){
 function outStatus(s,ready,id){
  const el=$(id);el.textContent=s;el.classList.toggle("ready",!!ready);el.classList.toggle("waiting",!ready);
 }
-async function refreshOutlook(){
- if(!ws||!session||!await valid())return;
- const status=await outlookControl("status");outlookState=status;
- outStatus("Graph: "+(status.connected?"متصل "+status.account:"غير متصل"),status.connected,"#outlook-connected");
+function outlookButtons(){
+ const status=outlookState;
+ $("#outlook-link").disabled=outlookBusy||!status?.configured;
+ $("#outlook-prepare").disabled=outlookBusy||!status;
+ $("#outlook-enable").disabled=outlookBusy||!status?.configured||!status.connected||!status.resume_uploaded||status.auto_send_enabled;
+ $("#outlook-disable").disabled=outlookBusy||!status?.auto_send_enabled;
+ $("#outlook-disconnect").disabled=outlookBusy||!status?.account;
+}
+function renderOutlook(status){
+ outlookState=status;
+ const needsAuth=status.connection_status==="reauth_required";
+ const canSend=status.configured&&status.connected&&status.resume_uploaded;
+ const sending=canSend&&status.auto_send_enabled;
+ const state=!status.configured?["بانتظار إعداد Entra","أضف معرّف تطبيق Microsoft وسرّه في Supabase، ثم حدّث الصفحة."]:
+  needsAuth?["يلزم تجديد تفويض Outlook","اضغط «إعادة ربط Outlook» وجدّد التفويض بحسابك المعتمد."]:
+  !status.connected?["بانتظار ربط Outlook","اضغط «ربط Outlook» ووافق من حساب Microsoft المعتمد."]:
+  !status.resume_uploaded?["السيرة مطلوبة","ارفع سيرتك PDF من هذا القسم."]:
+  !sending?["جاهز للتفعيل","إذا أردت إرسال طلبات البريد المعتمدة تلقائيًا، اضغط «تشغيل الإرسال التلقائي»."]:
+  ["الإرسال مفعّل","يفحص العامل الطابور دوريًا ويسجّل الإرسال بعد ظهوره في عناصر Outlook المرسلة."];
+ const counts=status.queue||{};
+ const waiting=(counts.queued||0)+(counts.claimed||0)+(counts.pending_verification||0);
+ outStatus(state[0],canSend,"#outlook-overall");
+ outStatus("Outlook: "+(status.connected?"متصل · "+status.account:needsAuth?"التفويض يحتاج تجديدًا":"غير متصل"),status.connected,"#outlook-connected");
  outStatus("السيرة PDF: "+(status.resume_uploaded?"مرفوعة":"غير مرفوعة"),status.resume_uploaded,"#outlook-cv");
- outStatus("الإرسال: "+(status.auto_send_enabled?"مفعّل":"متوقف – يتطلب Microsoft Graph"),status.auto_send_enabled,"#outlook-auto");
+ outStatus("الإرسال التلقائي: "+(sending?"مفعّل":"متوقف"),sending,"#outlook-auto");
+ outStatus("الطابور: "+waiting+" قيد الإرسال أو التحقق",waiting===0,"#outlook-queued");
+ $("#step-microsoft").dataset.ready=String(!!status.configured);
+ $("#step-account").dataset.ready=String(!!status.connected);
+ $("#step-resume").dataset.ready=String(!!status.resume_uploaded);
+ $("#step-sending").dataset.ready=String(!!sending);
+ $("#outlook-link").textContent=status.configured?"🔗 "+(status.connected||needsAuth?"إعادة ربط Outlook":"ربط Outlook"):"ربط Outlook";
+ $("#outlook-guidance").textContent=state[1];
+ if(!status.configured)$("#outlook-setup").open=true;
+ const last=status.followup;
+ $("#outlook-followup").textContent=last?"آخر متابعة للبريد · "+fmt(last.completed_at||last.started_at)+" · "+(last.status==="failed"?"تعذر فحص البريد":(last.status==="partial"?"فحص جزئي. ":"")+"ردود جديدة مسجلة "+last.found_count):"تظهر آخر متابعة هنا بعد فحص الردود المرتبطة بطلباتك.";
+ const portal=$("#portal-ready");
+ portal.replaceChildren();
+ if(status.portal_ready>0){
+  const link=document.createElement("a");
+  link.href="./?filter=approved#applications";link.textContent="افتح الوظائف المعتمدة";
+  portal.append(status.portal_ready+" وظائف معتمدة تتطلب فتح بوابة الشركة. ",link);
+ }
+ outlookButtons();
+}
+async function refreshOutlook(){
+ if(!ws||!await auth.valid())return;
+ const status=await outlookControl("status");
+ renderOutlook(status);
  const entries=await rows("job_outlook_queue","select=id,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30");
- const queued=(entries||[]).filter(x=>x.status==="queued").length;
- outStatus("الطابور: "+queued+" بانتظار الإرسال",queued===0,"#outlook-queued");
- $("#outlook-overall").textContent=status.auto_send_enabled?"نشط ومستقل":"Outlook Graph غير جاهز للإرسال";
- $("#outlook-overall").classList.toggle("ready",!!status.auto_send_enabled);
- $("#outlook-enable").disabled=!status.configured||!status.connected||!status.resume_uploaded||status.auto_send_enabled;
- $("#outlook-link").disabled=!status.configured;
- $("#outlook-link").textContent=status.configured?"🔗 "+(status.connected?"إعادة ربط Outlook":"ربط Outlook"):"يتطلب إعداد Microsoft Graph";
- $("#outlook-queue-list").innerHTML=(entries?.length?entries.map(x=>
+ $("#outlook-queue-list").innerHTML=entries.length?entries.map(x=>
   '<div class="outlook-queue-item"><div><b>'+clean(x.subject)+'</b><div>'+clean(x.recipient_email)+'</div>'+(x.last_error?'<small style="color:#ffc2ad">'+clean(x.last_error)+'</small>':"")+'</div><span>'+clean(({queued:"بانتظار الإرسال",claimed:"تجهيز",pending_verification:"بانتظار التحقق",sent:"أُرسل وتم التحقق",manual_review:"يحتاج مراجعة",blocked:"ممنوع",failed:"تعثر",cancelled:"ملغي"})[x.status]||x.status)+'</span></div>'
- ).join(""):'<div class="outlook-queue-item">لا توجد طلبات بريد جديدة معتمدة. الطلبات المرسلة سابقًا محفوظة في سجل التقديمات.</div>');
- if(!status.configured){$("#outlook-feedback").textContent="تسجيل الدخول يعمل، لكن الإرسال الآلي يحتاج إعداد Microsoft Graph مرة واحدة. يمكنك رفع السيرة الآن، ثم اضغط «⚙ إعداد ربط Microsoft» لعرض الخطوات.";$("#outlook-setup-open").disabled=false;}
+ ).join(""):'<div class="outlook-queue-item">الطابور فارغ. تجد الطلبات السابقة في سجل التقديمات.</div>';
 }
 async function runOutlook(action){
- if(outlookBusy)return;if(!await valid())return showLogin();
- if(action==="enable"&&!confirm("هل تسمح للمحرك بإرسال الوظائف المناسبة المعتمدة عبر Outlook تلقائيًا مع السيرة المرفوعة، دون سقف يومي، بعد منع التكرار والتحقق؟"))return;
- if(action==="disconnect"&&!confirm("فصل Microsoft Graph وإيقاف الإرسال الآلي؟ لن تُحذف طلبات التوظيف السابقة."))return;
- outlookBusy=true;
- const el=$("#outlook-feedback");el.textContent="جار معالجة طلب Outlook...";
- for(const b of $$(".outlook-btns button"))b.disabled=true;
+ if(outlookBusy)return;
+ const el=$("#outlook-feedback");
  try{
+  if(!await auth.valid())return showLogin();
+  if(action==="enable"&&!confirm("تفعيل إرسال الطلبات المعتمدة عبر Outlook وإرفاق السيرة المحفوظة؟"))return;
+  if(action==="disconnect"&&!confirm("فصل حساب Outlook وإيقاف الإرسال التلقائي؟"))return;
+  outlookBusy=true;outlookButtons();el.textContent="جار معالجة طلب Outlook…";
   const ans=await outlookControl(action);
-  if(action==="begin"&&ans.url){location.assign(ans.url);return;}
-  el.textContent=action==="enqueue"?"تم تجهيز "+(ans.prepared||0)+" طلب جديد بحسب الشروط.":action==="enable"?"تم اعتماد الإرسال الآلي بعد ربط الحساب والسيرة.":action==="disable"?"أوقفت الإرسال الآلي.":action==="disconnect"?"تم فصل الاتصال بأمان.":"تم تحديث الحالة.";
-  await refreshOutlook();
- }catch(e){el.textContent="تعذر تنفيذ العملية: "+e.message;}
- finally{outlookBusy=false;if(outlookState)$("#outlook-link").disabled=!outlookState.configured;$("#outlook-disable").disabled=false;$("#outlook-disconnect").disabled=false;$("#outlook-prepare").disabled=false;}
+  if(action==="begin"){
+   const url=new URL(ans.url);
+   if(url.origin!=="https://login.microsoftonline.com")throw Error("عنوان تسجيل الدخول غير متوقع.");
+   location.assign(url);return;
+  }
+  el.textContent=action==="enqueue"?"تجهز "+(ans.prepared||0)+" طلب بريد جديد بحسب الشروط.":action==="enable"?"تم تفعيل الإرسال التلقائي.":action==="disable"?"توقف الإرسال التلقائي.":"تم فصل حساب Outlook.";
+  await refreshOutlook().catch(error=>{$("#outlook-guidance").textContent="تعذر تحديث الحالة. "+error.message;});
+ }catch(error){el.textContent="تعذر تنفيذ العملية. "+error.message;}
+ finally{outlookBusy=false;outlookButtons();}
 }
 $("#outlook-link").addEventListener("click",()=>runOutlook("begin"));
 $("#outlook-prepare").addEventListener("click",()=>runOutlook("enqueue"));
@@ -227,7 +285,6 @@ $("#outlook-pdf").addEventListener("change",()=>{
   :"لم يُختر ملف بعد.";
 });
 $("#outlook-upload").addEventListener("click",async()=>{
- if(!ws||!await valid())return showLogin();
  const file=$("#outlook-pdf").files?.[0];
  if(!file){$("#outlook-feedback").textContent="اختر ملف PDF أولًا.";return;}
  if(file.size>3000000||file.size<100||!(/\.pdf$/i.test(file.name)||file.type==="application/pdf")){
@@ -236,41 +293,80 @@ $("#outlook-upload").addEventListener("click",async()=>{
  const button=$("#outlook-upload");button.disabled=true;button.textContent="جار الرفع...";
  $("#outlook-feedback").textContent="جار رفع ملف السيرة إلى التخزين الخاص، لا تغلق الصفحة...";
  try{
+  if(!ws||!await auth.valid())return showLogin();
   const signature=await file.slice(0,4).text();
   if(signature!=="%PDF")throw Error("محتوى الملف ليس PDF صحيحًا.");
   const u=P+"/storage/v1/object/job-office-resumes/"+encodeURIComponent(ws)+"/resume.pdf";
-  await request(u,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/pdf","x-upsert":"true"},body:file});
+  await request(u,{method:"POST",headers:{...headers(),"Content-Type":"application/pdf","x-upsert":"true"},body:file});
   const confirmation=await outlookControl("status");
   if(!confirmation.resume_uploaded)throw Error("تم قبول الرفع لكن لم يؤكد الخادم وجود الملف. أعد تحديث الصفحة للتحقق.");
   $("#outlook-pdf").value="";
   $("#outlook-file-hint").textContent="✅ السيرة محفوظة في التخزين الخاص.";
-  await refreshOutlook();
-  $("#outlook-feedback").textContent="✅ تم رفع السيرة وحفظها في حسابك بنجاح. ربط Outlook Graph خطوة منفصلة للإرسال الآلي.";
+  renderOutlook(confirmation);
+  $("#outlook-feedback").textContent="✅ تم رفع السيرة والتحقق من حفظها في حسابك.";
  }catch(e){
   $("#outlook-feedback").textContent="❌ تعذر رفع PDF: "+e.message;
   $("#outlook-file-hint").textContent="لم يثبت رفع الملف. ما زال مختارًا ويمكنك إعادة المحاولة.";
  }finally{button.disabled=false;button.textContent="⬆ رفع السيرة المختارة";}
 });
 
-function showLogin(){$("#login").classList.remove("hidden");$("#workspace").classList.add("hidden");$("#connection").textContent="🔒 يتطلب تسجيل الدخول"}
+function showLogin(){
+ ws=null;outlookState=null;messages=[];commands=[];runs=[];
+ $("#login").classList.remove("hidden");$("#workspace").classList.add("hidden");
+ $("#manager-signout").classList.add("hidden");$("#connection").textContent="🔒 يتطلب تسجيل الدخول";
+}
+function loadError(error){
+ if(!auth.session)showLogin();
+ else if($("#workspace").classList.contains("hidden"))$("#login").classList.remove("hidden");
+ $("#connection").textContent="تعذر تحديث بيانات المنظومة";
+ const target=$("#workspace").classList.contains("hidden")?"#login-feedback":"#feedback";
+ $(target).textContent=error.message;
+}
+$("#manager-signout").addEventListener("click",()=>{auth.signOut();showLogin();});
 async function doAction(payload){
- if(busy)return;if(!await valid()){showLogin();return}
+ if(busy)return;
  busy=true;$("#feedback").textContent="جار تنفيذ الطلب والتحقق من النتيجة...";$("#send").disabled=true;$$("[data-command]").forEach(b=>b.disabled=true);
- try{const r=await control(payload);$("#message").value="";$("#feedback").textContent=r.reply||"تم تسجيل العملية";await load()}
+ try{if(!await auth.valid())return showLogin();const r=await control(payload);$("#message").value="";$("#feedback").textContent=r.reply||"تم تسجيل العملية";await load()}
  catch(e){$("#feedback").textContent="تعذر تنفيذ الأمر: "+e.message}
  finally{busy=false;$("#send").disabled=false;$$("[data-command]").forEach(b=>b.disabled=false)}
 }
 $("#send-form").addEventListener("submit",e=>{e.preventDefault();const t=$("#message").value.trim();if(t)doAction({type:"message",text:t,target_section:target})});
 $("#message").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#send-form").requestSubmit()}});
 $$("[data-command]").forEach(b=>b.addEventListener("click",()=>doAction({type:"command",action:b.dataset.command,target_section:target})));
-$("#refresh").addEventListener("click",()=>load().catch(e=>$("#feedback").textContent=e.message));
-$("#login-form").addEventListener("submit",async e=>{e.preventDefault();$("#login-submit").disabled=true;$("#login-feedback").textContent="جار التحقق...";
- try{const v=await request(P+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify({email:$("#email").value.trim(),password:$("#password").value})});
- v.expires_at=Math.floor(Date.now()/1000)+v.expires_in;save(v);$("#password").value="";await load();
- }catch(err){$("#login-feedback").textContent=err.message}finally{$("#login-submit").disabled=false}});
-const query=new URLSearchParams(location.search);if(N.includes(query.get("target")))target=query.get("target");if(query.get("outlook")==="connected")$("#outlook-feedback").textContent="تمت إعادة التوجيه من Microsoft. تحقق من حالة الاتصال أعلاه.";else if(query.has("outlook"))$("#outlook-feedback").textContent="تعذر إكمال ربط Microsoft: "+query.get("outlook");
-load().catch(e=>{$("#connection").textContent="تعذر تحميل البيانات";$("#feedback").textContent=e.message;showLogin()});
-setInterval(()=>{if(!document.hidden&&!busy&&ws)load().catch(()=>{})},20000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!busy)load().catch(()=>{})});
+$("#refresh").addEventListener("click",()=>load().catch(loadError));
+$("#login-form").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const button=$("#login-submit");if(button.disabled)return;
+ button.disabled=true;$("#login-feedback").textContent="جار التحقق…";
+ try{
+  await auth.signIn($("#email").value.trim(),$("#password").value);
+  $("#password").value="";await load();
+ }catch(error){loadError(error);}
+ finally{button.disabled=false;}
+});
+const query=new URLSearchParams(location.search);
+if(N.includes(query.get("target")))target=query.get("target");
+const outlookResult=query.get("outlook");
+if(outlookResult){
+ const notices={
+  connected:"تم ربط Outlook. تحقق من الحالة في الأعلى.",
+  consent_denied:"أُلغي تفويض Microsoft. اضغط «ربط Outlook» للمحاولة مجددًا.",
+  configuration_missing:"إعداد Entra غير مكتمل على الخادم.",
+  invalid_state:"انتهت صلاحية محاولة الربط. اضغط «ربط Outlook» مجددًا.",
+  account_mismatch:"اختر حساب Microsoft المطابق لبريدك المعتمد في المنظومة.",
+  invalid_client:"تحقق من معرّف التطبيق وقيمة Client Secret في إعدادات Supabase.",
+  expired_secret:"انتهت صلاحية Client Secret. أنشئ قيمة جديدة وحدّثها في Supabase.",
+  redirect_mismatch:"تحقق من عنوان العودة في Entra ضمن منصة Web.",
+  wrong_account_type:"تأكد أن تسجيل التطبيق في Entra يدعم حسابات Microsoft الشخصية.",
+  permissions_missing:"راجع صلاحيات Microsoft Graph المفوضة ثم اربط الحساب مجددًا.",
+  login_required:"سجّل الدخول إلى Microsoft، ثم ابدأ الربط مجددًا من هذه الصفحة.",
+ };
+ $("#outlook-feedback").textContent=notices[outlookResult]||"تعذر إكمال تفويض Microsoft. حاول الربط مجددًا بعد مراجعة الإعدادات.";
+ const url=new URL(location.href);url.searchParams.delete("outlook");history.replaceState(null,"",url);
+}
+load().catch(loadError);
+const refreshVisible=()=>{if(!document.hidden&&!busy&&auth.session)load().catch(loadError);};
+setInterval(refreshVisible,30000);
+document.addEventListener("visibilitychange",refreshVisible);
 })();
 </script></body></html>

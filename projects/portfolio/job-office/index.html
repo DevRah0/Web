@@ -49,13 +49,13 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
   <button class="navbtn" data-nav="events"><span>◷</span> سجل الأنشطة</button>
   <button class="navbtn" data-nav="settings"><span>⚙</span> الإعدادات</button>
  </nav>
- <div class="sidebar-foot"><strong><span class="dot"></span> حالة النظام</strong><p>خمسة أقسام تعمل كل ساعة، ومحرك مستقل يبحث في مصادر الشركات كل 10 دقائق.</p><p id="fast-status" style="color:#9cead2">مراقبة المصادر: بانتظار تسجيل الدخول</p></div>
+ <div class="sidebar-foot"><strong><span class="dot"></span> حالة النظام</strong><p>يعرض المكتب آخر جولة لكل قسم. يبحث المحرك في مصادر الشركات كل 10 دقائق.</p><p id="fast-status" style="color:#9cead2">مراقبة المصادر: بانتظار تسجيل الدخول</p></div>
 </aside>
 <main>
  <div class="topbar">
    <div><div class="eyebrow">JOB OPERATIONS HQ · V2.4</div><div class="rightmini"><span class="dot"></span><span id="top-caption">مركز مراقبة أقسام التوظيف</span></div></div>
    <div class="top-actions">
-     <a class="button primary" href="./manager.html" title="محادثة المدير وإدارة الموظفين">👔 كلم المدير</a> <button class="button" id="scan-now" title="يفحص المصادر التي حان موعدها">⌕ بحث الآن</button><button class="button" id="refresh">↻ تحديث</button>
+     <a class="button primary" href="./manager.html" title="محادثة المدير وإدارة الموظفين">👔 كلم المدير</a> <button class="button" id="scan-now" title="اطلب من المدير جولة بحث عاجلة">⌕ بحث الآن</button><button class="button" id="refresh">↻ تحديث</button>
      <button class="button primary" id="authbtn">الدخول للبيانات الفعلية</button>
      <div class="avatar-icon" title="المدير">م</div>
    </div>
@@ -102,13 +102,12 @@ main{min-width:0;padding:26px min(3.4vw,45px) 45px;max-width:1710px;width:100%;m
   <div style="color:#7898ad;font-size:11px;margin-top:14px">بعد إنشاء الحساب، فعّل البريد من الرسالة التي تصلك. لا تدخل كلمة مرورك في المحادثة.</div>
  </div>
 </div>
+<script src="./auth.js?v=20261110"></script>
 <script>
 (function(){
 "use strict";
-const PROJECT="https://jclycoagtotikxskgkju.supabase.co";
-const KEY="sb_publishable_zHB_lJ-kSGkVnU4F-9JcJA_OHPNCwlB";
-const LOCALKEY="job-office-manager-session-v1";
-const AUTH_REDIRECT="https://devrah0.github.io/Web/job-office/";
+const auth=window.JobOfficeAuth;
+const PROJECT=auth.project;
 const AGENTS=[
  {id:"research",area:"research",name:"باحث الوظائف",role:"قسم الاستكشاف",icon:"🔎",symbol:"⌕",desc:"يكتشف فرصًا جديدة في جدة ومكة والمدينة والطائف، ويتحقق من أنها ما زالت مفتوحة قبل إحالتها للتدقيق.",label1:"إعلانات",label2:"أنشطة",shirt:"#83b3f2",skin:"#cf9a7b",hair:"#182938"},
  {id:"manager",area:"manager",name:"المدير العام",role:"تنسيق المنظومة",icon:"👔",symbol:"♜",desc:"يراجع أداء الأقسام والتقديمات المؤكدة دون سقف يومي، وينبه إلى العوائق دون احتساب اكتشاف إعلان على أنه تقديم.",label1:"الجولات",label2:"مهام اليوم",shirt:"#88d9c3",skin:"#c68a67",hair:"#182835"},
@@ -127,12 +126,12 @@ const demoActivity=[
  {actor_section:"screening",event_type:"example",note:"تقييم متطلبات وظيفة افتراضية",occurred_at:new Date(Date.now()-8*60000).toISOString()},
  {actor_section:"applying",event_type:"example",note:"نموذج إرسال افتراضي - لم يُرسل أي طلب",occurred_at:new Date(Date.now()-14*60000).toISOString()}
 ];
-let selected="manager", view="demo", filter="all", session=null, workspaceId=null, liveLoadError=null, liveData={jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[],sources:[],scans:[]},syncedAt=null;
+let selected="manager", view="demo", filter="all", workspaceId=null, liveLoadError=null, liveData={jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[],sources:[],scans:[]},syncedAt=null;
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function fmt(t){if(!t)return "—";const d=new Date(t);return Number.isNaN(+d)?"—":new Intl.DateTimeFormat("ar-SA",{timeZone:"Asia/Riyadh",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(d);}
 function n(id,val){$("#"+id).textContent=String(val);}
-function current(){if(view==="demo")return {jobs:demoJobs,reviews:demoJobs.filter(j=>j.status==="approved").map(j=>({job_id:j.id,approved_to_apply:true})),applications:demoJobs.filter(j=>j.appStatus).map(j=>({job_id:j.id,status:j.appStatus})),messages:[],activities:demoActivity,runs:[],sources:[],scans:[]};return liveData;}
+function current(){if(view==="demo")return {jobs:demoJobs,reviews:demoJobs.filter(j=>j.status==="approved").map(j=>({job_id:j.id,approved_to_apply:true})),applications:demoJobs.filter(j=>j.appStatus).map(j=>({job_id:j.id,status:j.appStatus})),messages:[],activities:demoActivity,runs:[],sources:[],scans:[]};return view==="offline"?{jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[],sources:[],scans:[]}:liveData;}
 function statusInfo(j,a){if(a){const st=a.status||a.appStatus;if(st==="submitted")return ["تم التقديم","green"];if(st==="blocked")return ["متعثر","orange"];if(st==="interview")return ["مقابلة","blue"];if(st==="offer")return ["عرض عمل","green"];if(st==="rejected")return ["مرفوض","orange"];if(st==="draft")return ["مسودة","blue"];}return ({discovered:["مكتشفة","blue"],in_review:["قيد التدقيق","blue"],approved:["مناسبة","green"],rejected:["غير مناسبة","orange"],applying:["قيد التقديم","blue"],applied:["تم التقديم","green"],closed:["مغلقة","orange"]})[j.status]||["جديدة","blue"];}
 // A scheduled worker can be on duty without executing a task at this exact minute.
 function workerState(a,d,now,preview){
@@ -181,7 +180,7 @@ function renderTable(){
  const pending=j=>!reviewed.has(j.id)&&j.status==="discovered";
  const list=d.jobs.filter(j=>{const a=amap.get(j.id);if(filter==="submitted")return a&&a.status==="submitted";if(filter==="blocked")return a&&a.status==="blocked";if(filter==="approved")return j.status==="approved";if(filter==="email")return ["email","both"].includes(j.application_channel);if(filter==="pending")return pending(j);return true;})
  .sort((a,b)=>Number(pending(b))-Number(pending(a)) || Number(b.machine_priority??0)-Number(a.machine_priority??0) || new Date(b.created_at)-new Date(a.created_at));
- $("#jobs-body").innerHTML=list.length?list.map(j=>{const st=statusInfo(j,amap.get(j.id));const url=j.application_url||j.posting_url;const link=view==="demo"?"—":url&&/^https?:\/\//i.test(url)?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">فتح ↗</a>':"—";
+ $("#jobs-body").innerHTML=list.length?list.map(j=>{const st=statusInfo(j,amap.get(j.id));const url=j.application_url||j.posting_url;const link=view!=="live"?"—":url&&/^https:\/\//i.test(url)?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">فتح ↗</a>':"—";
  const rank=view==="live"&&j.machine_priority!=null?(pending(j)?"أولوية آلية "+safe(j.machine_priority):"تمت مراجعته"):"—";
  const route=view==="live"?(j.application_channel==="email"?"Outlook":j.application_channel==="portal"?"بوابة الشركة":j.application_channel==="both"?"Outlook / بوابة":"غير محددة"):"—";
  return '<tr><td>'+safe(j.company)+'</td><td class="titlecell">'+safe(j.job_title)+'</td><td>'+safe(j.city)+'</td><td><span class="state '+st[1]+'">'+st[0]+'</span></td><td>'+safe(route)+'</td><td>'+rank+'</td><td>'+link+'</td></tr>';}).join(""):'<tr><td class="empty" colspan="7">لا توجد فرص في هذا التصنيف حاليًا.</td></tr>';
@@ -193,18 +192,19 @@ function renderTimeline(){
 function render(){
  const d=current(),approval=d.reviews.filter(r=>r.approved_to_apply).length,submit=d.applications.filter(a=>a.status==="submitted").length;
  const need=d.applications.filter(a=>a.status==="blocked").length+d.messages.filter(m=>m.requires_user_action).length;
- n("metric-jobs",d.jobs.length);n("metric-screen",approval);n("metric-submit",submit);n("metric-follow",need);
- n("nav-apps",d.applications.length);n("top-caption",view==="demo"?"المعاينة التفاعلية · ليست بيانات حقيقية":"عرض السجل الفعلي المحمي");
+ n("metric-jobs",view==="offline"?"—":d.jobs.length);n("metric-screen",view==="offline"?"—":approval);
+ n("metric-submit",view==="offline"?"—":submit);n("metric-follow",view==="offline"?"—":need);
+ n("nav-apps",d.applications.length);n("top-caption",view==="demo"?"المعاينة التفاعلية · بيانات توضيحية":view==="live"?"عرض السجل الفعلي المحمي":"السجل الفعلي غير متاح الآن");
  const sources=d.sources||[],scans=d.scans||[];
  const enabled=sources.filter(x=>x.is_enabled).length,down=sources.filter(x=>x.is_enabled&&x.last_status==="error").length;
  const backlog=d.jobs.filter(j=>!d.reviews.some(r=>r.job_id===j.id)).length;
  n("fast-info",view==="demo"?"المعاينة منفصلة عن النتائج الفعلية.":enabled+" مصادر نشطة، "+backlog+" وظائف بانتظار التدقيق، وآخر فحص "+(scans.length?fmt(scans[0].started_at):"لم يُسجل بعد")+(down?" • "+down+" مصادر متعثرة":""));
  n("fast-status",view==="demo"?"سجل الدخول لعرض عدد المصادر.":enabled+" مصادر فعالة • "+backlog+" بانتظار التدقيق • تحديث دوري");
  const b=$("#mode-banner");b.classList.toggle("live",view==="live");
- b.innerHTML=liveLoadError?"<b>تعذر تحميل البيانات الفعلية:</b> "+safe(liveLoadError)+" — المعروض الآن للمعاينة فقط. اضغط إعادة المحاولة.":view==="demo"?"<b>عرض تجريبي:</b> الأسماء والأرقام وحركة العمل تمثيلية بالكامل، ولا توجد تقديمات مرسلة من هذه المعاينة.":"<b>الحالة الفعلية:</b> «مداوم» تعني أن القسم أتم جولة خلال آخر ساعتين. «ينفذ جولة» تعني أن هناك مهمة بدأت ولم تكتمل بعد. يتم تحديث السجلات دوريًا.";
+ b.innerHTML=liveLoadError&&view!=="demo"?"<b>تعذر تحديث البيانات الفعلية.</b> "+safe(liveLoadError)+(view==="live"?" المعروض من آخر تحديث ناجح.":" اضغط إعادة المحاولة."):view==="demo"?"<b>عرض تجريبي:</b> الأسماء والأرقام وحركة العمل تمثيلية بالكامل، ولا توجد تقديمات مرسلة من هذه المعاينة.":"<b>الحالة الفعلية:</b> «مداوم» تعني أن القسم أتم جولة خلال آخر ساعتين. «ينفذ جولة» تعني أن هناك مهمة بدأت ولم تكتمل بعد. يتم تحديث السجلات دوريًا.";
  $("#demo-mode").classList.toggle("selected",view==="demo");$("#live-mode").classList.toggle("selected",view==="live");
- n("office-status",view==="demo"?"تجريبي / محاكاة":"متصل بقاعدة البيانات");
- n("lastsync",view==="demo"?"بيانات عرض":fmt(syncedAt));
+ n("office-status",view==="demo"?"تجريبي / محاكاة":view==="offline"?"تعذر الاتصال":"متصل بقاعدة البيانات");
+ n("lastsync",view==="demo"?"بيانات عرض":view==="offline"?"—":fmt(syncedAt));
  renderFloor();renderInspector();renderTable();renderTimeline();
 }
 function clock(){
@@ -212,30 +212,17 @@ function clock(){
  n("clock","الرياض · "+t);const e=$("#lounge-clock");if(e)e.textContent=t;
 }
 function authMessage(msg,error=false){const e=$("#auth-msg");e.style.display="block";e.style.background=error?"#43252a":"#1a3a3b";e.style.color=error?"#ffb4b8":"#b6f9ec";e.textContent=msg;}
-function apiHeaders(token){return {"apikey":KEY,"Authorization":"Bearer "+(token||KEY),"Accept":"application/json"};}
-async function jsonRequest(url,opts={}){
- const r=await fetch(url,opts);let body={};try{body=await r.json();}catch(e){}
- if(!r.ok){const err=new Error(body.msg||body.message||body.error_description||body.error||"تعذر الاتصال بالخادم");err.status=r.status;throw err;}
- return body;
-}
-async function authRequest(path,data){
- return jsonRequest(PROJECT+"/auth/v1/"+path,{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify(data)});
-}
-function saveSession(s){session=s;try{if(s)localStorage.setItem(LOCALKEY,JSON.stringify(s));else localStorage.removeItem(LOCALKEY);}catch(e){}}
-async function getValidSession(){
- if(!session)return false;
- const exp=session.expires_at||(Date.now()/1000+Number(session.expires_in||0));
- if(exp > Date.now()/1000+60)return true;
- if(!session.refresh_token){saveSession(null);return false;}
- try{const res=await authRequest("token?grant_type=refresh_token",{refresh_token:session.refresh_token});res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);return true;}
- catch(e){saveSession(null);return false;}
-}
 async function getRows(table,query){
- const h=apiHeaders(session.access_token);
- return jsonRequest(PROJECT+"/rest/v1/"+table+"?"+query,{headers:h});
+ return auth.request(PROJECT+"/rest/v1/"+table+"?"+query,{headers:auth.headers()});
+}
+function liveError(error){
+ liveLoadError=error.message;
+ if(!auth.session||view!=="live")view="offline";
+ $("#authbtn").textContent=auth.session?"تعذر الاتصال • إعادة المحاولة":"الدخول للبيانات الفعلية";
+ render();
 }
 async function loadLive(){
- if(!await getValidSession()){showModal();throw new Error("تسجيل الدخول مطلوب لعرض البيانات الحقيقية.");}
+ if(!await auth.valid())throw new Error("تسجيل الدخول مطلوب لعرض البيانات الفعلية.");
  const ws=await getRows("job_workspaces","select=id,name&limit=1");
  if(!ws.length){throw new Error("تم تسجيل الدخول لكن لم يُربط هذا الحساب بمساحة المدير. تأكد من تفعيل البريد المعتمد.");}
  workspaceId=ws[0].id;
@@ -250,39 +237,65 @@ async function loadLive(){
  getRows("job_search_sources","select=id,company,is_enabled,last_status,last_checked_at,last_inserted,last_matched&"+w+"&limit=30"),
  getRows("job_search_scans","select=started_at,status,new_leads,company&"+w+"&order=started_at.desc&limit=30")
  ]);
+ if(!auth.session)return;
  liveData={jobs,reviews,applications,messages,activities,runs,sources,scans};syncedAt=new Date();view="live";liveLoadError=null;$("#authbtn").textContent="الحساب متصل • خروج";render();
 }
 function showModal(){ $("#auth-modal").classList.add("open"); }
 function hideModal(){ $("#auth-modal").classList.remove("open"); }
 $("#close-modal").addEventListener("click",hideModal);
 $("#auth-modal").addEventListener("click",e=>{if(e.target.id==="auth-modal")hideModal();});
-$("#authbtn").addEventListener("click",async()=>{if(session&&liveLoadError){$("#authbtn").textContent="جار إعادة الاتصال...";try{await loadLive();}catch(e){liveLoadError=e.message;$("#authbtn").textContent="تعذر الاتصال • إعادة المحاولة";render();}return;}if(session){if(confirm("هل تريد تسجيل الخروج من بيانات المدير؟")){saveSession(null);liveLoadError=null;view="demo";workspaceId=null;liveData={jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[],sources:[],scans:[]};$("#authbtn").textContent="الدخول للبيانات الفعلية";render();}}else showModal();});
+$("#authbtn").addEventListener("click",async()=>{
+ if(!auth.session){showModal();return;}
+ if(liveLoadError){try{await loadLive();}catch(error){liveError(error);}return;}
+ if(!confirm("هل تريد تسجيل الخروج من حساب المدير؟"))return;
+ auth.signOut();liveLoadError=null;view="demo";workspaceId=null;syncedAt=null;
+ liveData={jobs:[],reviews:[],applications:[],messages:[],activities:[],runs:[],sources:[],scans:[]};
+ $("#authbtn").textContent="الدخول للبيانات الفعلية";render();
+});
 $("#login-form").addEventListener("submit",async e=>{
- e.preventDefault();n("login-btn","جار التحقق...");
- try{const email=$("#email").value.trim(),password=$("#password").value;const res=await authRequest("token?grant_type=password",{email,password});res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);authMessage("تم تسجيل الدخول. جارٍ تحميل السجل.");await loadLive();hideModal();}catch(err){authMessage(err.message,true);if(session){liveLoadError=err.message;view="demo";$("#authbtn").textContent="تعذر الاتصال • إعادة المحاولة";render();}}finally{n("login-btn","تسجيل الدخول");}
+ e.preventDefault();
+ const button=$("#login-btn");if(button.disabled)return;
+ button.disabled=true;n("login-btn","جار التحقق...");
+ try{
+  await auth.signIn($("#email").value.trim(),$("#password").value);
+  $("#password").value="";await loadLive();hideModal();
+ }catch(error){authMessage(error.message,true);if(auth.session)liveError(error);}
+ finally{button.disabled=false;n("login-btn","تسجيل الدخول");}
 });
 $("#signup-btn").addEventListener("click",async()=>{
- const email=$("#email").value.trim(),password=$("#password").value;if(!email||password.length<8){authMessage("أدخل بريدًا صحيحًا وكلمة مرور لا تقل عن 8 أحرف.",true);return;}
- $("#signup-btn").disabled=true;
- try{const res=await authRequest("signup?redirect_to="+encodeURIComponent(AUTH_REDIRECT),{email,password});if(res.access_token){res.expires_at=Math.floor(Date.now()/1000)+res.expires_in;saveSession(res);await loadLive();hideModal();}else authMessage("تم إرسال رسالة التفعيل إذا كان البريد مسموحًا. افتح بريدك وفعّل الحساب ثم ارجع لتسجيل الدخول.");}
- catch(err){authMessage(err.message,true);}finally{$("#signup-btn").disabled=false;}
+ if(!$("#login-form").reportValidity())return;
+ const button=$("#signup-btn");button.disabled=true;
+ try{
+  if(await auth.signUp($("#email").value.trim(),$("#password").value)){
+   $("#password").value="";await loadLive();hideModal();
+  }else authMessage("افتح رسالة التفعيل من Supabase، ثم ارجع إلى هذه الصفحة لتسجيل الدخول.");
+ }catch(error){authMessage(error.message,true);if(auth.session)liveError(error);}
+ finally{button.disabled=false;}
 });
 $("#demo-mode").addEventListener("click",()=>{view="demo";render();});
-$("#live-mode").addEventListener("click",async()=>{if(!session){showModal();return;}try{await loadLive();}catch(e){alert(e.message);}});
+$("#live-mode").addEventListener("click",async()=>{
+ if(!auth.session){showModal();return;}
+ try{await loadLive();}catch(error){liveError(error);}
+});
 $("#scan-now").addEventListener("click",async()=>{
  if(view!=="live"){showModal();return;}
  const btn=$("#scan-now");btn.disabled=true;btn.textContent="جار فحص المصادر...";
  try{
-  if(!await getValidSession()){showModal();return;}
-  const res=await jsonRequest(PROJECT+"/functions/v1/job-search-fast",{
-   method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+session.access_token,"Content-Type":"application/json"},body:"{}"
+  if(!await auth.valid()){showModal();return;}
+  const res=await auth.request(PROJECT+"/functions/v1/job-manager-control",{
+   method:"POST",headers:{...auth.headers(),"Content-Type":"application/json"},
+   body:JSON.stringify({type:"command",action:"search_now",target_section:"research"})
   });
   await loadLive();
-  alert(res.scanned?("فُحصت "+res.scanned+" مصادر. فرص جديدة أُضيفت: "+res.inserted+(res.errors?"، أخطاء: "+res.errors:"")+"."):"المصادر فُحصت مؤخرًا؛ الجولة الآلية التالية خلال 10 دقائق.");
+  alert(res.reply||"تم تسجيل أمر البحث في مكتب المدير.");
  }catch(err){alert("تعذر فحص المصادر: "+(err?.message||String(err)));}
  finally{btn.disabled=false;btn.textContent="⌕ بحث الآن";}
 });
-$("#refresh").addEventListener("click",async()=>{const b=$("#refresh");b.disabled=true;b.textContent="جار التحديث...";try{if(view==="live")await loadLive();else{render();} }catch(e){alert("تعذر جلب البيانات: "+e.message);}finally{b.disabled=false;b.textContent="↻ تحديث";}});
+$("#refresh").addEventListener("click",async()=>{const b=$("#refresh");b.disabled=true;b.textContent="جار التحديث...";try{if(view!=="demo"&&auth.session)await loadLive();else render(); }catch(e){alert("تعذر جلب البيانات: "+e.message);}finally{b.disabled=false;b.textContent="↻ تحديث";}});
+const initialFilter=new URLSearchParams(location.search).get("filter");
+if($$(".filterbar button").some(b=>b.dataset.filter===initialFilter)){
+ filter=initialFilter;$$(".filterbar button").forEach(b=>b.classList.toggle("sel",b.dataset.filter===filter));
+}
 $$(".filterbar button").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;$$(".filterbar button").forEach(k=>k.classList.toggle("sel",k===b));renderTable();document.getElementById("applications").scrollIntoView({behavior:"smooth",block:"start"});}));
 $$(".navbtn").forEach(b=>b.addEventListener("click",()=>{$$(".navbtn").forEach(k=>k.classList.remove("active"));b.classList.add("active");const id=b.dataset.nav;if(id==="settings")document.getElementById("settings").scrollIntoView({behavior:"smooth"});else document.getElementById(id).scrollIntoView({behavior:"smooth"});}));
 render();clock();setInterval(clock,1000);
@@ -293,12 +306,17 @@ async function refreshLiveInBackground(){
  if(view!=="live"||backgroundRefreshBusy||document.hidden)return;
  backgroundRefreshBusy=true;
  try{await loadLive();}
- catch(err){liveLoadError=err.message;render();console.warn("تعذر تحديث سجلات الموظفين",err.message);}
+ catch(error){liveError(error);}
  finally{backgroundRefreshBusy=false;}
 }
 setInterval(refreshLiveInBackground,120000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshLiveInBackground();});
-try{const s=localStorage.getItem(LOCALKEY);if(s){session=JSON.parse(s);$("#authbtn").textContent="التحقق من الحساب...";loadLive().catch(err=>{liveLoadError=err.message;view="demo";$("#authbtn").textContent="تعذر الاتصال • إعادة المحاولة";render();});}}catch(e){}
+(async()=>{
+ if(auth.session){view="offline";$("#authbtn").textContent="جار التحقق من الحساب...";render();}
+ try{await auth.readConfirmation();}
+ catch(error){showModal();authMessage(error.message,true);}
+ if(auth.session){try{await loadLive();}catch(error){liveError(error);}}
+})();
 })();
 </script>
 </body></html>
