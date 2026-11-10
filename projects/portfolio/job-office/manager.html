@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a1422"><title>مكتب المدير • Outlook V3 • منظومة التوظيف</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0a1422"><title>مدير التوظيف | حالة التشغيل الفعلية</title>
 <style>
 :root{color-scheme:dark;--bg:#08111e;--panel:#122236;--line:#2d4359;--ink:#f0f7ff;--muted:#a1b5c9;--turq:#5de2c6;--blue:#79aef6}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#183950 0%,transparent 44%),var(--bg);color:var(--ink);font:14px/1.65 Tahoma,"Noto Sans Arabic",system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:#c7f9ee;text-decoration:none}
@@ -29,6 +29,7 @@ main{max-width:1320px;margin:auto;padding:22px 20px 30px;min-height:100vh}.top{d
  <section class="head"><div class="boss-avatar">👔</div><div><h1>مركز قيادة المدير العام</h1><p>تحادث مع المدير وأصدر تكليفات للأقسام الخمسة — كل أمر وحالته محفوظان في Supabase.</p></div></section>
  <section id="login" class="panel sign-in hidden"><h2>الدخول الآمن إلى مكتب المدير</h2><p>سجل دخولك بنفس حساب منظومة التوظيف. لا تُدخل كلمة مرورك في المحادثة.</p><form id="login-form"><label for="email">البريد الإلكتروني</label><input id="email" required type="email" autocomplete="email"><label for="password">كلمة المرور</label><input id="password" required type="password" autocomplete="current-password"><button class="btn primary" type="submit" id="login-submit">تسجيل الدخول</button></form><p id="login-feedback"></p></section>
  <section id="workspace" class="hidden">
+  <div id="operations-health" class="note" role="status" style="margin:12px 0;border-color:#ac7250;background:#30261d">جار فحص حالة التشغيل الفعلية للأقسام...</div>
   <div class="status-cards">
    <div class="metric"><strong id="m-leads">—</strong><small>إعلانات مكتشفة</small></div>
    <div class="metric"><strong id="m-reviewed">—</strong><small>دُققت</small></div>
@@ -111,13 +112,31 @@ const headers=()=>({"apikey":KEY,"Authorization":"Bearer "+session.access_token,
 async function rows(table,q){return request(P+"/rest/v1/"+table+"?"+q,{headers:headers()})}
 async function control(body){return request(P+"/functions/v1/job-manager-control",{method:"POST",headers:{...headers(),"Content-Type":"application/json"},body:JSON.stringify(body)})}
 function targetSet(section){target=N.includes(section)?section:"manager";$("#chat-target-label").textContent="الجهة المستقبلة: "+name[target];renderStaff()}
+function workerStatus(section){
+ const latest=runs.find(r=>r.section===section);
+ if(!latest)return {working:false,label:"لم تسجل أي جولة",healthy:false};
+ const ts=new Date(latest.started_at).getTime(),age=Date.now()-ts;
+ if(!Number.isFinite(age))return {working:false,label:"وقت تشغيل غير صالح",healthy:false};
+ if(latest.status==="started"&&age<45*60000)return {working:true,label:"ينفّذ جولة الآن – "+fmt(latest.started_at),healthy:true};
+ if(["completed","partial"].includes(latest.status)&&age<90*60000)
+  return {working:false,label:(latest.status==="partial"?"فحص جزئي":"آخر عمل مكتمل")+" – "+fmt(latest.started_at),healthy:latest.status==="completed"};
+ return {working:false,label:(latest.status==="failed"?"فشل آخر تشغيل":"متوقف أو لا توجد جولة حديثة")+" – "+fmt(latest.started_at),healthy:false};
+}
 function renderStaff(){
- const last={};for(const r of runs)if(!last[r.section])last[r.section]=r;
  $("#staff").innerHTML=N.map(section=>{
-  const cur=last[section],done=cur?.status==="completed",txt=cur?(done?"آخر جولة مكتملة: ":"آخر جولة: ")+fmt(cur.started_at):"لا توجد جولة مسجلة";
-  return '<button type="button" data-target="'+section+'" class="staff-card '+(target===section?"selected":"")+'"><span class="staff-avatar">'+icons[section]+'</span><span class="staff-main"><b>'+name[section]+'</b><small>'+clean(txt)+'</small></span><i class="bulb '+(done?"ok":"wait")+'"></i></button>';
+  const state=workerStatus(section);
+  return '<button type="button" data-target="'+section+'" class="staff-card '+(target===section?"selected":"")+'"><span class="staff-avatar">'+icons[section]+'</span><span class="staff-main"><b>'+name[section]+'</b><small>'+clean(state.label)+'</small></span><i class="bulb '+(state.healthy?"ok":state.working?"ok":"wait")+'"></i></button>';
  }).join("");
  $$(".staff-card").forEach(b=>b.addEventListener("click",()=>targetSet(b.dataset.target)));
+ const inactive=N.filter(section=>!workerStatus(section).healthy&&!workerStatus(section).working);
+ const box=$("#operations-health");if(!box)return;
+ if(inactive.length){
+  box.style.borderColor="#ac7250";box.style.background="#30261d";
+  box.textContent="⚠️ تشغيل جزئي: البحث عبر المصادر الرسمية مستمر، لكن "+inactive.map(s=>name[s]).join("، ")+" ليس له تشغيل مكتمل حديث ومثبت. أوامر المدير تُعالج كل 3 دقائق، وقد يظهر التعذر عند غياب اتصال Outlook أو عامل التقديم.";
+ }else{
+  box.style.borderColor="#428b77";box.style.background="#17392f";
+  box.textContent="✅ توجد جولات حديثة مسجلة لكل الأقسام؛ حالة تشغيل الوظائف لا تعني أن جميع الموظفين يعملون طوال الوقت.";
+ }
 }
 function renderChat(){
  const list=messages.slice().reverse();const c=$("#conversation"),atEnd=c.scrollHeight-c.scrollTop-c.clientHeight<140;
@@ -164,11 +183,11 @@ async function refreshOutlook(){
  const status=await outlookControl("status");outlookState=status;
  outStatus("Graph: "+(status.connected?"متصل "+status.account:"غير متصل"),status.connected,"#outlook-connected");
  outStatus("السيرة PDF: "+(status.resume_uploaded?"مرفوعة":"غير مرفوعة"),status.resume_uploaded,"#outlook-cv");
- outStatus("الإرسال: "+(status.auto_send_enabled?"مفعّل":"متوقف"),status.auto_send_enabled,"#outlook-auto");
+ outStatus("الإرسال: "+(status.auto_send_enabled?"مفعّل":"متوقف – يتطلب Microsoft Graph"),status.auto_send_enabled,"#outlook-auto");
  const entries=await rows("job_outlook_queue","select=id,job_id,recipient_email,status,subject,created_at,last_error&workspace_id=eq."+encodeURIComponent(ws)+"&order=created_at.desc&limit=30");
  const queued=(entries||[]).filter(x=>x.status==="queued").length;
  outStatus("الطابور: "+queued+" بانتظار الإرسال",queued===0,"#outlook-queued");
- $("#outlook-overall").textContent=status.auto_send_enabled?"نشط ومستقل":"لم يُفعّل إرسال البريد";
+ $("#outlook-overall").textContent=status.auto_send_enabled?"نشط ومستقل":"Outlook Graph غير جاهز للإرسال";
  $("#outlook-overall").classList.toggle("ready",!!status.auto_send_enabled);
  $("#outlook-enable").disabled=!status.configured||!status.connected||!status.resume_uploaded||status.auto_send_enabled;
  $("#outlook-link").disabled=!status.configured;
