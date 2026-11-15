@@ -126,8 +126,10 @@ function workerStatus(section){
  const ts=new Date(latest.started_at).getTime(),age=Date.now()-ts;
  if(!Number.isFinite(age))return {working:false,label:"وقت تشغيل غير صالح",healthy:false};
  if(latest.status==="started"&&age<45*60000)return {working:true,label:"ينفّذ جولة الآن – "+fmt(latest.started_at),healthy:true};
- if(["completed","partial"].includes(latest.status)&&age<90*60000)
-  return {working:false,label:(latest.status==="partial"?"فحص جزئي":"آخر عمل مكتمل")+" – "+fmt(latest.started_at),healthy:latest.status==="completed"};
+ if(["completed","partial"].includes(latest.status)&&age<90*60000){
+  const summary=section==="applying"?"طلبات موثقة في آخر جولة: "+latest.submitted_count:latest.status==="partial"?"فحص جزئي":"آخر عمل مكتمل";
+  return {working:false,label:summary+" · "+fmt(latest.started_at),healthy:latest.status==="completed"};
+ }
  return {working:false,label:(latest.status==="failed"?"فشل آخر تشغيل":"متوقف أو لا توجد جولة حديثة")+" – "+fmt(latest.started_at),healthy:false};
 }
 function renderStaff(){
@@ -167,17 +169,17 @@ async function loadWorkspace(){
  const [a,b,c,d,e,f,replies]=await Promise.all([
   rows("job_leads","select=id,status&"+w+"&limit=700"),
   rows("job_reviews","select=job_id&"+w+"&limit=700"),
-  rows("job_applications","select=id,status&"+w+"&limit=700"),
+  rows("job_applications","select=id,submitted_at&"+w+"&limit=700"),
   rows("job_manager_messages","select=id,sender,target_section,body,created_at&"+w+"&order=created_at.desc&limit=100"),
   rows("job_manager_commands","select=id,action,target_section,status,instruction,last_error,created_at&"+w+"&order=created_at.desc&limit=100"),
-  rows("job_workflow_runs","select=section,status,started_at&"+w+"&order=started_at.desc&limit=80"),
+  rows("job_latest_workflow_runs","select=section,status,started_at,submitted_count&"+w),
   rows("job_messages","select=subject,sender_or_recipient,occurred_at&"+w+"&channel=eq.email&direction=eq.incoming&application_id=not.is.null&order=occurred_at.desc&limit=10")
  ]);
  if(!auth.session)return showLogin();
  messages=d;commands=e;runs=f;
  $("#m-leads").textContent=a.length;$("#m-reviewed").textContent=b.length;
- const ids=new Set(b.map(x=>x.job_id));$("#m-pending").textContent=a.filter(x=>!ids.has(x.id)).length;
- $("#m-sent").textContent=c.filter(x=>x.status==="submitted").length;
+ const ids=new Set(b.map(x=>x.job_id));$("#m-pending").textContent=a.filter(x=>x.status==="in_review"||(x.status==="discovered"&&!ids.has(x.id))).length;
+ $("#m-sent").textContent=c.filter(x=>x.submitted_at).length;
  $("#connection").textContent="🔒 متصل بالبيانات الحقيقية • آخر تحديث "+fmt(new Date().toISOString());
  $("#login").classList.add("hidden");$("#workspace").classList.remove("hidden");$("#manager-signout").classList.remove("hidden");
  $("#chat-target-label").textContent="الجهة المستقبلة: "+name[target];
@@ -215,8 +217,8 @@ function renderOutlook(status){
  const canSend=status.configured&&status.connected&&status.resume_uploaded;
  const sending=canSend&&status.auto_send_enabled;
  const state=connectorMode?(connectorReady
-  ?["متصل عبر ChatGPT","تُفحص الردود كل ساعة. يمكنك طلب تجهيز مسودات الفرص المعتمدة ثم فتحها في Outlook وإرفاق سيرتك ومراجعتها وإرسالها."]
-  :["بانتظار جولة المتابعة","آخر فحص حديث غير متاح. تُجهّز المسودات بعد عودة اتصال Outlook في مهمة المتابعة."]):
+  ?["متصل عبر ChatGPT","تعالج مهمة التقديم فرص البريد المعتمدة. يمكنك أيضًا طلب مسودات ومراجعتها وإرسالها بنفسك من Outlook."]
+  :["بانتظار جولة المتابعة","تظهر حالة الاتصال بعد الجولة التالية. راجع بطاقة موظف التقديم لمعرفة حالة آخر جولة إرسال."]):
   !status.configured?["بانتظار ربط Outlook","تظهر حالة الربط هنا بعد أول جولة متابعة ناجحة عبر ChatGPT."]:
   needsAuth?["يلزم تجديد تفويض Outlook","اضغط «إعادة ربط Outlook» وجدّد التفويض بحسابك المعتمد."]:
   !status.connected?["بانتظار ربط Outlook","اضغط «ربط Outlook» ووافق من حساب Microsoft المعتمد."]:
@@ -224,12 +226,13 @@ function renderOutlook(status){
   !sending?["جاهز للتفعيل","إذا أردت إرسال طلبات البريد المعتمدة تلقائيًا، اضغط «تشغيل الإرسال التلقائي»."]:
   ["الإرسال مفعّل","يفحص العامل الطابور دوريًا ويسجّل الإرسال بعد ظهوره في عناصر Outlook المرسلة."];
  const counts=status.queue||{};
- const waiting=(counts.queued||0)+(counts.claimed||0)+(counts.pending_verification||0);
+ const preparing=(counts.queued||0)+(counts.claimed||0);
+ const verifying=counts.pending_verification||0;
  outStatus(state[0],canSend||connectorReady,"#outlook-overall");
  outStatus("Outlook: "+(status.connected?"متصل · "+status.account:connectorReady?"متصل عبر ChatGPT":needsAuth?"التفويض يحتاج تجديدًا":"بانتظار التحقق"),status.connected||connectorReady,"#outlook-connected");
  outStatus("السيرة PDF: "+(status.resume_uploaded?"مرفوعة":"غير مرفوعة"),status.resume_uploaded,"#outlook-cv");
- outStatus(connectorMode?"الإرسال من Outlook بعد مراجعتك":"الإرسال التلقائي: "+(sending?"مفعّل":"متوقف"),sending,"#outlook-auto");
- outStatus(connectorMode?"الطابور: "+waiting+" للتجهيز، "+(counts.drafted||0)+" مسودة للمراجعة":"الطابور: "+waiting+" قيد الإرسال أو التحقق",waiting===0,"#outlook-queued");
+ outStatus(connectorMode?"الإرسال عبر مهمة التقديم":"الإرسال التلقائي: "+(sending?"مفعّل":"متوقف"),connectorMode?workerStatus("applying").healthy:sending,"#outlook-auto");
+ outStatus(connectorMode?"الطابور: "+preparing+" للتجهيز، "+(counts.drafted||0)+" مسودة، "+verifying+" للتحقق":"الطابور: "+(preparing+verifying)+" قيد الإرسال أو التحقق",preparing+verifying===0,"#outlook-queued");
  $("#step-microsoft").dataset.ready=String(!!status.configured);
  $("#step-account").dataset.ready=String(!!status.connected);
  $("#step-resume").dataset.ready=String(!!status.resume_uploaded);

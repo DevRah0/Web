@@ -21,9 +21,9 @@ async function counts(db:any,workspace:string){
  const q=await Promise.all([
   db.from("job_leads").select("id,status",{count:"exact",head:false}).eq("workspace_id",workspace).limit(700),
   db.from("job_reviews").select("job_id",{count:"exact",head:true}).eq("workspace_id",workspace),
-  db.from("job_applications").select("id",{count:"exact",head:true}).eq("workspace_id",workspace).eq("status","submitted"),
+  db.from("job_applications").select("id",{count:"exact",head:true}).eq("workspace_id",workspace).not("submitted_at","is",null),
   db.from("job_search_sources").select("id",{count:"exact",head:true}).eq("workspace_id",workspace).eq("is_enabled",true),
-  db.from("job_workflow_runs").select("section,status,started_at").eq("workspace_id",workspace).order("started_at",{ascending:false}).limit(75),
+  db.from("job_latest_workflow_runs").select("section,status,started_at,submitted_count").eq("workspace_id",workspace),
   db.from("job_manager_commands").select("id",{count:"exact",head:true}).eq("workspace_id",workspace).eq("status","queued")
  ]);
  const [leads,reviews,submitted,sources,runs,queued]=q;
