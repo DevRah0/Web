@@ -98,6 +98,23 @@ Deno.serve(async(req)=>{
  let payload:any;try{payload=await req.json()}catch{return json({error:"طلب غير صالح"},400)}
  const type=String(payload?.type??"");
  try{
+  if(type==="mail_status"||type==="mail_switch"){
+    let state=await db.rpc("job_office_mail_state",{p_workspace:workspace});
+    if(state.error||!state.data)throw Error("تعذر فحص قناة البريد");
+    if(type==="mail_switch"){
+      if(typeof payload.enabled!=="boolean")return json({error:"قيمة التشغيل غير صالحة"},400);
+      if(payload.enabled && !(state.data.connected && state.data.resume && state.data.auto_apply && state.data.account))return json({error:"تحقق من ربط Gmail والسيرة وإعداد التقديم التلقائي."},409);
+      if(payload.enabled){
+        const settings=await db.from("job_system_settings").select("outlook_auto_send_enabled").eq("workspace_id",workspace).single();
+        if(settings.error||settings.data.outlook_auto_send_enabled)return json({error:"تحقق من قناة الإرسال النشطة."},409);
+      }
+      const result=await db.from("job_gmail_connections").update({send_enabled:payload.enabled,updated_at:new Date().toISOString()}).eq("workspace_id",workspace);
+      if(result.error)throw Error("تعذر تحديث إعداد الإرسال");
+      state=await db.rpc("job_office_mail_state",{p_workspace:workspace});
+      if(state.error)throw Error("تعذر تأكيد الإعداد");
+    }
+    return json(state.data);
+  }
   if(type==="status")return json({status:await counts(db,workspace)});
   if(type!=="message"&&type!=="command")return json({error:"نوع طلب غير مدعوم"},400);
   let action=type==="command"?String(payload.action||""):"";
