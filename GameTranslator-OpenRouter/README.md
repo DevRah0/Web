@@ -31,7 +31,7 @@ headers remain intact. Build fetches the complete upstream source.
 
 ## Build
 A GitHub Actions workflow checks out the **original app** at a fixed commit,
-copies these nine modified source files into it, runs its original tests and
+copies these ten modified source files into it, runs its original tests and
 builds an **unsigned IPA**. The IPA needs your own signing certificate before
 installation. The app bundle identifier is not intentionally changed.
 

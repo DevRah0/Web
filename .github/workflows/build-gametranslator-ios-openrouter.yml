@@ -38,6 +38,7 @@ jobs:
             mobile/ios/Runner/Channels.swift \
             mobile/ios/Runner/Diagnostics.swift \
             mobile/ios/Runner/Core/DiagnosticFormat.swift \
+            mobile/ios/CoreTests/DiagnosticsTest.swift \
             mobile/lib/bridge.dart \
             mobile/lib/settings_page.dart; do
             test -s "modifications/GameTranslator-OpenRouter/$file"
