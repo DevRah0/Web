@@ -137,6 +137,8 @@ final class Engine: Native.Listener {
       let usesGemini = s.engine == "gemini" && s.targetLanguage == "tr"
         && !s.geminiKey.trimmingCharacters(in: .whitespaces).isEmpty
       options.engineId = Engine.effectiveEngine(s)
+      // Context-dependent Arabic translations must not be reused in unrelated dialogue.
+      if options.engineId == "openrouter" { options.cache = nil }
       // Talimat değişince eski üslupla saklanmış çeviriler gelmesin: kararlı kısa özet modele eklenir (boşsa eklenmez).
       let noteTag = GeminiStyleNote.cacheTag(s.geminiStyleNote)
       options.model = options.engineId == "openrouter" ? OpenRouterTranslator.model :

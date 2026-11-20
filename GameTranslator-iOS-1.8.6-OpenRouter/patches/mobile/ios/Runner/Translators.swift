@@ -245,6 +245,9 @@ final class OpenRouterTranslator: TextTranslator, ChainMember {
   private let key: String
   private let source: String
   private let target: String
+  private let memoryLock = NSLock()
+  private var previous: [(String, String)] = []
+  private var previousAt = Date.distantPast
 
   init(key: String, source: String, target: String) {
     self.key = key.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -257,7 +260,11 @@ final class OpenRouterTranslator: TextTranslator, ChainMember {
   func attempt(_ text: String) -> ChainOutcome {
     guard !key.isEmpty, source == "en", target == "ar",
           let url = URL(string: "https://openrouter.ai/api/v1/chat/completions") else { return .failed }
-    let context = (TranslationContext.current ?? "").prefix(1000)
+    memoryLock.lock()
+    if Date().timeIntervalSince(previousAt) > 90 { previous.removeAll() }
+    let prior = previous.suffix(6).map { "English: \($0.0)\nArabic: \($0.1)" }.joined(separator: "\n")
+    memoryLock.unlock()
+    let context = (prior.isEmpty ? (TranslationContext.current ?? "") : prior).prefix(1600)
     let instruction = """
       Translate English video-game dialogue into polished, natural Modern Standard Arabic,
       using the quality and clarity expected of professional Arabic game localization.
@@ -302,6 +309,11 @@ final class OpenRouterTranslator: TextTranslator, ChainMember {
     let translated = output.trimmingCharacters(in: .whitespacesAndNewlines)
     let hasArabic = translated.unicodeScalars.contains { (0x0600...0x06FF).contains(Int($0.value)) }
     guard !translated.isEmpty, hasArabic else { return .failed }
+    memoryLock.lock()
+    previous.append((String(text.prefix(500)), String(translated.prefix(500))))
+    if previous.count > 6 { previous.removeFirst(previous.count - 6) }
+    previousAt = Date()
+    memoryLock.unlock()
     return .translated(translated)
   }
 
