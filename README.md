@@ -1,126 +1,23 @@
-# 🌐 Web Projects
+# HDMI Translator TV — fresh rebuild
 
-A collection of web development projects showcasing frontend, backend, and AI-powered web applications. Each project is organized independently with its own documentation, making the repository easy to explore, maintain, and expand.
+## العربية
+تطبيق Android TV جديد من الصفر، بمعرّف جديد تمامًا `com.devrah0.hdmisubtitles.fresh`.
+يعرض شريط الترجمة بواسطة نافذة `TYPE_APPLICATION_OVERLAY` مع خدمة أمامية، ويوفر اختبارًا مدته 60 ثانية، وتطبيق ويب محليًا في الهاتف لإرسال نص إلى التلفزيون على نفس الشبكة.
 
-مجموعة من مشاريع تطوير الويب التي تستعرض تطبيقات الواجهات الأمامية والخلفية، بالإضافة إلى تطبيقات تعتمد على الذكاء الاصطناعي. تم تنظيم كل مشروع بشكل مستقل مع توثيقه الخاص لتسهيل استعراضه وصيانته وتطويره.
+**القيود:** هذا تطبيق **استقبال وعرض ترجمة**، وليس نظام تعرّف على صوت اللعبة أو ترجمة تلقائية. قد لا تظهر نافذة Android فوق HDMI على تلفزيونات تستخدم مسار عرض الأجهزة (TIF/Hardware video plane). الاختبار على الجهاز الفعلي ضروري.
 
----
+1. ثبّت الـAPK الجديد؛ لا يحتاج إزالة التطبيقات السابقة.
+2. افتح التطبيق على Android TV وفعّل إذن الظهور فوق التطبيقات.
+3. اختر اختبار HDMI، ثم انتقل إلى مدخل البلايستيشن خلال 60 ثانية.
+4. إذا ظهر النص، ارجع للتطبيق واختر تشغيل استقبال الترجمة.
+5. افتح عنوان التلفزيون الظاهر على التطبيق في Safari، واكتب رمز الاقتران، ثم أرسل نصًا.
 
-# 🚀 Portfolio Website | موقع الأعمال
+## English
+New native Android TV receiver built from scratch with a unique package ID, an overlay permission flow, a 60-second real-input visibility test, and a local HTTP caption receiver.
 
-🔗 **Live Portfolio**
+The TV web endpoint is `http://TV-IP:9786/`; `POST /caption?code=PAIR_CODE` with a UTF-8 plain text body sends a caption. An on-screen 6-digit pairing code is required; keep both devices on the same local network.
 
-https://devrah0.github.io/Web/
+**Important:** HDMI overlay depends on firmware. The app does not capture/decode HDMI or transcribe/translate game audio. The TV's actual HDMI compositor may suppress application overlay layers despite the overlay permission being granted.
 
----
-
-# 📂 Repository Structure | هيكلة المستودع
-
-```text
-Web/
-│
-├── projects/
-│   ├── portfolio/
-│   ├── student-status/
-│   ├── voice-chatbot/
-│   └── ...
-│
-└── README.md
-```
-
----
-
-# 📁 Projects | المشاريع
-
-## 🌐 Portfolio
-
-A responsive personal portfolio website presenting my projects, technical skills, and development experience.
-
-موقع شخصي متجاوب يعرض مشاريعي، ومهاراتي التقنية، وخبرتي في تطوير البرمجيات.
-
-**Technologies**
-- HTML5
-- CSS3
-- JavaScript
-
-**Location**
-
-```text
-projects/portfolio
-```
-
----
-
-## 🎓 Student Status
-
-A web application developed to display student academic status through a simple and user-friendly interface.
-
-تطبيق ويب لعرض الحالة الأكاديمية للطلاب من خلال واجهة بسيطة وسهلة الاستخدام.
-
-**Technologies**
-- HTML
-- CSS
-- JavaScript
-- PHP
-
-**Location**
-
-```text
-projects/student-status
-```
-
----
-
-## 🎙️ Voice Chatbot
-
-An AI-powered voice chatbot built with HTML, CSS, JavaScript, and PHP. The project uses OpenRouter Chat Completions API to provide intelligent real-time conversations while remaining compatible with standard PHP hosting environments.
-
-روبوت محادثة صوتي يعتمد على الذكاء الاصطناعي باستخدام HTML وCSS وJavaScript وPHP. يستخدم OpenRouter Chat Completions API لتوفير محادثات ذكية في الوقت الحقيقي مع توافق كامل مع بيئات استضافة PHP.
-
-**Technologies**
-- HTML5
-- CSS3
-- JavaScript
-- PHP
-- OpenRouter API
-
-**Location**
-
-```text
-projects/voice-chatbot
-```
-
----
-
-# 🛠️ Technologies Used | التقنيات المستخدمة
-
-- HTML5
-- CSS3
-- JavaScript (ES6)
-- PHP
-- OpenRouter API
-- Git
-- GitHub
-
----
-
-# 🎯 Repository Purpose | هدف المستودع
-
-This repository serves as a centralized collection of my web development projects. It demonstrates practical experience in frontend development, backend integration, API communication, responsive web design, deployment, and software organization.
-
-يمثل هذا المستودع مركزًا موحدًا لجميع مشاريع تطوير الويب الخاصة بي، ويستعرض خبرتي العملية في تطوير الواجهات الأمامية، وتطوير الواجهات الخلفية، والتكامل مع واجهات البرمجة (APIs)، وتصميم المواقع المتجاوبة، ونشر التطبيقات، وتنظيم المشاريع البرمجية.
-
----
-
-# 📈 Future Projects | المشاريع المستقبلية
-
-This repository will continue to grow with new web applications covering web development, AI integration, automation, and full-stack projects.
-
-سيستمر هذا المستودع في التوسع بإضافة مشاريع جديدة في تطوير الويب، وتكامل الذكاء الاصطناعي، والأتمتة، وتطبيقات Full Stack.
-
----
-
-# 👨‍💻 Author | المطور
-
-**Abdulrahman Al-Rubaie**
-
+## Build
+JDK 17, Gradle 8.9, Android SDK 35, Android Gradle Plugin 8.6.1. Run `gradle :app:assembleDebug`; find `app/build/outputs/apk/debug/app-debug.apk`. APK is debug-signed for personal sideloading, not Play Store distribution.

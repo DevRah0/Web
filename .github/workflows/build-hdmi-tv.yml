@@ -1,0 +1,35 @@
+name: Build HDMI TV APK
+on:
+  push:
+    branches: ["hdmi-tv-rebuild-2026"]
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build installable APK
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Verify APK
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -8
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          cp "$APK" HDMI-Translator-TV-FRESH.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HDMI-Translator-TV-FRESH
+          path: HDMI-Translator-TV-FRESH.apk
