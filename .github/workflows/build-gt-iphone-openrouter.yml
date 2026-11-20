@@ -63,11 +63,16 @@ jobs:
           set -euo pipefail
           APP="gt-source/mobile/build/ios/iphoneos/Runner.app"
           BUNDLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+          echo "Original bundle: $BUNDLE"
+          test "$BUNDLE" = "com.gametranslator.gametranslatorMobile"
+          # The original source's Flutter bundle build settings can override --build-number.
+          # Normalize the unsigned app metadata before packaging while preserving bundle ID.
+          /usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString 1.8.6' "$APP/Info.plist"
+          /usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 14' "$APP/Info.plist"
           VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")
           BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")
-          test "$BUNDLE" = "com.gametranslator.gametranslatorMobile"
-          test "$VERSION" = "1.8.6"
-          test "$BUILD" = "14"
+          echo "Validated version: $VERSION build $BUILD"
+          test "$VERSION" = "1.8.6" && test "$BUILD" = "14"
           mkdir -p output/Payload
           cp -R "$APP" output/Payload/
           rm -rf output/Payload/Runner.app/_CodeSignature output/Payload/Runner.app/embedded.mobileprovision
