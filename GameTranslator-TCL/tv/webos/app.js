@@ -6,7 +6,7 @@
   'use strict';
 
   // TV uygulamasının sürümü: appinfo.json, tv-tizen/config.xml ve tv-android/app/build.gradle ile aynı tutulur.
-  var APP_VERSION = '1.0.5';
+  var APP_VERSION = '1.0.7';
   var t = window.t;
   var config = window.GAMETRANSLATOR_CONFIG || window.GAMETRANSLATOR_CONFIG || {};
   var platform = window.GAMETRANSLATOR_PLATFORM || window.GAMETRANSLATOR_PLATFORM;
@@ -181,7 +181,8 @@
     currentBox = validBox(box);
     setSubtitleText($('subtitle-text'), text, paragraphs);
     $('subtitle-text').style.whiteSpace = paragraphs ? 'pre-line' : '';
-    $('subtitle-text').style.textAlign = paragraphs ? 'left' : '';
+    // Maddeli yazılar satır başına yaslanır: soldan sağa dillerde sola, sağdan sola dillerde sağa
+    $('subtitle-text').style.textAlign = paragraphs ? (isRtl(text) ? 'right' : 'left') : '';
     $('subtitle').className = '';
     layout();
     setStatus('st-last', text.length > 40 ? text.slice(0, 40) + '…' : text);
@@ -195,7 +196,17 @@
   // Konuşmacı adları ("MARKOS: …", cümle ortasında başlayan ikinci konuşmacı dahil) ayarlarda açıksa ayrı renkte
   // yazılır. Ad büyük harfle başlayan en çok üç sözcüktür ve satır başında ya da bir cümlenin bitiminde durur.
   var SPEAKER = /(^|[.!?…”"]\s+|\n)([A-ZÇĞİÖŞÜÂÎÛ][^\s:.!?]*(?: [A-ZÇĞİÖŞÜÂÎÛ][^\s:.!?]*){0,2}):(?=\s)/g;
+  // Metin sağdan sola mı okunur (Arapça, Farsça, İbranice): harflerin çoğunluğuna bakılır; satır "MARKOS:" gibi Latin bir
+  // adla başlasa da Arapça söz sağdan sola dizilir. Bilgisayardaki Languages.IsRtlText ve ikinci ekran sayfasıyla aynı kural.
+  function isRtl(text) {
+    var rtl = (text.match(/[֐-ࣿיִ-﷿ﹰ-﻿]/g) || []).length;
+    if (!rtl) return false;
+    var letters = (text.match(/[A-Za-zÀ-ɏͰ-ԯ぀-ヿ一-鿿가-힯]/g) || []).length;
+    return rtl >= letters;
+  }
+
   function setSubtitleText(el, text, paragraphs) {
+    el.dir = isRtl(text) ? 'rtl' : 'ltr';
     if (!speakerColor || paragraphs) {
       el.textContent = text;
       return;
@@ -532,7 +543,11 @@
   function connect(address) {
     if (demoRunning()) stopDemo();
     if (eventSource) eventSource.close();
-    if (address !== server) failures = 0;
+    if (address !== server) {
+      failures = 0;
+      serverActive = false;
+    }
+    lastSubtitleAt = Date.now();
     server = address;
     $('waiting').className = 'hidden';
     setStatus('st-server', address);
@@ -545,6 +560,7 @@
     eventSource.onopen = function () {
       failures = 0;
       cancelScan();
+      watchIdle();
       clearTimeout(dropTimer);
       dropTimer = null;
       setStatus('st-conn', t('connected'), 'ok');
@@ -566,6 +582,7 @@
     };
     onEvent('subtitle', function (data) {
       diag.subtitles++;
+      lastSubtitleAt = Date.now();
       renderDiag();
       if (data.text) showSubtitle(data.text, data.duration, data.box, data.paragraphs === true, data.source, data.line);
     });
@@ -616,6 +633,28 @@
   var scanDue = 0;
   var scanning = false;
   var failures = 0;
+  // Ağda birden çok GameTranslator olabilir (bilgisayardaki uygulama açık dururken telefonla çeviri): TV ilk bulduğuna
+  // bağlanıp altyazısız kalıyordu. Sunucu /hello yanıtında "active" (çeviri çalışıyor) bildirir; bağlı sunucu çeviri
+  // yapmıyor ve bir süredir altyazı gelmiyorsa ağ yeniden taranır, çeviri yapan başka sunucuya geçilir.
+  var IDLE_RESCAN_MS = 30000;
+  var serverActive = false;
+  var lastSubtitleAt = 0;
+  var idleTimer = null;
+
+  function isOpen() { return !!eventSource && eventSource.readyState === 1; }
+
+  function watchIdle() {
+    if (idleTimer !== null) return;
+    idleTimer = setInterval(function () {
+      if (!isOpen() || scanning || Date.now() - lastSubtitleAt < IDLE_RESCAN_MS) return;
+      var current = server;
+      probe(current, function (ok, active) {
+        if (current !== server) return;
+        serverActive = ok && active;
+        if (!serverActive && isOpen()) scanForServer();
+      });
+    }, IDLE_RESCAN_MS);
+  }
 
   // Bekleyen tarama daha erken başlayacaksa korunur; EventSource birkaç saniyede bir yeniden denediği için sayaç
   // baştan kurulursa tarama hiç başlamazdı.
@@ -645,7 +684,9 @@
 
   function subnetOf(address) {
     var match = /^(?:https?:\/\/)?(\d+\.\d+\.\d+)\.\d+(?::\d+)?\/?$/.exec(address || '');
-    return match ? match[1] : null;
+    // Bağlı olmayan ağ arabirimi 0.0.0.0 bildirir; kendi kendine atanmış (169.254) ve yerel (127) adresler de taranmaz.
+    if (!match || /^(0\.0\.0|127\.|169\.254\.)/.test(match[1] + '.')) return null;
+    return match[1];
   }
 
   // Taranacak ağlar: TV'nin kendi ağı, sonra kayıtlı adresin ağı (aynıysa bir kez); ikisi de yoksa 192.168.1.
@@ -678,14 +719,15 @@
   function probe(address, done) {
     var request = new XMLHttpRequest();
     var finished = false;
-    function finish(ok) {
+    function finish(ok, active) {
       if (finished) return;
       finished = true;
-      done(ok);
+      done(ok, ok && active === true);
     }
     request.onload = function () {
       var body = (request.responseText || '').toLowerCase();
-      finish(request.status === 200 && (body.indexOf('gametranslator') >= 0 || body.indexOf('gametrans') >= 0 || body.indexOf('couchsubs') >= 0));
+      finish(request.status === 200 && (body.indexOf('gametranslator') >= 0 || body.indexOf('gametrans') >= 0 || body.indexOf('couchsubs') >= 0),
+        /"active"\s*:\s*true/.test(body));
     };
     request.onerror = function () { finish(false); };
     request.ontimeout = function () { finish(false); };
@@ -707,28 +749,39 @@
       for (var s = 0; s < subnets.length; s++) {
         for (var host = 1; host <= 254; host++) addresses.push('http://' + subnets[s] + '.' + host + ':' + SERVER_PORT);
       }
-      var next = 0, active = 0, found = false;
+      var next = 0, pending = 0, found = false, fallback = null;
+      function use(address, active) {
+        // Bulunan adres kaydedilir: TV bir sonraki açılışta eski adrese takılmasın.
+        save('server', address);
+        // Aynı bilgisayarsa EventSource kendisi yeniden bağlanır; kapanıp vazgeçtiyse (CLOSED) yeniden kurulur.
+        if (address !== server || (eventSource && eventSource.readyState === 2)) connect(address);
+        serverActive = active;
+      }
       function pump() {
-        while (!found && active < SCAN_PARALLEL && next < addresses.length) {
-          active++;
+        while (!found && pending < SCAN_PARALLEL && next < addresses.length) {
+          pending++;
           tryAddress(addresses[next++]);
         }
-        if (!found && !active && next >= addresses.length) {
+        if (!found && !pending && next >= addresses.length) {
           scanning = false;
-          scheduleScan();
+          // Çeviri yapan yok: bağlı değilsek bulunan (bekleyen) sunucuya bağlanılır; o da yoksa bir süre sonra yeniden.
+          if (fallback && !isOpen()) use(fallback, false);
+          else if (!isOpen()) scheduleScan();
         }
       }
       function tryAddress(address) {
-        probe(address, function (ok) {
-          active--;
+        probe(address, function (ok, active) {
+          pending--;
           if (found) return;
           if (!ok) return pump();
+          // Çeviri yapmayan sunucu (ör. açık duran bilgisayar uygulaması) yedekte bekler; tarama çeviri yapanı arar.
+          if (!active) {
+            if (!fallback || address === server) fallback = address;
+            return pump();
+          }
           found = true;
           scanning = false;
-          // Bulunan adres kaydedilir: TV bir sonraki açılışta eski adrese takılmasın.
-          save('server', address);
-          // Aynı bilgisayarsa EventSource kendisi yeniden bağlanır; kapanıp vazgeçtiyse (CLOSED) yeniden kurulur.
-          if (address !== server || (eventSource && eventSource.readyState === 2)) connect(address);
+          use(address, true);
         });
       }
       pump();
