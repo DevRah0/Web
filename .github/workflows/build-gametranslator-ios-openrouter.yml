@@ -36,6 +36,8 @@ jobs:
             mobile/ios/Runner/VisionReader.swift \
             mobile/ios/Runner/GeminiTranslator.swift \
             mobile/ios/Runner/Channels.swift \
+            mobile/ios/Runner/Diagnostics.swift \
+            mobile/ios/Runner/Core/DiagnosticFormat.swift \
             mobile/lib/bridge.dart \
             mobile/lib/settings_page.dart; do
             test -s "modifications/GameTranslator-OpenRouter/$file"
