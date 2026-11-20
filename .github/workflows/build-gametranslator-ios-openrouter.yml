@@ -1,0 +1,89 @@
+name: Build GameTranslator iOS - OpenRouter modification
+on:
+  push:
+    branches: [gametranslator-ios-openrouter-2026]
+    paths:
+      - "GameTranslator-OpenRouter/**"
+      - ".github/workflows/build-gametranslator-ios-openrouter.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 50
+    steps:
+      - name: Get targeted changes
+        uses: actions/checkout@v4
+        with:
+          path: modifications
+      - name: Get original community iPhone application
+        uses: actions/checkout@v4
+        with:
+          repository: SimonPetrus/GameTranslator-iOS
+          ref: 2ebef08cbbbee531f752aaa443b39d368954823f
+          path: original
+          persist-credentials: false
+      - name: Apply OpenRouter translation patch without replacing the app
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            mobile/ios/Runner/Store.swift \
+            mobile/ios/Runner/Engine.swift \
+            mobile/ios/Runner/VisionReader.swift \
+            mobile/ios/Runner/GeminiTranslator.swift \
+            mobile/ios/Runner/Channels.swift \
+            mobile/lib/bridge.dart \
+            mobile/lib/settings_page.dart; do
+            test -s "modifications/GameTranslator-OpenRouter/$file"
+            cp "modifications/GameTranslator-OpenRouter/$file" "original/$file"
+          done
+          cd original
+          git diff --stat
+      - name: Xcode version
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+      - name: Original iOS core tests
+        working-directory: original
+        run: sh mobile/ios/CoreTests/run.sh
+      - name: Obtain original PS5 Remote Play native library
+        working-directory: original
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: SimonPetrus/GameTranslator-iOS
+        run: ./mobile/ios/scripts/fetch-libchiaki.sh
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.0'
+          cache: true
+      - name: Dart dependencies, static analysis, existing tests
+        working-directory: original/mobile
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+      - name: Build original GameTranslator app with only OpenRouter changes
+        working-directory: original/mobile
+        run: flutter build ios --release --no-codesign
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="original/mobile/build/ios/iphoneos/Runner.app"
+          test -f "$APP/Info.plist"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist"
+          mkdir -p artifacts/Payload
+          cp -R "$APP" artifacts/Payload/
+          rm -rf artifacts/Payload/Runner.app/_CodeSignature artifacts/Payload/Runner.app/embedded.mobileprovision
+          (cd artifacts && zip -qry GameTranslator-iOS-OpenRouter-unsigned.ipa Payload)
+          shasum -a 256 artifacts/*.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GameTranslator-iOS-OpenRouter-unsigned
+          path: artifacts/*.ipa
+          if-no-files-found: error
