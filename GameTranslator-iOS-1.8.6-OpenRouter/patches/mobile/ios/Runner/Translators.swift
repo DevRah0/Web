@@ -237,10 +237,101 @@ final class AppleTranslator: TextTranslator {
 }
 
 
+// A public, USER-EDITABLE translation config. Only model + style parameters are remote.
+// The OpenRouter secret key NEVER leaves Keychain except in authenticated OpenRouter calls.
+// An asynchronous refresh avoids adding a GitHub network round-trip to each subtitle.
+private struct OpenRouterTranslationConfig: Equatable {
+  let revision: Int
+  let model: String
+  let temperature: Double
+  let maxTokens: Int
+  let contextTurns: Int
+  let systemPrompt: String
+
+  static let builtIn = OpenRouterTranslationConfig(
+    revision: 0,
+    model: "tencent/hy-mt2-30b-a3b",
+    temperature: 0,
+    maxTokens: 220,
+    contextTurns: 6,
+    systemPrompt: "Translate English video-game dialogue into clear, natural CONTEMPORARY MODERN STANDARD ARABIC ONLY. Never write Saudi, Egyptian, Gulf, Levantine, or any other spoken dialect. For example, do not use: وش، ليش، إيش، شلون، الحين، عشان، مو، هذي، ده، عايز، شو. Preserve character emotion, sarcasm and intent, render idioms by their meaning, never invent missing words, and keep concise Arabic subtitles with proper grammar. Translate swearing, vulgar insults, slurs and defamatory accusations without omission, masking with symbols, euphemisms or softening. Match the source's exact meaning and offensiveness, including explicit profanity, but never invent stronger insults or accusations. Every translated word must remain grammatical Modern Standard Arabic, without dialect. Prior lines provide context only. Output only the current subtitle in Arabic, with no explanations."
+  )
+
+  static func decode(_ data: Data) -> OpenRouterTranslationConfig? {
+    guard data.count <= 20000,
+          let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+          let revision = root["revision"] as? Int, revision >= 1,
+          let model = root["model"] as? String, model.count <= 120,
+          model.range(of: "^[a-zA-Z0-9._-]+/[a-zA-Z0-9._:/-]+$", options: .regularExpression) != nil,
+          let temperature = root["temperature"] as? Double, (0...0.4).contains(temperature),
+          let maxTokens = root["max_tokens"] as? Int, (60...450).contains(maxTokens),
+          let contextTurns = root["context_turns"] as? Int, (0...10).contains(contextTurns),
+          let prompt = root["system_prompt"] as? String,
+          (100...6000).contains(prompt.count)
+    else { return nil }
+    return OpenRouterTranslationConfig(
+      revision: revision, model: model, temperature: temperature,
+      maxTokens: maxTokens, contextTurns: contextTurns, systemPrompt: prompt
+    )
+  }
+}
+
+private final class OpenRouterRemoteConfig {
+  static let shared = OpenRouterRemoteConfig()
+  private static let configUrl =
+    "https://raw.githubusercontent.com/DevRah0/Web/main/GameTranslator-Config/translation.json"
+  private let lock = NSLock()
+  private var config = OpenRouterTranslationConfig.builtIn
+  private var lastAttempt = Date.distantPast
+  private var loading = false
+
+  func snapshot() -> OpenRouterTranslationConfig {
+    lock.lock()
+    let value = config
+    let refresh = !loading && Date().timeIntervalSince(lastAttempt) >= 60
+    if refresh {
+      loading = true
+      lastAttempt = Date()
+    }
+    lock.unlock()
+    if refresh { refreshAsync() }
+    return value
+  }
+
+  private func refreshAsync() {
+    guard var urlParts = URLComponents(string: Self.configUrl) else {
+      finish(nil)
+      return
+    }
+    // Refresh a public GitHub file even behind a short-lived CDN cache.
+    urlParts.queryItems = [
+      URLQueryItem(name: "v", value: String(Int(Date().timeIntervalSince1970 / 60)))
+    ]
+    guard let url = urlParts.url else {
+      finish(nil)
+      return
+    }
+    var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 5)
+    request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+    URLSession.shared.dataTask(with: request) { [weak self] data, response, _ in
+      let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+      let loaded = status == 200 ? data.flatMap(OpenRouterTranslationConfig.decode) : nil
+      self?.finish(loaded)
+    }.resume()
+  }
+
+  private func finish(_ loaded: OpenRouterTranslationConfig?) {
+    lock.lock()
+    if let loaded { config = loaded }
+    loading = false
+    lock.unlock()
+  }
+}
+
 // OpenRouter is an opt-in translation engine. It does not alter PS5 capture, OCR,
 // subtitle layout or TV transport. Only the original subtitle text is sent.
 final class OpenRouterTranslator: TextTranslator, ChainMember {
-  static let model = "tencent/hy-mt2-30b-a3b"
+  static var model: String { OpenRouterRemoteConfig.shared.snapshot().model }
   var id: String { "openrouter" }
   private let key: String
   private let source: String
@@ -248,6 +339,7 @@ final class OpenRouterTranslator: TextTranslator, ChainMember {
   private let memoryLock = NSLock()
   private var previous: [(String, String)] = []
   private var previousAt = Date.distantPast
+  private var lastConfig: OpenRouterTranslationConfig?
 
   init(key: String, source: String, target: String) {
     self.key = key.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -260,32 +352,31 @@ final class OpenRouterTranslator: TextTranslator, ChainMember {
   func attempt(_ text: String) -> ChainOutcome {
     guard !key.isEmpty, source == "en", target == "ar",
           let url = URL(string: "https://openrouter.ai/api/v1/chat/completions") else { return .failed }
+    // Each request uses the most recent valid remote settings, without blocking on GitHub.
+    let config = OpenRouterRemoteConfig.shared.snapshot()
     memoryLock.lock()
+    // Prevent old dialect or old-model examples from contaminating the new configuration.
+    if lastConfig != config {
+      previous.removeAll()
+      lastConfig = config
+    }
     if Date().timeIntervalSince(previousAt) > 90 { previous.removeAll() }
-    let prior = previous.suffix(6).map { "English: \($0.0)\nArabic: \($0.1)" }.joined(separator: "\n")
+    let prior = previous.suffix(config.contextTurns).map {
+      "English: \($0.0)\nArabic: \($0.1)"
+    }.joined(separator: "\n")
     memoryLock.unlock()
     let context = (prior.isEmpty ? (TranslationContext.current ?? "") : prior).prefix(1600)
-    let instruction = """
-      Translate English video-game dialogue into polished, natural Modern Standard Arabic,
-      using the quality and clarity expected of professional Arabic game localization.
-      Preserve the speaker's emotions, sarcasm, intent, and idiomatic meanings;
-      never translate English idioms literally. Do not invent information, speakers, or events.
-      Preserve the identity of character names and in-game terminology.
-      Keep Arabic subtitles concise and readable without losing essential meaning.
-      Treat previous lines as context ONLY; translate the CURRENT line ONLY.
-      Output only the Arabic subtitle, with no notes, markdown, or labels.
-      """
     let prompt = context.isEmpty
       ? "CURRENT ENGLISH SUBTITLE:\n\(text)"
       : "PREVIOUS DIALOGUE (context only):\n\(context)\n\nCURRENT ENGLISH SUBTITLE:\n\(text)"
     let body: [String: Any] = [
-      "model": Self.model,
+      "model": config.model,
       "messages": [
-        ["role": "system", "content": instruction],
+        ["role": "system", "content": config.systemPrompt],
         ["role": "user", "content": prompt],
       ],
-      "temperature": 0.15,
-      "max_tokens": 260,
+      "temperature": config.temperature,
+      "max_tokens": config.maxTokens,
       "stream": false,
     ]
     var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 6)

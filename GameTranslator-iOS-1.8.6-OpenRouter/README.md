@@ -24,3 +24,18 @@ Build relies on upstream public native libchiaki artifact; if permissions or exp
 the workflow cannot make an IPA until the native dependency is restored. There is no API key in this repo.
 
 Licensed under upstream **AGPL-3.0-only**. Full original source and notices: pinned tag above.
+
+
+## Remote settings — no more IPA builds for translation style changes
+
+Edit the shared JSON file: https://github.com/DevRah0/Web/edit/main/GameTranslator-Config/translation.json
+
+- `system_prompt`: exact Arabic localization style, including mandatory unmasked, uncensored profanity, insults, accusations.
+- `model`: OpenRouter model ID.
+- `temperature`, `max_tokens`, `context_turns`: quality/latency trade-offs.
+- `revision`: increment after each edit.
+- The iOS app checks this public read-only file about once per minute while translating; HTTPS request is asynchronous.
+- The user's API key stays in iOS Keychain; **never put an API key into this public file**.
+- If GitHub/config is unavailable or invalid, use built-in fusha translation defaults.
+- Requires installing the one-time updated IPA (build 15 or newer); prior build 14 does not read remote settings.
+- Preserve original app bundle ID and existing signing certificate to keep PS5 pairing.
