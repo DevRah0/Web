@@ -1,0 +1,80 @@
+name: GameTranslator iPhone 1.8.6 OpenRouter (same original app)
+on:
+  push:
+    branches: [gametranslator-ios-186-openrouter]
+    paths:
+      - 'GameTranslator-iOS-1.8.6-OpenRouter/**'
+      - '.github/workflows/build-gt-iphone-openrouter.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone user's exact original iOS 1.8.6 source
+        run: git clone --depth 1 --branch ios-v1.8.6 https://github.com/SimonPetrus/GameTranslator-iOS.git gt-source
+      - name: Apply seven OpenRouter-only files
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in             mobile/ios/Runner/Translators.swift             mobile/ios/Runner/Store.swift             mobile/ios/Runner/VisionReader.swift             mobile/ios/Runner/Engine.swift             mobile/ios/Runner/Channels.swift             mobile/lib/bridge.dart             mobile/lib/settings_page.dart; do
+            cp "GameTranslator-iOS-1.8.6-OpenRouter/patches/$file" "gt-source/$file"
+          done
+          cd gt-source
+          git diff --stat
+          grep -q 'com.gametranslator.gametranslatorMobile' mobile/ios/Runner.xcodeproj/project.pbxproj
+      - name: Original native unit tests
+        working-directory: gt-source
+        run: sh mobile/ios/CoreTests/run.sh
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.0'
+          cache: true
+      - name: Flutter validation
+        working-directory: gt-source/mobile
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+      - name: Fetch original public libchiaki iOS artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          UPSTREAM=SimonPetrus/GameTranslator-iOS
+          RUN="$(gh run list -R "$UPSTREAM" --workflow ios-native.yml --branch ios-port --status success --limit 1 --json databaseId --jq '.[0].databaseId')"
+          test -n "$RUN" && test "$RUN" != null
+          mkdir -p gt-source/work/libchiaki-ios
+          gh run download "$RUN" -R "$UPSTREAM" -n libchiaki-ios-arm64 -D gt-source/work/libchiaki-ios
+          test -f gt-source/work/libchiaki-ios/lib/libgtchiaki_ios.a
+          test -d gt-source/work/libchiaki-ios/include/chiaki
+      - name: Compile same iPhone app with OpenRouter
+        working-directory: gt-source/mobile
+        run: flutter build ios --release --no-codesign --build-name=1.8.6 --build-number=14
+      - name: Package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="gt-source/mobile/build/ios/iphoneos/Runner.app"
+          BUNDLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")
+          BUILD=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Info.plist")
+          test "$BUNDLE" = "com.gametranslator.gametranslatorMobile"
+          test "$VERSION" = "1.8.6"
+          test "$BUILD" = "14"
+          mkdir -p output/Payload
+          cp -R "$APP" output/Payload/
+          rm -rf output/Payload/Runner.app/_CodeSignature output/Payload/Runner.app/embedded.mobileprovision
+          (cd output && zip -q -r GameTranslator-iOS-1.8.6-OpenRouter.ipa Payload)
+          ls -lh output/*.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GameTranslator-iOS-1.8.6-OpenRouter-unsigned
+          path: output/*.ipa
+          if-no-files-found: error
